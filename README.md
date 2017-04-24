@@ -1,6 +1,6 @@
 # Qt 海天鹰文件管理器
-![alt](preview.jpg)  
 Linux 平台基于 Qt 的文件管理程序，文件操作需谨慎，个人软件仅供学习，若有损失概不负责。  
+![alt](preview.jpg)  
 
 特色：一键创建desktop快捷方式，支持修改desktop属性。  
 ![alt](desktop_property.jpg)  
