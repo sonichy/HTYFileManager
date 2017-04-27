@@ -125,7 +125,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-04\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
+    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
     MBox.exec();
 }
 
@@ -275,7 +275,7 @@ void MainWindow::on_action_list_triggered()
 
 void MainWindow::viewContextMenu(const QPoint &position)
 {
-    QAction *action_copy,*action_cut,*action_rename,*action_trash,*action_delete,*action_restore,*action_paste,*action_newdir,*action_sort,*action_property,*action_desktop,*action_gksu;
+    QAction *action_copy,*action_cut,*action_rename,*action_trash,*action_delete,*action_restore,*action_paste,*action_newdir,*action_sort,*action_property,*action_desktop,*action_gksu,*action_copyto,*action_moveto,*action_setWallpaper;
     QModelIndex index=ui->listView->indexAt(position);
     //qDebug() << "setData" << model->setData(index,QPixmap("/:icon.png"),Qt::DecorationRole);
     QString filepath=index.data(QFileSystemModel::FilePathRole).toString();
@@ -301,6 +301,14 @@ void MainWindow::viewContextMenu(const QPoint &position)
     action_rename->setText("重命名");
     actions.append(action_rename);
 
+    action_moveto=new QAction(this);
+    action_moveto->setText("移动到");
+    actions.append(action_moveto);
+
+    action_copyto=new QAction(this);
+    action_copyto->setText("复制到");
+    actions.append(action_copyto);
+
     action_trash=new QAction(this);
     action_trash->setText("移至回收站");
     actions.append(action_trash);
@@ -322,6 +330,10 @@ void MainWindow::viewContextMenu(const QPoint &position)
     actions.append(action_sort);
     action_sort->setMenu(sortMenu);
 
+    action_setWallpaper=new QAction(this);
+    action_setWallpaper->setText("设为壁纸");
+    actions.append(action_setWallpaper);
+
     action_property=new QAction(this);
     action_property->setText("属性");
     actions.append(action_property);
@@ -334,7 +346,9 @@ void MainWindow::viewContextMenu(const QPoint &position)
     action_gksu->setText("以管理员身份打开");
     actions.append(action_gksu);
 
-    if(MIME!="application/x-executable")action_desktop->setVisible(false);
+    if(MIME!="application/x-executable" && MIME!="application/x-shellscript")action_desktop->setVisible(false);
+    if(filetype!="image")action_setWallpaper->setVisible(false);
+
     QString dirTrash=QDir::homePath()+"/.local/share/Trash/files";
     //qDebug() << path << dirTrash;
     if(path==dirTrash)
@@ -619,6 +633,77 @@ void MainWindow::viewContextMenu(const QPoint &position)
         model->sort(3,Qt::DescendingOrder);
     }
 
+    if(result_action == action_copyto)
+    {
+        QString dir = QFileDialog::getExistingDirectory(this, "选择路径", "/home", QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
+        if(dir!=""){
+            QString newName = dir + "/" + QFileInfo(filepath).fileName();
+            qDebug() << "copyto:" << filepath << newName;
+            if(!QFile::copy(filepath, newName)){
+                QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 "+newName+" ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+                if(SB == QMessageBox::Yes){
+                    if(!QFile::remove(newName)){
+                        QMessageBox::critical(NULL, "错误", "无法覆盖新文件 "+newName);
+                    }else{
+                        qDebug() << "remove" << newName;
+                    }
+                    if(!QFile::copy(filepath, newName)){
+                        QMessageBox::critical(NULL, "错误", "粘贴失败！");
+                    }else{
+                        qDebug() << "copy" << filepath << newName;
+                    }
+                }
+            }
+        }
+        return;
+    }
+
+    if(result_action == action_moveto)
+    {
+        QString dir = QFileDialog::getExistingDirectory(this, "选择路径", "/home", QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
+        if(dir!=""){
+            QString newName = dir + "/" + QFileInfo(filepath).fileName();
+            qDebug() << "copyto:" << filepath << newName;
+            if(!QFile::copy(filepath, newName)){
+                QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 "+newName+" ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+                if(SB == QMessageBox::Yes){
+                    if(!QFile::remove(newName)){
+                        QMessageBox::critical(NULL, "错误", "无法覆盖新文件 " + newName);
+                    }else{
+                        qDebug() << "remove" << newName;
+                    }
+                    if(!QFile::copy(filepath, newName)){
+                        QMessageBox::critical(NULL, "错误", "粘贴失败！");
+                    }else{
+                        qDebug() << "copy" << filepath << newName;
+                        if(!QFile::remove(filepath)){
+                            QMessageBox::critical(NULL, "错误", "无法删除源文件 " + filepath);
+                        }else{
+                            qDebug() << "remove" << filepath;
+                        }
+                    }
+                }
+            }else{
+                qDebug() << "copy" << filepath << newName;
+                if(!QFile::remove(filepath)){
+                    QMessageBox::critical(NULL, "错误", "无法删除源文件 " + filepath);
+                }else{
+                    qDebug() << "remove" << filepath;
+                }
+            }
+        }
+        return;
+    }
+
+    if(result_action == action_setWallpaper)
+    {
+        QString cmd="gsettings set org.gnome.desktop.background picture-uri \"file://" + filepath + "\"";
+        qDebug() << "setWallpaper:" << cmd;
+        QProcess *proc = new QProcess;
+        proc->start(cmd);
+        return;
+    }
+
     foreach(QAction* action, actions)
     {
         action->deleteLater();
@@ -895,7 +980,7 @@ QString MainWindow::BS(qint64 b)
 }
 
 void MainWindow::changeIcon(){
-    pathIcon = QFileDialog::getOpenFileName(this,"打开图片", ".", "图片文件(*.jpg *.jpeg *.png *.bmp)");
+    pathIcon = QFileDialog::getOpenFileName(this,"打开图片", QFileInfo(dialogPD->ui->lineEditExec->text()).absolutePath(), "图片文件(*.jpg *.jpeg *.png *.bmp)");
     if(pathIcon.length() != 0){
         dialogPD->ui->btnIcon->setIcon(QIcon(pathIcon));
     }
