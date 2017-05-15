@@ -24,7 +24,7 @@
 
 QLineEdit *LELocation;
 QFileSystemModel *model;
-QString path="/",source="",pathIcon="",pathDesktop="";
+QString path="/",source="",pathIcon="",pathDesktop="",dir="";
 QStandardItem *SI1,*SI2,*SI3,*SI4,*SI5,*SI6;
 QStandardItemModel *SIM;
 int cut=0;
@@ -76,6 +76,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView->setWordWrap(true);
     // 设置view显示的目录
     ui->listView->setRootIndex(model->index(path));
+
+    connect(ui->listView,SIGNAL(clicked(QModelIndex)),this,SLOT(info(QModelIndex)));
     connect(ui->listView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(open(QModelIndex)));
     connect(ui->listView, SIGNAL(customContextMenuRequested(QPoint)),this, SLOT(viewContextMenu(QPoint)));
 
@@ -125,7 +127,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
+    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-05\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
     MBox.exec();
 }
 
@@ -193,16 +195,30 @@ void MainWindow::open(QModelIndex index)
         QString MIME= QMimeDatabase().mimeTypeForFile(newpath).name();
         qDebug() << MIME;
         QString filetype=MIME.left(MIME.indexOf("/"));        
-        if(filetype=="image")
+        if(filetype=="image"){
             proc->start("deepin-image-viewer \"" + newpath + "\"");
-        if(filetype=="video")
+            return;
+        }
+        if(filetype=="video"){
             proc->start("deepin-movie \"" + newpath + "\"");
-        if(filetype=="audio")
+            return;
+        }
+        if(filetype=="audio"){
             proc->start("deepin-music \"" + newpath + "\"");
-        if(MIME=="text/plain" || MIME=="text/markdown")
+            return;
+        }
+        if(MIME=="text/plain" || MIME=="text/markdown"){
             proc->start("gedit \"" + newpath + "\"");
-        if(MIME=="text/html")
+            return;
+        }
+        if(MIME=="text/html"){
             proc->start("google-chrome-stable \"" + newpath + "\"");
+            return;
+        }
+        if(MIME=="application/vnd.nokia.qt.qmakeprofile"){
+            proc->start("qtcreator \"" + newpath + "\"");
+            return;
+        }
         if(MIME=="application/x-desktop"){
             QFile file(newpath);
             file.open(QIODevice::ReadOnly);
@@ -216,8 +232,25 @@ void MainWindow::open(QModelIndex index)
                 }
             }
         }
+    }    
+}
+
+void MainWindow::info(QModelIndex index)
+{
+    QString newpath=index.data().toString();
+    if(index.data().toString()!="/"){
+        if(path=="/"){
+            newpath = "/" + index.data().toString();
+        }else{
+            newpath = path + "/" + index.data().toString();
+        }
+    }else{
+        newpath = "/";
     }
     qDebug() << newpath;
+    QString MIME= QMimeDatabase().mimeTypeForFile(newpath).name();
+    ui->statusBar->showMessage(MIME);
+
 }
 
 void MainWindow::openL()
@@ -346,7 +379,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
     action_gksu->setText("以管理员身份打开");
     actions.append(action_gksu);
 
-    if(MIME!="application/x-executable" && MIME!="application/x-shellscript")action_desktop->setVisible(false);
+    if(MIME!="application/x-executable" && MIME!="application/x-shellscript" && MIME!="application/x-ms-dos-executable")action_desktop->setVisible(false);
     if(filetype!="image")action_setWallpaper->setVisible(false);
 
     QString dirTrash=QDir::homePath()+"/.local/share/Trash/files";
@@ -587,7 +620,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         QString str="[Desktop Entry]\nName="+QFileInfo(filepath).fileName()+"\nComment=\nExec="+filepath+"\nIcon="+QFileInfo(filepath).absolutePath() + "/icon.png\nPath="+QFileInfo(filepath).absolutePath()+"\nTerminal=false\nType=Application\nMimeType=\nCategories=";
         qDebug() << str;
         QFile file(QFileInfo(filepath).absolutePath()+"/"+QFileInfo(filepath).fileName() + ".desktop");
-        if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append))
+        if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
         {
             QMessageBox::warning(this,"错误","不能创建 "+filepath+".desktop",QMessageBox::Yes);
         }
@@ -635,7 +668,11 @@ void MainWindow::viewContextMenu(const QPoint &position)
 
     if(result_action == action_copyto)
     {
-        QString dir = QFileDialog::getExistingDirectory(this, "选择路径", "/home", QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
+        if(dir==""){
+            dir = QFileDialog::getExistingDirectory(this, "选择路径", "/home", QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
+        }else{
+            dir = QFileDialog::getExistingDirectory(this, "选择路径", dir, QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
+        }
         if(dir!=""){
             QString newName = dir + "/" + QFileInfo(filepath).fileName();
             qDebug() << "copyto:" << filepath << newName;
@@ -660,7 +697,11 @@ void MainWindow::viewContextMenu(const QPoint &position)
 
     if(result_action == action_moveto)
     {
-        QString dir = QFileDialog::getExistingDirectory(this, "选择路径", "/home", QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
+        if(dir==""){
+            dir = QFileDialog::getExistingDirectory(this, "选择路径", "/home", QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
+        }else{
+            dir = QFileDialog::getExistingDirectory(this, "选择路径", dir, QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
+        }
         if(dir!=""){
             QString newName = dir + "/" + QFileInfo(filepath).fileName();
             qDebug() << "copyto:" << filepath << newName;

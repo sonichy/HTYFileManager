@@ -31,6 +31,7 @@ private slots:
     void on_action_back_triggered();
     void on_action_forward_triggered();
     void open(QModelIndex index);
+    void info(QModelIndex index);
     void nav(QModelIndex index);
     void openL();
     void viewContextMenu(const QPoint &position);
