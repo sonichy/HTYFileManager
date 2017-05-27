@@ -127,7 +127,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-05\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
+    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
     MBox.exec();
 }
 
@@ -180,8 +180,8 @@ void MainWindow::open(QModelIndex index)
         }
     }else{
         newpath = "/";
-    }
-    qDebug() << newpath;
+    }    
+    qDebug() << "newpath:" << newpath;
     QFileInfo FI(newpath);
     if(FI.isDir() || index.data().toString()=="/"){
         LELocation->setText(newpath);
@@ -308,16 +308,31 @@ void MainWindow::on_action_list_triggered()
 
 void MainWindow::viewContextMenu(const QPoint &position)
 {
-    QAction *action_copy,*action_cut,*action_rename,*action_trash,*action_delete,*action_restore,*action_paste,*action_newdir,*action_sort,*action_property,*action_desktop,*action_gksu,*action_copyto,*action_moveto,*action_setWallpaper;
+    QAction *action_copy,*action_cut,*action_rename,*action_trash,*action_delete,*action_restore,*action_paste,*action_newdir,*action_sort,*action_property,*action_desktop,*action_gksu,*action_copyto,*action_moveto,*action_setWallpaper,*action_terminal;
     QModelIndex index=ui->listView->indexAt(position);
     //qDebug() << "setData" << model->setData(index,QPixmap("/:icon.png"),Qt::DecorationRole);
     QString filepath=index.data(QFileSystemModel::FilePathRole).toString();
+    qDebug() << filepath;
     QString filename=QFileInfo(filepath).fileName();
     QString MIME= QMimeDatabase().mimeTypeForFile(filepath).name();
     qDebug() << MIME;
     QString filetype=MIME.left(MIME.indexOf("/"));
 
     QList<QAction *> actions;
+    QAction *action_openwith=new QAction(this);
+    action_openwith->setText("打开方式");
+    actions.append(action_openwith);
+    QMenu *SMDirectory = new QMenu(this);
+    QAction *SADFM = new QAction(SMDirectory);
+    SADFM->setText("深度文管");
+    SMDirectory->addAction(SADFM);
+    QAction *SAThunar = new QAction(SMDirectory);
+    SAThunar->setText("Thunar");
+    SMDirectory->addAction(SAThunar);
+    if(MIME=="inode/directory"){
+        action_openwith->setMenu(SMDirectory);
+    }
+
     action_copy=new QAction(this);
     action_copy->setText("复制");
     actions.append(action_copy);
@@ -371,6 +386,11 @@ void MainWindow::viewContextMenu(const QPoint &position)
     action_property->setText("属性");
     actions.append(action_property);
 
+    action_terminal=new QAction(this);
+    action_terminal->setText("在终端中打开");
+    actions.append(action_terminal);
+    actions.append(action_terminal);
+
     action_desktop=new QAction(this);
     action_desktop->setText("创建快捷方式");
     actions.append(action_desktop);
@@ -410,23 +430,36 @@ void MainWindow::viewContextMenu(const QPoint &position)
 
     QAction *result_action = QMenu::exec(actions,ui->listView->mapToGlobal(position));
 
-    if(result_action == action_copy)
-    {
+    if(result_action == SADFM){
+        QProcess *proc = new QProcess;
+        QString cmd="dde-file-manager \"" + filepath + "\"";
+        qDebug() << cmd;
+        proc->start(cmd);
+        return;
+    }
+
+    if(result_action == SAThunar){
+        QProcess *proc = new QProcess;
+        QString cmd="thunar \"" + filepath + "\"";
+        qDebug() << cmd;
+        proc->start(cmd);
+        return;
+    }
+
+    if(result_action == action_copy){
         source=filepath;
         qDebug() << "copy" << source;
         return;
     }
 
-    if(result_action == action_cut)
-    {
+    if(result_action == action_cut){
         qDebug() << "cut" << source;
         source=filepath;
         cut=1;
         return;
     }
 
-    if(result_action == action_paste)
-    {
+    if(result_action == action_paste){
         QString newName = path + "/" + QFileInfo(source).fileName();
         qDebug() << "paste" << source << newName;
         if(!QFile::copy(source, newName)){
@@ -450,8 +483,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_trash)
-    {
+    if(result_action == action_trash){
         qDebug() << "trash" << filepath;
         if(MIME=="inode/directory"){
             QDir *dir=new QDir;
@@ -481,8 +513,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_delete)
-    {
+    if(result_action == action_delete){
         qDebug() << "delete" << filepath;
         if(MIME=="inode/directory"){
             QDir *dir=new QDir;
@@ -500,8 +531,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_restore)
-    {
+    if(result_action == action_restore){
         qDebug() << "restore" << filepath;
         QString spath="";
         QString pathinfo=QDir::homePath()+"/.local/share/Trash/info/" + QFileInfo(filepath).fileName()+".trashinfo";
@@ -523,8 +553,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_newdir)
-    {
+    if(result_action == action_newdir){
         QDir *dir=new QDir;
         if(!dir->mkdir(path+"/"+"新建文件夹")){
             QMessageBox::warning(this,"创建文件夹","文件夹已经存在！");
@@ -532,8 +561,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_rename)
-    {
+    if(result_action == action_rename){
         QDialog *dialog=new QDialog(this);
         dialog->setWindowTitle("重命名");
         QVBoxLayout *vbox=new QVBoxLayout;
@@ -560,8 +588,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_property)
-    {
+    if(result_action == action_property){
         if(MIME=="application/x-desktop"){
             pathDesktop=filepath;
             QString sname="",sexec="",spath="",scomment="";
@@ -614,8 +641,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_desktop)
-    {
+    if(result_action == action_desktop){
         qDebug() << "Create desktop file";
         QString str="[Desktop Entry]\nName="+QFileInfo(filepath).fileName()+"\nComment=\nExec="+filepath+"\nIcon="+QFileInfo(filepath).absolutePath() + "/icon.png\nPath="+QFileInfo(filepath).absolutePath()+"\nTerminal=false\nType=Application\nMimeType=\nCategories=";
         qDebug() << str;
@@ -630,8 +656,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_gksu)
-    {
+    if(result_action == action_gksu){
         qDebug() << "gksu";
         QProcess *proc = new QProcess;
         if(filetype=="text"){
@@ -642,32 +667,39 @@ void MainWindow::viewContextMenu(const QPoint &position)
         }
     }
 
-    if(result_action == action_sortName)
-    {
+    if(result_action == action_terminal){
+        QProcess *proc = new QProcess;
+        QString cmd="";
+        if(index.isValid()){
+            cmd = "deepin-terminal -w " + filepath;
+        }else{
+            cmd = "deepin-terminal -w " + path;
+        }
+        qDebug() << cmd;
+        proc->start(cmd);
+    }
+
+    if(result_action == action_sortName){
         qDebug() << "sort by name";
         model->sort(0,Qt::AscendingOrder);
     }
 
-    if(result_action == action_sortSize)
-    {
+    if(result_action == action_sortSize){
         qDebug() << "sort by size";
         model->sort(1,Qt::DescendingOrder);
     }
 
-    if(result_action == action_sortType)
-    {
+    if(result_action == action_sortType){
         qDebug() << "sort by type";
         model->sort(0,Qt::AscendingOrder);
     }
 
-    if(result_action == action_sortTime)
-    {
+    if(result_action == action_sortTime){
         qDebug() << "sort by time";
         model->sort(3,Qt::DescendingOrder);
     }
 
-    if(result_action == action_copyto)
-    {
+    if(result_action == action_copyto){
         if(dir==""){
             dir = QFileDialog::getExistingDirectory(this, "选择路径", "/home", QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
         }else{
@@ -695,8 +727,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_moveto)
-    {
+    if(result_action == action_moveto){
         if(dir==""){
             dir = QFileDialog::getExistingDirectory(this, "选择路径", "/home", QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
         }else{
@@ -736,8 +767,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_setWallpaper)
-    {
+    if(result_action == action_setWallpaper){
         QString cmd="gsettings set org.gnome.desktop.background picture-uri \"file://" + filepath + "\"";
         qDebug() << "setWallpaper:" << cmd;
         QProcess *proc = new QProcess;
@@ -745,8 +775,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    foreach(QAction* action, actions)
-    {
+    foreach(QAction* action, actions){
         action->deleteLater();
     }
 }
@@ -800,8 +829,7 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
 
     if(MIME!="application/x-executable")action_desktop->setVisible(false);
 
-    if(!index.isValid())
-    {
+    if(!index.isValid()){
         qDebug()<<"viewContextMenu: index is not valid";
         action_copy->setVisible(false);
         action_cut->setVisible(false);
@@ -812,23 +840,20 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
 
     QAction *result_action = QMenu::exec(actions,ui->tableView->mapToGlobal(position));
 
-    if(result_action == action_copy)
-    {
+    if(result_action == action_copy){
         source=filepath;
         qDebug() << "copy" << source;
         return;
     }
 
-    if(result_action == action_cut)
-    {
+    if(result_action == action_cut){
         qDebug() << "cut" << source;
         source=filepath;
         cut=1;
         return;
     }
 
-    if(result_action == action_paste)
-    {
+    if(result_action == action_paste){
         QString newName = path + "/" + QFileInfo(source).fileName();
         qDebug() << "paste" << source << newName;
         if(!QFile::copy(source, newName)){
@@ -844,8 +869,7 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
         return;
     }
 
-    if(result_action == action_delete)
-    {
+    if(result_action == action_delete){
         qDebug() << "delete" << filepath;
         if(MIME=="inode/directory"){
             QDir *dir=new QDir;
@@ -860,8 +884,7 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
         return;
     }
 
-    if(result_action == action_newdir)
-    {
+    if(result_action == action_newdir){
         QDir *dir=new QDir;
         if(!dir->mkdir(path+"/"+"新建文件夹")){
             QMessageBox::warning(this,"创建文件夹","文件夹已经存在！");
@@ -869,8 +892,7 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
         return;
     }
 
-    if(result_action == action_rename)
-    {
+    if(result_action == action_rename){
         QDialog *dialog=new QDialog(this);
         dialog->setWindowTitle("重命名");
         QVBoxLayout *vbox=new QVBoxLayout;
@@ -897,8 +919,7 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
         return;
     }
 
-    if(result_action == action_property)
-    {
+    if(result_action == action_property){
         if(MIME=="application/x-desktop"){
             pathDesktop=filepath;
             QString sname="",sexec="",spath="",scomment="";
@@ -951,8 +972,7 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
         return;
     }
 
-    if(result_action == action_desktop)
-    {
+    if(result_action == action_desktop){
         qDebug() << "Create desktop file";
         QString str="[Desktop Entry]\nName="+QFileInfo(filepath).fileName()+"\nComment=\nExec="+filepath+"\nIcon="+QFileInfo(filepath).absolutePath() + "/icon.png\nPath="+QFileInfo(filepath).absolutePath()+"\nTerminal=false\nType=Application\nMimeType=\nCategories=";
         QFile file(QFileInfo(filepath).absolutePath()+"/"+QFileInfo(filepath).fileName() + ".desktop");
@@ -966,8 +986,7 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
         return;
     }
 
-    if(result_action == action_gksu)
-    {
+    if(result_action == action_gksu){
         QProcess *proc = new QProcess;
         if(filetype=="text"){
             proc->start("gksu gedit " + filepath);
