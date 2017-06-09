@@ -36,9 +36,6 @@ private slots:
     void openL();
     void viewContextMenu(const QPoint &position);
     void viewContextMenuTV(const QPoint &position);
-    void changeIcon();
-    void saveDesktop();
-    void desktopPath();
 };
 
 #endif // MAINWINDOW_H

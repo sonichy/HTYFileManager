@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>338</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>属性</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="4" column="0">
@@ -25,25 +25,6 @@
      </item>
      <item row="4" column="1" colspan="2">
       <widget class="QLineEdit" name="lineEditComment"/>
-     </item>
-     <item row="0" column="0" colspan="3">
-      <widget class="QPushButton" name="btnIcon">
-       <property name="maximumSize">
-        <size>
-         <width>100</width>
-         <height>100</height>
-        </size>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>100</width>
-         <height>100</height>
-        </size>
-       </property>
-       <property name="flat">
-        <bool>true</bool>
-       </property>
-      </widget>
      </item>
      <item row="1" column="1" colspan="2">
       <widget class="QLineEdit" name="lineEditName"/>
@@ -57,6 +38,9 @@
      </item>
      <item row="2" column="1">
       <widget class="QLineEdit" name="lineEditExec"/>
+     </item>
+     <item row="3" column="1" colspan="2">
+      <widget class="QLineEdit" name="lineEditPath"/>
      </item>
      <item row="2" column="2">
       <widget class="QPushButton" name="pushButtonPath">
@@ -72,15 +56,53 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1" colspan="2">
-      <widget class="QLineEdit" name="lineEditPath"/>
-     </item>
      <item row="3" column="0">
       <widget class="QLabel" name="labelPath">
        <property name="text">
         <string>路径：</string>
        </property>
       </widget>
+     </item>
+     <item row="0" column="0" colspan="3">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLineEdit" name="lineEditPathDesktop"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonIcon">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>100</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEditIcon"/>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

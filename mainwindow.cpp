@@ -86,10 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)),this, SLOT(viewContextMenuTV(QPoint)));
 
     dialogPD=new PropertyDesktop(this);
-    dialogPD->ui->gridLayout->itemAtPosition(0,0)->setAlignment(Qt::AlignCenter);
-    connect(dialogPD->ui->btnIcon,SIGNAL(clicked(bool)),this,SLOT(changeIcon()));
-    connect(dialogPD->ui->pushButtonPath,SIGNAL(clicked(bool)),this,SLOT(desktopPath()));
-    connect(dialogPD,SIGNAL(accepted()),this,SLOT(saveDesktop()));
+    connect(dialogPD,SIGNAL(accepted()),dialogPD,SLOT(saveDesktop()));
 
     sortMenu = new QMenu(this);
     action_sortName = new QAction(sortMenu);
@@ -127,7 +124,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
+    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-06\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
     MBox.exec();
 }
 
@@ -590,7 +587,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
 
     if(result_action == action_property){
         if(MIME=="application/x-desktop"){
-            pathDesktop=filepath;
+            //pathDesktop=filepath;
             QString sname="",sexec="",spath="",scomment="";
             QFile file(filepath);
             file.open(QIODevice::ReadOnly);
@@ -618,7 +615,9 @@ void MainWindow::viewContextMenu(const QPoint &position)
                     continue;
                 }
             }
-            dialogPD->ui->btnIcon->setIcon(QIcon(pathIcon));
+            dialogPD->ui->lineEditPathDesktop->setText(filepath);
+            dialogPD->ui->pushButtonIcon->setIcon(QIcon(pathIcon));
+            dialogPD->ui->lineEditIcon->setText(pathIcon);
             dialogPD->ui->lineEditName->setText(sname);
             dialogPD->ui->lineEditName->setCursorPosition(0);
             dialogPD->ui->lineEditExec->setText(sexec);
@@ -949,7 +948,8 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
                     continue;
                 }
             }
-            dialogPD->ui->btnIcon->setIcon(QIcon(pathIcon));
+            dialogPD->ui->pushButtonIcon->setIcon(QIcon(pathIcon));
+            dialogPD->ui->lineEditIcon->setText(pathIcon);
             dialogPD->ui->lineEditName->setText(sname);
             dialogPD->ui->lineEditName->setCursorPosition(0);
             dialogPD->ui->lineEditExec->setText(sexec);
@@ -1037,73 +1037,4 @@ QString MainWindow::BS(qint64 b)
         }
     }
     return s;
-}
-
-void MainWindow::changeIcon(){
-    pathIcon = QFileDialog::getOpenFileName(this,"打开图片", QFileInfo(dialogPD->ui->lineEditExec->text()).absolutePath(), "图片文件(*.jpg *.jpeg *.png *.bmp)");
-    if(pathIcon.length() != 0){
-        dialogPD->ui->btnIcon->setIcon(QIcon(pathIcon));
-    }
-}
-
-void MainWindow::saveDesktop(){
-    qDebug() << "saveDesktop";
-    QString strAll;
-    QStringList strList;
-    QFile readFile(pathDesktop);
-    if(readFile.open((QIODevice::ReadOnly|QIODevice::Text)))
-    {
-        QTextStream stream(&readFile);
-        strAll=stream.readAll();
-    }
-    readFile.close();
-    QFile writeFile(pathDesktop);
-    if(writeFile.open(QIODevice::WriteOnly|QIODevice::Text))
-    {
-        QTextStream stream(&writeFile);
-        strList=strAll.split("\n");
-        for(int i=0;i<strList.count();i++)
-        {
-            if(strList.at(i).contains("name=",Qt::CaseInsensitive))
-            {
-                QString tempStr="Name="+dialogPD->ui->lineEditName->text();
-                stream<<tempStr<<'\n';
-                continue;
-            }
-            if(strList.at(i).contains("icon=",Qt::CaseInsensitive))
-            {
-                QString tempStr="Icon="+pathIcon;
-                stream<<tempStr<<'\n';
-                continue;
-            }
-            if(strList.at(i).contains("exec=",Qt::CaseInsensitive))
-            {
-                QString tempStr="Exec="+dialogPD->ui->lineEditExec->text();
-                stream<<tempStr<<'\n';
-                continue;
-            }
-            if(strList.at(i).contains("path=",Qt::CaseInsensitive))
-            {
-                QString tempStr="Path="+dialogPD->ui->lineEditPath->text();
-                stream<<tempStr<<'\n';
-                continue;
-            }
-            if(strList.at(i).contains("comment=",Qt::CaseInsensitive))
-            {
-                QString tempStr="Comment="+dialogPD->ui->lineEditComment->text();
-                stream<<tempStr<<'\n';
-                continue;
-            }
-            stream<<strList.at(i)<<'\n';
-        }
-    }
-    writeFile.close();
-}
-
-void MainWindow::desktopPath()
-{
-    QProcess *proc = new QProcess;
-    QString cmd = QDir::currentPath() + "/HTYFileManager " + QFileInfo(dialogPD->ui->lineEditExec->text()).absolutePath();
-    qDebug() << cmd;
-    proc->start(cmd);
 }
