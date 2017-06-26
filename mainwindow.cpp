@@ -16,6 +16,8 @@
 #include <QStandardItem>
 #include <QDateTime>
 #include <QFileDialog>
+#include <QShortcut>
+#include <QFileIconProvider>
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 
 #else
@@ -44,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->action_forward->setIcon(style()->standardIcon(QStyle::SP_ArrowForward));
     LELocation = new QLineEdit(path,this);
     ui->mainToolBar->addWidget(LELocation);
-    connect(LELocation,SIGNAL(returnPressed()),this,SLOT(openL()));
+    connect(LELocation,SIGNAL(returnPressed()),this,SLOT(openL()));    
 
     SI1=new QStandardItem(style()->standardIcon(QStyle::SP_DirHomeIcon),"主目录");
     SI2=new QStandardItem(style()->standardIcon(QStyle::SP_DesktopIcon),"桌面");
@@ -79,6 +81,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->listView,SIGNAL(clicked(QModelIndex)),this,SLOT(info(QModelIndex)));
     connect(ui->listView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(open(QModelIndex)));
+    connect(new QShortcut(QKeySequence(Qt::Key_Return),this), SIGNAL(activated()),this, SLOT(open(ui->listView->selectedIndexes().at(0))));
+    connect(new QShortcut(QKeySequence(Qt::Key_Enter),this), SIGNAL(activated()),this, SLOT(open(ui->listView->selectedIndexes().at(0))));
     connect(ui->listView, SIGNAL(customContextMenuRequested(QPoint)),this, SLOT(viewContextMenu(QPoint)));
 
     ui->tableView->setModel(model);
@@ -124,13 +128,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-06\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
+    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-06\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
     MBox.exec();
 }
 
 void MainWindow::on_action_about_triggered()
 {
-    QMessageBox aboutMB(QMessageBox::NoIcon, "关于", "海天鹰文件管理器 1.0\n一款基于Qt的文件管理器。\n作者：黄颖\nE-mail: sonichy@163.com\n主页：sonichy.96.lt\n参考：\n右键菜单：http://windrocblog.sinaapp.com/?p=1016\n二级菜单：http://blog.csdn.net/u011417605/article/details/51219019\nQAction组群单选：http://qiusuoge.com/12287.html\nQListView添加项目：http://blog.csdn.net/u010142953/article/details/46694419\n修改文本：http://blog.csdn.net/caoshangpa/article/details/51775147");
+    QMessageBox aboutMB(QMessageBox::NoIcon, "关于", "海天鹰文件管理器 1.0\n一款基于Qt的文件管理器。\n作者：黄颖\nE-mail: sonichy@163.com\n主页：sonichy.96.lt\n参考：\n右键菜单：http://windrocblog.sinaapp.com/?p=1016\n二级菜单：http://blog.csdn.net/u011417605/article/details/51219019\nQAction组群单选：http://qiusuoge.com/12287.html\nQListView添加项目：http://blog.csdn.net/u010142953/article/details/46694419\n修改文本：http://blog.csdn.net/caoshangpa/article/details/51775147\n获取系统文件图标：http://www.cnblogs.com/RainyBear/p/5223103.html");
     aboutMB.setIconPixmap(QPixmap(":/icon.png"));
     aboutMB.exec();
 }
@@ -630,10 +634,14 @@ void MainWindow::viewContextMenu(const QPoint &position)
         }else{
             qDebug() << "property" << filepath;
             QMessageBox MBox(QMessageBox::NoIcon, "属性", "文件名：\t"+QFileInfo(filepath).fileName()+"\n大小：\t"+BS(QFileInfo(filepath).size())+"\n类型：\t"+QMimeDatabase().mimeTypeForFile(filepath).name()+"\n访问时间：\t"+QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss")+"\n修改时间：\t"+QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
-
             if(filetype=="image"){
                 QSize iconSize(200,200);
                 MBox.setIconPixmap(QPixmap(filepath).scaled(iconSize, Qt::KeepAspectRatio));
+            }else{
+                QFileInfo fileinfo(filepath);
+                QFileIconProvider iconProvider;
+                QIcon icon = iconProvider.icon(fileinfo);
+                MBox.setIconPixmap(icon.pixmap(QSize(64,64)));
             }
             MBox.exec();
         }
