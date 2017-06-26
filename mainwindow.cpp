@@ -1,19 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "propertydesktop.h"
-#include "ui_propertydesktop.h"
 #include <QMessageBox>
 #include <QDesktopWidget>
 #include <QLabel>
-#include <QLineEdit>
-#include <QFileSystemModel>
 #include <QProcess>
 #include <QDebug>
 #include <QMimeDatabase>
 #include <QPushButton>
 #include <QWheelEvent>
 #include <QScrollBar>
-#include <QStandardItem>
 #include <QDateTime>
 #include <QFileDialog>
 #include <QShortcut>
@@ -23,16 +18,6 @@
 #else
 #include <QStandardPaths>
 #endif
-
-QLineEdit *LELocation;
-QFileSystemModel *model;
-QString path="/",source="",pathIcon="",pathDesktop="",dir="";
-QStandardItem *SI1,*SI2,*SI3,*SI4,*SI5,*SI6;
-QStandardItemModel *SIM;
-int cut=0;
-PropertyDesktop *dialogPD;
-QMenu *sortMenu;
-QAction *action_sortName,*action_sortSize,*action_sortType,*action_sortTime;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -68,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     move((QApplication::desktop()->width() - width())/2, (QApplication::desktop()->height() - height())/2);
     model=new QFileSystemModel;
     // 设置model监视的目录，其下的修改会立刻signal通知view
+    path="/";
     model->setRootPath(path);
     // 没有通过过滤器的文件，true为不可用，false为隐藏
     model->setNameFilterDisables(false);
@@ -81,9 +67,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->listView,SIGNAL(clicked(QModelIndex)),this,SLOT(info(QModelIndex)));
     connect(ui->listView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(open(QModelIndex)));
-    connect(new QShortcut(QKeySequence(Qt::Key_Return),this), SIGNAL(activated()),this, SLOT(open(ui->listView->selectedIndexes().at(0))));
-    connect(new QShortcut(QKeySequence(Qt::Key_Enter),this), SIGNAL(activated()),this, SLOT(open(ui->listView->selectedIndexes().at(0))));
     connect(ui->listView, SIGNAL(customContextMenuRequested(QPoint)),this, SLOT(viewContextMenu(QPoint)));
+    connect(new QShortcut(QKeySequence(Qt::Key_Return),this), SIGNAL(activated()),this, SLOT(enterOpen()));
+    connect(new QShortcut(QKeySequence(Qt::Key_Enter),this), SIGNAL(activated()),this, SLOT(enterOpen()));
+    connect(new QShortcut(QKeySequence(Qt::Key_Backspace),this), SIGNAL(activated()),this, SLOT(on_action_back_triggered()));
 
     ui->tableView->setModel(model);
     connect(ui->tableView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(open(QModelIndex)));
@@ -128,7 +115,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-06\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
+    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-06\n增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
     MBox.exec();
 }
 
@@ -641,7 +628,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
                 QFileInfo fileinfo(filepath);
                 QFileIconProvider iconProvider;
                 QIcon icon = iconProvider.icon(fileinfo);
-                MBox.setIconPixmap(icon.pixmap(QSize(64,64)));
+                MBox.setIconPixmap(icon.pixmap(QSize(128,128)));
             }
             MBox.exec();
         }
@@ -1045,4 +1032,9 @@ QString MainWindow::BS(qint64 b)
         }
     }
     return s;
+}
+
+void MainWindow::enterOpen()
+{
+    open(ui->listView->selectionModel()->selectedIndexes().at(0));
 }
