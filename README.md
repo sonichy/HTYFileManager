@@ -11,10 +11,10 @@ Linux 平台基于 Qt 的文件管理程序，文件操作需谨慎，个人软�
 
 已编译好的 HTYFileManager 程序适用 64 位 Linux 系统 Qt5 环境，双击运行，其他版本请自行编译。  
 
-###新增：
+### 新增：
 压缩功能需要安装 zip：sudo apt-get install zip  
 解压缩功能需要安装 unzip：sudo apt-get install unzip  
 
-####支持背景图片
+#### 支持背景图片
 更换背景图片方法：替换程序目录下的 bg.jpg  
 ![alt](previewbg.jpg)
