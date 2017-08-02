@@ -8,6 +8,7 @@
 #include <QStandardItem>
 #include "propertydesktop.h"
 #include "ui_propertydesktop.h"
+//#include "filemodel.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,8 +25,9 @@ public:
 private:
     Ui::MainWindow *ui;
     QString BS(qint64 b);
-    QLineEdit *LELocation;
+    QLineEdit *LELocation,*LESearch;
     QFileSystemModel *model;
+    //FileModel *model;
     QString path,source,pathIcon,pathDesktop,dir;
     QStandardItem *SI1,*SI2,*SI3,*SI4,*SI5,*SI6;
     QStandardItemModel *SIM;
@@ -51,6 +53,7 @@ private slots:
     void viewContextMenu(const QPoint &position);
     void viewContextMenuTV(const QPoint &position);
     void enterOpen();
+    void search();
 };
 
 #endif // MAINWINDOW_H

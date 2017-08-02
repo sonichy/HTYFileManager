@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    propertydesktop.cpp
+    propertydesktop.cpp \
+    filemodel.cpp
 
 HEADERS  += mainwindow.h \
-    propertydesktop.h
+    propertydesktop.h \
+    filemodel.h
 
 FORMS    += mainwindow.ui \
     propertydesktop.ui

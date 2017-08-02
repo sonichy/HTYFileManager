@@ -13,6 +13,7 @@
 #include <QFileDialog>
 #include <QShortcut>
 #include <QFileIconProvider>
+#include <QTextBrowser>
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 
 #else
@@ -24,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setStyleSheet("#listView{background-image:url(bg.jpg);} #listView::item { background: transparent;}");
+    //setStyleSheet("#listView{background-image:url(bg.jpg);} #listView::item { background: transparent;}");
     ui->action_icon->setIcon(style()->standardIcon(QStyle::SP_FileDialogListView));
     ui->action_icon->setChecked(true);
     //ui->action_list->setIcon(style()->standardIcon(QStyle::SP_TitleBarMenuButton));
@@ -33,7 +34,13 @@ MainWindow::MainWindow(QWidget *parent) :
     path="/";
     LELocation = new QLineEdit(path,this);
     ui->mainToolBar->addWidget(LELocation);
-    connect(LELocation,SIGNAL(returnPressed()),this,SLOT(openL()));    
+    connect(LELocation,SIGNAL(returnPressed()),this,SLOT(openL()));
+    LESearch = new QLineEdit("",this);
+    LESearch->setPlaceholderText("搜索");
+    LESearch->setFixedWidth(100);
+    ui->mainToolBar->addWidget(LESearch);
+    connect(LESearch,SIGNAL(textChanged(QString)),this,SLOT(search()));
+    connect(LESearch,SIGNAL(returnPressed()),this,SLOT(search()));
 
     SI1=new QStandardItem(style()->standardIcon(QStyle::SP_DirHomeIcon),"主目录");
     SI2=new QStandardItem(style()->standardIcon(QStyle::SP_DesktopIcon),"桌面");
@@ -54,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->setVisible(false);
     move((QApplication::desktop()->width() - width())/2, (QApplication::desktop()->height() - height())/2);
     model=new QFileSystemModel;
+    //model=new FileModel;
     // 设置model监视的目录，其下的修改会立刻signal通知view    
     model->setRootPath(path);
     // 没有通过过滤器的文件，true为不可用，false为隐藏
@@ -116,8 +124,27 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QMessageBox MBox(QMessageBox::NoIcon, "更新历史", "1.0\n2017-07\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。");
-    MBox.exec();
+    QString s="1.0\n2017-08\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QDialog *dialog=new QDialog;
+    dialog->setWindowTitle("更新历史");
+    dialog->setFixedSize(400,300);
+    QVBoxLayout *vbox=new QVBoxLayout;
+    QTextBrowser *textBrowser=new QTextBrowser;
+    textBrowser->setText(s);
+    textBrowser->zoomIn();
+    vbox->addWidget(textBrowser);
+    QHBoxLayout *hbox=new QHBoxLayout;
+    QPushButton *btnConfirm=new QPushButton("确定");
+    hbox->addStretch();
+    hbox->addWidget(btnConfirm);
+    hbox->addStretch();
+    vbox->addLayout(hbox);
+    dialog->setLayout(vbox);
+    dialog->show();
+    connect(btnConfirm, SIGNAL(clicked()), dialog, SLOT(accept()));
+    if(dialog->exec()==QDialog::Accepted){
+        dialog->close();
+    }
 }
 
 void MainWindow::on_action_about_triggered()
@@ -188,7 +215,7 @@ void MainWindow::open(QModelIndex index)
             proc->start("deepin-image-viewer \"" + newpath + "\"");
             return;
         }
-        if(filetype=="video"){
+        if(filetype=="video" || MIME=="application/vnd.rn-realmedia"){
             proc->start("deepin-movie \"" + newpath + "\"");
             return;
         }
@@ -247,8 +274,8 @@ void MainWindow::openL()
     QString newpath=LELocation->text();
     QFileInfo FI(newpath);
     if(FI.isDir()){
-        model->setRootPath(newpath);
-        ui->listView->setRootIndex(model->index(newpath));
+        //model->setRootPath(newpath);
+        //ui->listView->setRootIndex(model->index(newpath));
         path = newpath;
     }
 }
@@ -311,13 +338,17 @@ void MainWindow::viewContextMenu(const QPoint &position)
     QAction *action_openwith=new QAction(this);
     action_openwith->setText("打开方式");
     actions.append(action_openwith);
-    QMenu *SMDirectory = new QMenu(this);
-    QAction *SADFM = new QAction(SMDirectory);
-    SADFM->setText("深度文管");
-    SMDirectory->addAction(SADFM);
-    QAction *SAThunar = new QAction(SMDirectory);
-    SAThunar->setText("Thunar");
-    SMDirectory->addAction(SAThunar);
+    QMenu *OpenwithFileManager = new QMenu(this);
+    QAction *DFM = new QAction(OpenwithFileManager);
+    DFM->setText("深度文管");
+    OpenwithFileManager->addAction(DFM);
+    QAction *Thunar = new QAction(OpenwithFileManager);
+    Thunar->setText("Thunar");
+    OpenwithFileManager->addAction(Thunar);
+    QMenu *OpenwithVideo=new QMenu(this);
+    QAction *HTYMP = new QAction(OpenwithVideo);
+    HTYMP->setText("海天鹰播放器");
+    OpenwithVideo->addAction(HTYMP);
 
     action_copy=new QAction(this);
     action_copy->setText("复制");
@@ -394,8 +425,12 @@ void MainWindow::viewContextMenu(const QPoint &position)
     action_gksu->setText("以管理员身份打开");
     actions.append(action_gksu);
 
+    if(filetype=="video" || filetype=="audio" || MIME=="application/vnd.rn-realmedia"){
+        action_openwith->setMenu(OpenwithVideo);
+    }
+
     if(MIME=="inode/directory"){
-        action_openwith->setMenu(SMDirectory);
+        action_openwith->setMenu(OpenwithFileManager);
     }else{
         action_zip->setVisible(false);
     }
@@ -435,7 +470,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
 
     QAction *result_action = QMenu::exec(actions,ui->listView->mapToGlobal(position));
 
-    if(result_action == SADFM){
+    if(result_action == DFM){
         QProcess *proc = new QProcess;
         QString cmd="dde-file-manager \"" + filepath + "\"";
         qDebug() << cmd;
@@ -443,7 +478,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == SAThunar){
+    if(result_action == Thunar){
         QProcess *proc = new QProcess;
         QString cmd="thunar \"" + filepath + "\"";
         qDebug() << cmd;
@@ -454,6 +489,10 @@ void MainWindow::viewContextMenu(const QPoint &position)
     if(result_action == action_copy){
         source=filepath;
         qDebug() << "copy" << source;
+        QModelIndexList modelIndexList = ui->listView->selectionModel()->selectedIndexes();
+        foreach(QModelIndex modelIndex, modelIndexList){
+            qWarning() << "=" << model->data(modelIndex).toString();
+        }
         return;
     }
 
@@ -806,6 +845,22 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
+    if(result_action == HTYMP){
+        QFile file("/home/sonichy/.local/share/applications/HTYMediaPlayer.desktop");
+        file.open(QIODevice::ReadOnly);
+        while(!file.atEnd()){
+            QString sl=file.readLine().replace("\n","");
+            if(sl.left(sl.indexOf("=")).toLower()=="exec"){
+                QString sexec=sl.mid(sl.indexOf("=")+1) + " \"" + filepath + "\"";
+                qDebug() << sexec;
+                QProcess *proc = new QProcess;
+                proc->start(sexec);
+                //break;
+                return;
+            }
+        }
+    }
+
     foreach(QAction* action, actions){
         action->deleteLater();
     }
@@ -813,7 +868,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
 
 void MainWindow::viewContextMenuTV(const QPoint &position)
 {
-    QAction *action_copy,*action_cut,*action_rename,*action_trash,*action_delete,*action_paste,*action_newdir,*action_property,*action_desktop,*action_gksu;
+        QAction *action_copy,*action_cut,*action_rename,*action_trash,*action_delete,*action_paste,*action_newdir,*action_property,*action_desktop,*action_gksu;
     QModelIndex index=ui->tableView->indexAt(position);
     QString filepath=index.data(QFileSystemModel::FilePathRole).toString();
     QString filename=QFileInfo(filepath).fileName();
@@ -1073,4 +1128,11 @@ QString MainWindow::BS(qint64 b)
 void MainWindow::enterOpen()
 {
     open(ui->listView->selectionModel()->selectedIndexes().at(0));
+}
+
+void MainWindow::search()
+{
+    QStringList filter;
+    filter << "*" + LESearch->text() + "*";
+    model->setNameFilters(filter);
 }
