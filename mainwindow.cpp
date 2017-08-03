@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->action_back->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
     ui->action_forward->setIcon(style()->standardIcon(QStyle::SP_ArrowForward));
     path="/";
+    dirTrash=QDir::homePath()+"/.local/share/Trash/files";
     LELocation = new QLineEdit(path,this);
     ui->mainToolBar->addWidget(LELocation);
     connect(LELocation,SIGNAL(returnPressed()),this,SLOT(openL()));
@@ -80,6 +81,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(new QShortcut(QKeySequence(Qt::Key_Return),this), SIGNAL(activated()),this, SLOT(enterOpen()));
     connect(new QShortcut(QKeySequence(Qt::Key_Enter),this), SIGNAL(activated()),this, SLOT(enterOpen()));
     connect(new QShortcut(QKeySequence(Qt::Key_Backspace),this), SIGNAL(activated()),this, SLOT(on_action_back_triggered()));
+    connect(new QShortcut(QKeySequence(Qt::Key_Delete),this), SIGNAL(activated()),this, SLOT(trashDelete()));
+    connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_C),this), SIGNAL(activated()),this, SLOT(copy()));
+    connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_V),this), SIGNAL(activated()),this, SLOT(paste()));
 
     ui->tableView->setModel(model);
     connect(ui->tableView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(open(QModelIndex)));
@@ -124,7 +128,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s="1.0\n2017-08\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s="1.0\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog=new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -325,7 +329,7 @@ void MainWindow::on_action_list_triggered()
 void MainWindow::viewContextMenu(const QPoint &position)
 {
     QAction *action_copy,*action_cut,*action_rename,*action_trash,*action_delete,*action_restore,*action_paste,*action_newdir,*action_sort,*action_property,*action_desktop,*action_gksu,*action_copyto,*action_moveto,*action_setWallpaper,*action_terminal,*action_zip,*action_unzip;
-    QModelIndex index=ui->listView->indexAt(position);
+    QModelIndex index=ui->listView->indexAt(position);    
     //qDebug() << "setData" << model->setData(index,QPixmap("/:icon.png"),Qt::DecorationRole);
     QString filepath=index.data(QFileSystemModel::FilePathRole).toString();
     qDebug() << filepath;
@@ -442,7 +446,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
     if(MIME!="application/x-executable" && MIME!="application/x-shellscript" && MIME!="application/x-ms-dos-executable")action_desktop->setVisible(false);
     if(filetype!="image")action_setWallpaper->setVisible(false);
 
-    QString dirTrash=QDir::homePath()+"/.local/share/Trash/files";
+
     //qDebug() << path << dirTrash;
     if(path==dirTrash)
     {
@@ -487,12 +491,10 @@ void MainWindow::viewContextMenu(const QPoint &position)
     }
 
     if(result_action == action_copy){
-        source=filepath;
-        qDebug() << "copy" << source;
-        QModelIndexList modelIndexList = ui->listView->selectionModel()->selectedIndexes();
-        foreach(QModelIndex modelIndex, modelIndexList){
-            qWarning() << "=" << model->data(modelIndex).toString();
-        }
+        //source=filepath;
+        //qDebug() << "copy" << source;
+        pathSource = path;
+        modelIndexList = ui->listView->selectionModel()->selectedIndexes();        
         return;
     }
 
@@ -504,74 +506,81 @@ void MainWindow::viewContextMenu(const QPoint &position)
     }
 
     if(result_action == action_paste){
-        QString newName = path + "/" + QFileInfo(source).fileName();
-        qDebug() << "paste" << source << newName;
-        if(!QFile::copy(source, newName)){
-            QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 "+newName+" ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-            if(SB == QMessageBox::Yes){
-                if(!QFile::remove(newName)){
-                    QMessageBox::critical(NULL, "错误", "无法覆盖新文件 "+newName);
+        qDebug() << "paste";
+        foreach(QModelIndex modelIndex, modelIndexList){
+            //QString newName = path + "/" + QFileInfo(source).fileName();
+            source = model->data(modelIndex,QFileSystemModel::FilePathRole).toString();
+            QString newName = path + "/" + QFileInfo(model->data(modelIndex,QFileSystemModel::FilePathRole).toString()).fileName();
+            qDebug() << "paste" << source << newName;
+            if(!QFile::copy(source, newName)){
+                QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 " + newName + " ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+                if(SB == QMessageBox::Yes){
+                    if(!QFile::remove(newName)){
+                        QMessageBox::critical(NULL, "错误", "无法覆盖新文件 "+newName);
+                    }
+                    if(!QFile::copy(source, newName)){
+                        QMessageBox::critical(NULL, "错误", "粘贴失败！");
+                    }
                 }
-                if(!QFile::copy(source, newName)){
-                    QMessageBox::critical(NULL, "错误", "粘贴失败！");
+            }else{
+                if(cut){
+                    if(!QFile::remove(source)){
+                        QMessageBox::critical(NULL, "错误", "无法删除剪切的源文件 "+source, QMessageBox::Ok);
+                    }
                 }
+                cut=0;
             }
-        }else{
-            if(cut){
-                if(!QFile::remove(source)){
-                    QMessageBox::critical(NULL, "错误", "无法删除剪切的源文件 "+source, QMessageBox::Ok);
-                }
-            }
-            cut=0;
         }
         return;
     }
 
     if(result_action == action_trash){
-        qDebug() << "trash" << filepath;
-        if(MIME=="inode/directory"){
-            QDir *dir=new QDir;
-            if(!dir->rmdir(filepath)){
-                QMessageBox::critical(this,"错误","无法删除文件夹 "+filepath);
-            }
-        }else{
-            QString newName = QDir::homePath()+"/.local/share/Trash/files/" + QFileInfo(filepath).fileName();
-            if(QFile::copy(filepath, newName)){
-                QString pathinfo=QDir::homePath()+"/.local/share/Trash/info/" + QFileInfo(filepath).fileName()+".trashinfo";
-                QFile file(pathinfo);
-                if(file.open(QIODevice::WriteOnly|QIODevice::Text))
-                {
-                    QTextStream stream(&file);
-                    QDateTime time;
-                    time = QDateTime::currentDateTime();
-                    stream<<"[Trash Info]\nPath="+filepath+"\nDeletionDate="+time.toString("yyyy-MM-ddThh:mm:ss");
-                    file.close();
-                }
-                if(!QFile::remove(filepath)){
-                    QMessageBox::critical(NULL, "错误", "无法删除文件 "+filepath);
-                }
-            }else{
-                QMessageBox::critical(NULL, "错误", "无法移动 "+filepath+" 到回收站");
-            }
-        }
+        trashFiles();
+//        qDebug() << "trash" << filepath;
+//        if(MIME=="inode/directory"){
+//            QDir *dir=new QDir;
+//            if(!dir->rmdir(filepath)){
+//                QMessageBox::critical(this,"错误","无法删除文件夹 "+filepath);
+//            }
+//        }else{
+//            QString newName = QDir::homePath()+"/.local/share/Trash/files/" + QFileInfo(filepath).fileName();
+//            if(QFile::copy(filepath, newName)){
+//                QString pathinfo=QDir::homePath()+"/.local/share/Trash/info/" + QFileInfo(filepath).fileName()+".trashinfo";
+//                QFile file(pathinfo);
+//                if(file.open(QIODevice::WriteOnly|QIODevice::Text))
+//                {
+//                    QTextStream stream(&file);
+//                    QDateTime time;
+//                    time = QDateTime::currentDateTime();
+//                    stream<<"[Trash Info]\nPath="+filepath+"\nDeletionDate="+time.toString("yyyy-MM-ddThh:mm:ss");
+//                    file.close();
+//                }
+//                if(!QFile::remove(filepath)){
+//                    QMessageBox::critical(NULL, "错误", "无法删除文件 "+filepath);
+//                }
+//            }else{
+//                QMessageBox::critical(NULL, "错误", "无法移动 "+filepath+" 到回收站");
+//            }
+//        }
         return;
     }
 
     if(result_action == action_delete){
-        qDebug() << "delete" << filepath;
-        if(MIME=="inode/directory"){
-            QDir *dir=new QDir;
-            if(!dir->rmdir(filepath)){
-                QMessageBox::critical(this,"错误","无法删除文件夹 "+filepath);
-            }
-        }else{
-            if(QFile::remove(filepath)){
-                QString dirTrash=QDir::homePath()+"/.local/share/Trash/files";
-                if(QFileInfo(filepath).absolutePath()==dirTrash)QFile::remove(QDir::homePath()+"/.local/share/Trash/info/"+QFileInfo(filepath).fileName()+".trashinfo");
-            }else{
-                QMessageBox::critical(NULL, "错误", "无法删除文件 "+filepath);
-            }
-        }
+        deleteFiles();
+//        qDebug() << "delete" << filepath;
+//        if(MIME=="inode/directory"){
+//            QDir *dir=new QDir;
+//            if(!dir->rmdir(filepath)){
+//                QMessageBox::critical(this,"错误","无法删除文件夹 "+filepath);
+//            }
+//        }else{
+//            if(QFile::remove(filepath)){
+//                QString dirTrash=QDir::homePath()+"/.local/share/Trash/files";
+//                if(QFileInfo(filepath).absolutePath()==dirTrash)QFile::remove(QDir::homePath()+"/.local/share/Trash/info/"+QFileInfo(filepath).fileName()+".trashinfo");
+//            }else{
+//                QMessageBox::critical(NULL, "错误", "无法删除文件 "+filepath);
+//            }
+//        }
         return;
     }
 
@@ -1135,4 +1144,106 @@ void MainWindow::search()
     QStringList filter;
     filter << "*" + LESearch->text() + "*";
     model->setNameFilters(filter);
+}
+
+void MainWindow::trashFiles()
+{
+    modelIndexList = ui->listView->selectionModel()->selectedIndexes();
+    foreach(QModelIndex modelIndex, modelIndexList){
+        QString filepath = model->data(modelIndex,QFileSystemModel::FilePathRole).toString();
+        qDebug() << "trash" << filepath;
+        QString MIME= QMimeDatabase().mimeTypeForFile(filepath).name();
+        if(MIME=="inode/directory"){
+            QDir *dir=new QDir;
+            if(!dir->rmdir(filepath)){
+                QMessageBox::critical(this,"错误","无法删除文件夹 "+filepath);
+            }
+        }else{
+            QString newName = QDir::homePath()+"/.local/share/Trash/files/" + QFileInfo(filepath).fileName();
+            if(QFile::copy(filepath, newName)){
+                QString pathinfo=QDir::homePath()+"/.local/share/Trash/info/" + QFileInfo(filepath).fileName()+".trashinfo";
+                QFile file(pathinfo);
+                if(file.open(QIODevice::WriteOnly|QIODevice::Text))
+                {
+                    QTextStream stream(&file);
+                    QDateTime time;
+                    time = QDateTime::currentDateTime();
+                    stream<<"[Trash Info]\nPath="+filepath+"\nDeletionDate="+time.toString("yyyy-MM-ddThh:mm:ss");
+                    file.close();
+                }
+                if(!QFile::remove(filepath)){
+                    QMessageBox::critical(NULL, "错误", "无法删除文件 "+filepath);
+                }
+            }else{
+                QMessageBox::critical(NULL, "错误", "无法移动 "+filepath+" 到回收站");
+            }
+        }
+    }
+}
+
+void MainWindow::deleteFiles()
+{
+    modelIndexList = ui->listView->selectionModel()->selectedIndexes();
+    foreach(QModelIndex modelIndex, modelIndexList){
+        QString filepath = model->data(modelIndex,QFileSystemModel::FilePathRole).toString();
+        qDebug() << "delete" << filepath;
+        QString MIME= QMimeDatabase().mimeTypeForFile(filepath).name();
+        if(MIME=="inode/directory"){
+            QDir *dir=new QDir;
+            if(!dir->rmdir(filepath)){
+                QMessageBox::critical(this,"错误","无法删除文件夹 "+filepath);
+            }
+        }else{
+            if(QFile::remove(filepath)){
+                QString dirTrash=QDir::homePath()+"/.local/share/Trash/files";
+                if(QFileInfo(filepath).absolutePath()==dirTrash)QFile::remove(QDir::homePath()+"/.local/share/Trash/info/"+QFileInfo(filepath).fileName()+".trashinfo");
+            }else{
+                QMessageBox::critical(NULL, "错误", "无法删除文件 "+filepath);
+            }
+        }
+    }
+}
+
+void MainWindow::trashDelete()
+{
+    if(path==dirTrash){
+        deleteFiles();
+    }else{
+        trashFiles();
+    }
+}
+
+void MainWindow::copy()
+{
+    qDebug() << "copy";
+    pathSource = path;
+    modelIndexList = ui->listView->selectionModel()->selectedIndexes();
+}
+
+void MainWindow::paste()
+{
+    qDebug() << "paste";
+    foreach(QModelIndex modelIndex, modelIndexList){
+        source = model->data(modelIndex,QFileSystemModel::FilePathRole).toString();
+        QString newName = path + "/" + QFileInfo(model->data(modelIndex,QFileSystemModel::FilePathRole).toString()).fileName();
+        qDebug() << "paste" << source << newName;
+        if(!QFile::copy(source, newName)){
+            QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 " + newName + " ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+            if(SB == QMessageBox::Yes){
+                if(!QFile::remove(newName)){
+                    QMessageBox::critical(NULL, "错误", "无法覆盖新文件 "+newName);
+                }
+                if(!QFile::copy(source, newName)){
+                    QMessageBox::critical(NULL, "错误", "粘贴失败！");
+                }
+            }
+        }else{
+            if(cut){
+                if(!QFile::remove(source)){
+                    QMessageBox::critical(NULL, "错误", "无法删除剪切的源文件 "+source, QMessageBox::Ok);
+                }
+            }
+            cut=0;
+        }
+    }
 }

@@ -28,13 +28,16 @@ private:
     QLineEdit *LELocation,*LESearch;
     QFileSystemModel *model;
     //FileModel *model;
-    QString path,source,pathIcon,pathDesktop,dir;
+    QString path,source,pathIcon,pathDesktop,dir,pathSource,dirTrash;
     QStandardItem *SI1,*SI2,*SI3,*SI4,*SI5,*SI6;
     QStandardItemModel *SIM;
     int cut;
     PropertyDesktop *dialogPD;
     QMenu *sortMenu;
     QAction *action_sortName,*action_sortSize,*action_sortType,*action_sortTime;
+    QModelIndexList modelIndexList;
+    void trashFiles();
+    void deleteFiles();
 
 protected:
     void wheelEvent(QWheelEvent*);
@@ -54,6 +57,9 @@ private slots:
     void viewContextMenuTV(const QPoint &position);
     void enterOpen();
     void search();
+    void trashDelete();
+    void copy();
+    void paste();
 };
 
 #endif // MAINWINDOW_H
