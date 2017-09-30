@@ -14,6 +14,7 @@
 #include <QShortcut>
 #include <QFileIconProvider>
 #include <QTextBrowser>
+#include <QSettings>
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 
 #else
@@ -128,7 +129,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s="1.0\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s="1.0\n2017-10\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog=new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -251,6 +252,11 @@ void MainWindow::open(QModelIndex index)
                     break;
                 }
             }
+//            QSettings *settings = new QSettings(newpath, QSettings::IniFormat);
+//            qDebug() << settings;
+//            QString sexec = settings->value("Exec").toString();
+//            qDebug() << sexec;
+//            proc->start(sexec);
         }
     }    
 }
@@ -513,11 +519,17 @@ void MainWindow::viewContextMenu(const QPoint &position)
             QString newName = path + "/" + QFileInfo(model->data(modelIndex,QFileSystemModel::FilePathRole).toString()).fileName();
             qDebug() << "paste" << source << newName;
             if(!QFile::copy(source, newName)){
-                QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 " + newName + " ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+                QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 " + newName + " ?", QMessageBox::Yes | QMessageBox::No |QMessageBox::Cancel, QMessageBox::Yes);
                 if(SB == QMessageBox::Yes){
                     if(!QFile::remove(newName)){
-                        QMessageBox::critical(NULL, "错误", "无法覆盖新文件 "+newName);
+                        QMessageBox::critical(NULL, "错误", "无法覆盖新文件 " + newName);
                     }
+                    if(!QFile::copy(source, newName)){
+                        QMessageBox::critical(NULL, "错误", "粘贴失败！");
+                    }
+                }
+                if(SB == QMessageBox::No){
+                    newName =  path + "/副本" + QFileInfo(model->data(modelIndex,QFileSystemModel::FilePathRole).toString()).fileName();
                     if(!QFile::copy(source, newName)){
                         QMessageBox::critical(NULL, "错误", "粘贴失败！");
                     }

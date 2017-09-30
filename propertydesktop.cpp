@@ -24,7 +24,7 @@ PropertyDesktop::~PropertyDesktop()
 
 void PropertyDesktop::changeIcon()
 {
-    QString pathIcon = QFileDialog::getOpenFileName(this,"打开图片", QFileInfo(ui->lineEditExec->text()).absolutePath(), "图片文件(*.jpg *.jpeg *.png *.bmp *.svg)");
+    QString pathIcon = QFileDialog::getOpenFileName(this,"打开图片", QFileInfo(ui->lineEditExec->text()).absolutePath(), "图片文件(*.jpg *.jpeg *.png *.bmp *.svg *.ico)");
     if(pathIcon.length() != 0){
         ui->pushButtonIcon->setIcon(QIcon(pathIcon));
         ui->lineEditIcon->setText(pathIcon);
