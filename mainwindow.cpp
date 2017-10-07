@@ -129,7 +129,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s="1.0\n2017-10\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s="1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog=new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -228,8 +228,12 @@ void MainWindow::open(QModelIndex index)
             proc->start("deepin-music \"" + newpath + "\"");
             return;
         }
-        if(MIME=="text/plain" || MIME=="text/markdown"){
+        if(MIME=="text/plain" || MIME=="application/javascript"){
             proc->start("gedit \"" + newpath + "\"");
+            return;
+        }
+        if(MIME=="text/markdown"){
+            proc->start("retext \"" + newpath + "\"");
             return;
         }
         if(MIME=="text/html"){
@@ -275,7 +279,7 @@ void MainWindow::info(QModelIndex index)
     }
     qDebug() << newpath;
     QString MIME= QMimeDatabase().mimeTypeForFile(newpath).name();
-    ui->statusBar->showMessage(MIME);
+    ui->statusBar->showMessage(MIME + " , " + QFileInfo(newpath).fileName());
 
 }
 
@@ -349,17 +353,30 @@ void MainWindow::viewContextMenu(const QPoint &position)
     QAction *action_openwith=new QAction(this);
     action_openwith->setText("打开方式");
     actions.append(action_openwith);
-    QMenu *OpenwithFileManager = new QMenu(this);
-    QAction *DFM = new QAction(OpenwithFileManager);
+
+    QMenu *openwithFileManager = new QMenu(this);
+    QAction *DFM = new QAction(openwithFileManager);
     DFM->setText("深度文管");
-    OpenwithFileManager->addAction(DFM);
-    QAction *Thunar = new QAction(OpenwithFileManager);
+    openwithFileManager->addAction(DFM);
+    QAction *Thunar = new QAction(openwithFileManager);
     Thunar->setText("Thunar");
-    OpenwithFileManager->addAction(Thunar);
-    QMenu *OpenwithVideo=new QMenu(this);
-    QAction *HTYMP = new QAction(OpenwithVideo);
+    openwithFileManager->addAction(Thunar);
+
+    QMenu *openwithVideo=new QMenu(this);
+    QAction *HTYMP = new QAction(openwithVideo);
     HTYMP->setText("海天鹰播放器");
-    OpenwithVideo->addAction(HTYMP);
+    openwithVideo->addAction(HTYMP);
+
+    QMenu *openwithText=new QMenu;
+    QAction *gedit = new QAction("gedit",openwithText);
+    //gedit->setText("gedit");
+    openwithText->addAction(gedit);
+    QAction *notepadqq = new QAction("notepadqq",openwithText);
+    //notepadqq->setText("notepadqq");
+    openwithText->addAction(notepadqq);
+    QAction *HTYEdit = new QAction("海天鹰编辑器",openwithText);
+    //HTYEdit->setText("海天鹰编辑器");
+    openwithText->addAction(HTYEdit);
 
     action_copy=new QAction(this);
     action_copy->setText("复制");
@@ -437,14 +454,18 @@ void MainWindow::viewContextMenu(const QPoint &position)
     actions.append(action_gksu);
 
     if(filetype=="video" || filetype=="audio" || MIME=="application/vnd.rn-realmedia"){
-        action_openwith->setMenu(OpenwithVideo);
+        action_openwith->setMenu(openwithVideo);
+    }
+
+    if(filetype=="text" || MIME=="application/javascript" || MIME=="application/x-desktop"){
+        action_openwith->setMenu(openwithText);
     }
 
     if(MIME=="inode/directory"){
-        action_openwith->setMenu(OpenwithFileManager);
+        action_openwith->setMenu(openwithFileManager);
     }else{
         action_zip->setVisible(false);
-    }
+    }    
 
     if(MIME!="application/zip"){
         action_unzip->setVisible(false);
@@ -492,6 +513,30 @@ void MainWindow::viewContextMenu(const QPoint &position)
     if(result_action == Thunar){
         QProcess *proc = new QProcess;
         QString cmd="thunar \"" + filepath + "\"";
+        qDebug() << cmd;
+        proc->start(cmd);
+        return;
+    }
+
+    if(result_action == gedit){
+        QProcess *proc = new QProcess;
+        QString cmd="gedit \"" + filepath + "\"";
+        qDebug() << cmd;
+        proc->start(cmd);
+        return;
+    }
+
+    if(result_action == notepadqq){
+        QProcess *proc = new QProcess;
+        QString cmd="notepadqq \"" + filepath + "\"";
+        qDebug() << cmd;
+        proc->start(cmd);
+        return;
+    }
+
+    if(result_action == HTYEdit){
+        QProcess *proc = new QProcess;
+        QString cmd="/media/sonichy/job/HY/Linux/Qt/HTYEdit/HTYEdit \"" + filepath + "\"";
         qDebug() << cmd;
         proc->start(cmd);
         return;
