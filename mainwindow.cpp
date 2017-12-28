@@ -32,8 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->action_list->setIcon(style()->standardIcon(QStyle::SP_TitleBarMenuButton));
     ui->action_back->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
     ui->action_forward->setIcon(style()->standardIcon(QStyle::SP_ArrowForward));
-    path="/";
-    dirTrash=QDir::homePath()+"/.local/share/Trash/files";
+    path = "/";
+    dirTrash = QDir::homePath() + "/.local/share/Trash/files";
     LELocation = new QLineEdit(path,this);
     ui->mainToolBar->addWidget(LELocation);
     connect(LELocation,SIGNAL(returnPressed()),this,SLOT(openL()));
@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tableView->setVisible(false);
     move((QApplication::desktop()->width() - width())/2, (QApplication::desktop()->height() - height())/2);
-    model=new QFileSystemModel;
+    model = new QFileSystemModel;
     //model=new FileModel;
     // 设置model监视的目录，其下的修改会立刻signal通知view    
     model->setRootPath(path);
@@ -340,17 +340,17 @@ void MainWindow::on_action_list_triggered()
 void MainWindow::viewContextMenu(const QPoint &position)
 {
     QAction *action_copy,*action_cut,*action_rename,*action_trash,*action_delete,*action_restore,*action_paste,*action_newdir,*action_sort,*action_property,*action_desktop,*action_gksu,*action_copyto,*action_moveto,*action_setWallpaper,*action_terminal,*action_zip,*action_unzip;
-    QModelIndex index=ui->listView->indexAt(position);    
+    QModelIndex index = ui->listView->indexAt(position);
     //qDebug() << "setData" << model->setData(index,QPixmap("/:icon.png"),Qt::DecorationRole);
-    QString filepath=index.data(QFileSystemModel::FilePathRole).toString();
+    QString filepath = index.data(QFileSystemModel::FilePathRole).toString();
     qDebug() << filepath;
-    QString filename=QFileInfo(filepath).fileName();
-    QString MIME= QMimeDatabase().mimeTypeForFile(filepath).name();
+    QString filename = QFileInfo(filepath).fileName();
+    QString MIME = QMimeDatabase().mimeTypeForFile(filepath).name();
     qDebug() << MIME;
-    QString filetype=MIME.left(MIME.indexOf("/"));
+    QString filetype = MIME.left(MIME.indexOf("/"));
 
     QList<QAction *> actions;
-    QAction *action_openwith=new QAction(this);
+    QAction *action_openwith = new QAction(this);
     action_openwith->setText("打开方式");
     actions.append(action_openwith);
 
@@ -367,7 +367,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
     HTYMP->setText("海天鹰播放器");
     openwithVideo->addAction(HTYMP);
 
-    QMenu *openwithText=new QMenu;
+    QMenu *openwithText = new QMenu;
     QAction *gedit = new QAction("gedit",openwithText);
     //gedit->setText("gedit");
     openwithText->addAction(gedit);
@@ -378,106 +378,104 @@ void MainWindow::viewContextMenu(const QPoint &position)
     //HTYEdit->setText("海天鹰编辑器");
     openwithText->addAction(HTYEdit);
 
-    action_copy=new QAction(this);
+    action_copy = new QAction(this);
     action_copy->setText("复制");
     actions.append(action_copy);
 
-    action_cut=new QAction(this);
+    action_cut = new QAction(this);
     action_cut->setText("剪切");
     actions.append(action_cut);
 
-    action_paste=new QAction(this);
+    action_paste = new QAction(this);
     action_paste->setText("粘贴");
     actions.append(action_paste);
 
-    action_rename=new QAction(this);
+    action_rename = new QAction(this);
     action_rename->setText("重命名");
     actions.append(action_rename);
 
-    action_moveto=new QAction(this);
+    action_moveto = new QAction(this);
     action_moveto->setText("移动到");
     actions.append(action_moveto);
 
-    action_copyto=new QAction(this);
+    action_copyto = new QAction(this);
     action_copyto->setText("复制到");
     actions.append(action_copyto);
 
-    action_zip=new QAction(this);
+    action_zip = new QAction(this);
     action_zip->setText("压缩");
     actions.append(action_zip);
 
-    action_unzip=new QAction(this);
+    action_unzip = new QAction(this);
     action_unzip->setText("解压到当前目录");
     actions.append(action_unzip);
 
 
-    action_trash=new QAction(this);
+    action_trash = new QAction(this);
     action_trash->setText("移至回收站");
     actions.append(action_trash);
 
-    action_delete=new QAction(this);
+    action_delete = new QAction(this);
     action_delete->setText("删除");
     actions.append(action_delete);
 
-    action_restore=new QAction(this);
+    action_restore = new QAction(this);
     action_restore->setText("还原");
     actions.append(action_restore);
 
-    action_newdir=new QAction(this);
+    action_newdir = new QAction(this);
     action_newdir->setText("新建文件夹");
     actions.append(action_newdir);
 
-    action_sort=new QAction(this);
+    action_sort = new QAction(this);
     action_sort->setText("排序方式");
     actions.append(action_sort);
     action_sort->setMenu(sortMenu);
 
-    action_setWallpaper=new QAction(this);
+    action_setWallpaper = new QAction(this);
     action_setWallpaper->setText("设为壁纸");
     actions.append(action_setWallpaper);
 
-    action_property=new QAction(this);
+    action_property = new QAction(this);
     action_property->setText("属性");
     actions.append(action_property);
 
-    action_terminal=new QAction(this);
+    action_terminal = new QAction(this);
     action_terminal->setText("在终端中打开");
     actions.append(action_terminal);
     actions.append(action_terminal);
 
-    action_desktop=new QAction(this);
+    action_desktop = new QAction(this);
     action_desktop->setText("创建快捷方式");
     actions.append(action_desktop);
 
-    action_gksu=new QAction(this);
+    action_gksu = new QAction(this);
     action_gksu->setText("以管理员身份打开");
     actions.append(action_gksu);
 
-    if(filetype=="video" || filetype=="audio" || MIME=="application/vnd.rn-realmedia"){
+    if(filetype == "video" || filetype == "audio" || MIME == "application/vnd.rn-realmedia"){
         action_openwith->setMenu(openwithVideo);
     }
 
-    if(filetype=="text" || MIME=="application/javascript" || MIME=="application/x-desktop"){
+    if(filetype == "text" || MIME == "application/javascript" || MIME == "application/x-desktop"){
         action_openwith->setMenu(openwithText);
     }
 
-    if(MIME=="inode/directory"){
+    if(MIME == "inode/directory"){
         action_openwith->setMenu(openwithFileManager);
     }else{
         action_zip->setVisible(false);
     }    
 
-    if(MIME!="application/zip"){
+    if(MIME != "application/zip"){
         action_unzip->setVisible(false);
     }
 
-    if(MIME!="application/x-executable" && MIME!="application/x-shellscript" && MIME!="application/x-ms-dos-executable")action_desktop->setVisible(false);
-    if(filetype!="image")action_setWallpaper->setVisible(false);
-
+    if(MIME != "application/x-executable" && MIME != "application/x-shellscript" && MIME != "application/x-ms-dos-executable" && MIME !="application/x-sharedlib") action_desktop->setVisible(false);
+    if(filetype != "image") action_setWallpaper->setVisible(false);
 
     //qDebug() << path << dirTrash;
-    if(path==dirTrash)
-    {
+    if(path == dirTrash) {
         action_trash->setVisible(false);
         action_gksu->setVisible(false);
         action_rename->setVisible(false);
@@ -542,7 +540,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_copy){
+    if(result_action == action_copy) {
         //source=filepath;
         //qDebug() << "copy" << source;
         pathSource = path;
@@ -550,7 +548,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_cut){
+    if(result_action == action_cut) {
         qDebug() << "cut" << source;
         source=filepath;
         cut=1;
@@ -935,55 +933,55 @@ void MainWindow::viewContextMenu(const QPoint &position)
 
 void MainWindow::viewContextMenuTV(const QPoint &position)
 {
-        QAction *action_copy,*action_cut,*action_rename,*action_trash,*action_delete,*action_paste,*action_newdir,*action_property,*action_desktop,*action_gksu;
-    QModelIndex index=ui->tableView->indexAt(position);
-    QString filepath=index.data(QFileSystemModel::FilePathRole).toString();
-    QString filename=QFileInfo(filepath).fileName();
-    QString MIME= QMimeDatabase().mimeTypeForFile(filepath).name();
+    QAction *action_copy,*action_cut,*action_rename,*action_trash,*action_delete,*action_paste,*action_newdir,*action_property,*action_desktop,*action_gksu;
+    QModelIndex index = ui->tableView->indexAt(position);
+    QString filepath = index.data(QFileSystemModel::FilePathRole).toString();
+    QString filename = QFileInfo(filepath).fileName();
+    QString MIME = QMimeDatabase().mimeTypeForFile(filepath).name();
     qDebug() << MIME;
-    QString filetype=MIME.left(MIME.indexOf("/"));
+    QString filetype = MIME.left(MIME.indexOf("/"));
 
     QList<QAction *> actions;
-    action_copy=new QAction(this);
+    action_copy = new QAction(this);
     action_copy->setText("复制");
     actions.append(action_copy);
 
-    action_cut=new QAction(this);
+    action_cut = new QAction(this);
     action_cut->setText("剪切");
     actions.append(action_cut);
 
-    action_rename=new QAction(this);
+    action_rename = new QAction(this);
     action_rename->setText("重命名");
     actions.append(action_rename);
 
-    action_delete=new QAction(this);
+    action_delete = new QAction(this);
     action_delete->setText("删除");
     actions.append(action_delete);
 
-    action_paste=new QAction(this);
+    action_paste = new QAction(this);
     action_paste->setText("粘贴");
     actions.append(action_paste);
 
-    action_newdir=new QAction(this);
+    action_newdir = new QAction(this);
     action_newdir->setText("新建文件夹");
     actions.append(action_newdir);
 
-    action_property=new QAction(this);
+    action_property = new QAction(this);
     action_property->setText("属性");
     actions.append(action_property);
 
-    action_desktop=new QAction(this);
+    action_desktop = new QAction(this);
     action_desktop->setText("创建快捷方式");
     actions.append(action_desktop);
 
-    action_gksu=new QAction(this);
+    action_gksu = new QAction(this);
     action_gksu->setText("以管理员身份打开");
     actions.append(action_gksu);
 
-    if(MIME!="application/x-executable")action_desktop->setVisible(false);
+    if(MIME != "application/x-executable") action_desktop->setVisible(false);
 
     if(!index.isValid()){
-        qDebug()<<"viewContextMenu: index is not valid";
+        qDebug() << "viewContextMenu: index is not valid";
         action_copy->setVisible(false);
         action_cut->setVisible(false);
         action_rename->setVisible(false);
@@ -1024,8 +1022,8 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
 
     if(result_action == action_delete){
         qDebug() << "delete" << filepath;
-        if(MIME=="inode/directory"){
-            QDir *dir=new QDir;
+        if(MIME == "inode/directory"){
+            QDir *dir = new QDir;
             if(!dir->rmdir(filepath)){
                 QMessageBox::critical(this,"错误","无法删除文件夹 "+filepath);
             }
@@ -1038,7 +1036,7 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
     }
 
     if(result_action == action_newdir){
-        QDir *dir=new QDir;
+        QDir *dir = new QDir;
         if(!dir->mkdir(path+"/"+"新建文件夹")){
             QMessageBox::warning(this,"创建文件夹","文件夹已经存在！");
         }
@@ -1046,23 +1044,23 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
     }
 
     if(result_action == action_rename){
-        QDialog *dialog=new QDialog(this);
+        QDialog *dialog = new QDialog(this);
         dialog->setWindowTitle("重命名");
-        QVBoxLayout *vbox=new QVBoxLayout;
-        QLineEdit *lineEdit=new QLineEdit;
+        QVBoxLayout *vbox = new QVBoxLayout;
+        QLineEdit *lineEdit = new QLineEdit;
         lineEdit->setText(filename);
         vbox->addWidget(lineEdit);
-        QHBoxLayout *hbox=new QHBoxLayout;
-        QPushButton *btnConfirm=new QPushButton("确定");
-        QPushButton *btnCancel=new QPushButton("取消");
+        QHBoxLayout *hbox = new QHBoxLayout;
+        QPushButton *btnConfirm = new QPushButton("确定");
+        QPushButton *btnCancel = new QPushButton("取消");
         hbox->addWidget(btnConfirm);
         hbox->addWidget(btnCancel);
         vbox->addLayout(hbox);
         dialog->setLayout(vbox);
         connect(btnConfirm, SIGNAL(clicked()), dialog, SLOT(accept()));
         connect(btnCancel, SIGNAL(clicked()), dialog, SLOT(reject()));
-        if(dialog->exec()==QDialog::Accepted){
-            QString newName=QFileInfo(filepath).absolutePath() + "/" + lineEdit->text();
+        if(dialog->exec() == QDialog::Accepted){
+            QString newName = QFileInfo(filepath).absolutePath() + "/" + lineEdit->text();
             qDebug() << "rename" << filepath << newName;
             if(!QFile::rename(filepath, newName)){
                 QMessageBox::critical(NULL, "错误", "无法重命名文件，该文件已存在！", QMessageBox::Ok);
@@ -1073,32 +1071,32 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
     }
 
     if(result_action == action_property){
-        if(MIME=="application/x-desktop"){
-            pathDesktop=filepath;
-            QString sname="",sexec="",spath="",scomment="";
+        if(MIME == "application/x-desktop"){
+            pathDesktop = filepath;
+            QString sname = "", sexec = "", spath = "", scomment = "";
             QFile file(filepath);
             file.open(QIODevice::ReadOnly);
             while(!file.atEnd()){
-                QString sl=file.readLine().replace("\n","");
+                QString sl = file.readLine().replace("\n","");
                 qDebug() << sl;
-                if(sl.left(sl.indexOf("=")).toLower()=="name"){
-                    sname=sl.mid(sl.indexOf("=")+1);
+                if(sl.left(sl.indexOf("=")).toLower() == "name"){
+                    sname = sl.mid(sl.indexOf("=") + 1);
                     continue;
                 }
-                if(sl.left(sl.indexOf("=")).toLower()=="exec"){
-                    sexec=sl.mid(sl.indexOf("=")+1);
+                if(sl.left(sl.indexOf("=")).toLower() == "exec"){
+                    sexec = sl.mid(sl.indexOf("=")+1);
                     continue;
                 }
-                if(sl.left(sl.indexOf("=")).toLower()=="icon"){
-                    pathIcon=sl.mid(sl.indexOf("=")+1);
+                if(sl.left(sl.indexOf("=")).toLower() == "icon"){
+                    pathIcon = sl.mid(sl.indexOf("=") + 1);
                     continue;
                 }
-                if(sl.left(sl.indexOf("=")).toLower()=="path"){
-                    spath=sl.mid(sl.indexOf("=")+1);
+                if(sl.left(sl.indexOf("=")).toLower() == "path"){
+                    spath=sl.mid(sl.indexOf("=") + 1);
                     continue;
                 }
-                if(sl.left(sl.indexOf("=")).toLower()=="comment"){
-                    scomment=sl.mid(sl.indexOf("=")+1);
+                if(sl.left(sl.indexOf("=")).toLower() == "comment"){
+                    scomment = sl.mid(sl.indexOf("=") + 1);
                     continue;
                 }
             }
@@ -1115,8 +1113,8 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
             dialogPD->show();
         }else{
             qDebug() << "property" << filepath;
-            QMessageBox MBox(QMessageBox::NoIcon, "属性", "文件名：\t"+QFileInfo(filepath).fileName()+"\n大小：\t"+BS(QFileInfo(filepath).size())+"\n类型：\t"+QMimeDatabase().mimeTypeForFile(filepath).name()+"\n访问时间：\t"+QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss")+"\n修改时间：\t"+QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
-            if(filetype=="image"){
+            QMessageBox MBox(QMessageBox::NoIcon, "属性", "文件名：\t" + QFileInfo(filepath).fileName() + "\n大小：\t" + BS(QFileInfo(filepath).size()) + "\n类型：\t" + QMimeDatabase().mimeTypeForFile(filepath).name() + "\n访问时间：\t" + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
+            if(filetype == "image"){
                 QSize iconSize(200,200);
                 MBox.setIconPixmap(QPixmap(filepath).scaled(iconSize, Qt::KeepAspectRatio));
             }
@@ -1125,12 +1123,11 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
         return;
     }
 
-    if(result_action == action_desktop){
+    if(result_action == action_desktop) {
         qDebug() << "Create desktop file";
-        QString str="[Desktop Entry]\nName="+QFileInfo(filepath).fileName()+"\nComment=\nExec="+filepath+"\nIcon="+QFileInfo(filepath).absolutePath() + "/icon.png\nPath="+QFileInfo(filepath).absolutePath()+"\nTerminal=false\nType=Application\nMimeType=\nCategories=";
-        QFile file(QFileInfo(filepath).absolutePath()+"/"+QFileInfo(filepath).fileName() + ".desktop");
-        if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append))
-        {
+        QString str = "[Desktop Entry]\nName=" + QFileInfo(filepath).fileName() + "\nComment=\nExec=" + filepath + "\nIcon=" + QFileInfo(filepath).absolutePath() + "/icon.png\nPath=" + QFileInfo(filepath).absolutePath() + "\nTerminal=false\nType=Application\nMimeType=\nCategories=";
+        QFile file(QFileInfo(filepath).absolutePath() + "/" + QFileInfo(filepath).fileName() + ".desktop");
+        if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)){
             QMessageBox::warning(this,"错误","不能创建 "+filepath+".desktop",QMessageBox::Yes);
         }
         QTextStream in(&file);
@@ -1139,18 +1136,17 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
         return;
     }
 
-    if(result_action == action_gksu){
+    if(result_action == action_gksu) {
         QProcess *proc = new QProcess;
-        if(filetype=="text"){
+        if(filetype == "text"){
             proc->start("gksu gedit " + filepath);
         }
-        if(MIME=="inode/directory"){
+        if(MIME == "inode/directory"){
             proc->start("gksu " + QDir::currentPath() + "/HTYFileManager " + filepath);
         }
     }
 
-    foreach(QAction* action, actions)
-    {
+    foreach(QAction* action, actions) {
         action->deleteLater();
     }
 }
@@ -1207,26 +1203,25 @@ void MainWindow::search()
 void MainWindow::trashFiles()
 {
     modelIndexList = ui->listView->selectionModel()->selectedIndexes();
-    foreach(QModelIndex modelIndex, modelIndexList){
+    foreach(QModelIndex modelIndex, modelIndexList) {
         QString filepath = model->data(modelIndex,QFileSystemModel::FilePathRole).toString();
         qDebug() << "trash" << filepath;
-        QString MIME= QMimeDatabase().mimeTypeForFile(filepath).name();
-        if(MIME=="inode/directory"){
+        QString MIME = QMimeDatabase().mimeTypeForFile(filepath).name();
+        if(MIME == "inode/directory"){
             QDir *dir=new QDir;
             if(!dir->rmdir(filepath)){
                 QMessageBox::critical(this,"错误","无法删除文件夹 "+filepath);
             }
         }else{
-            QString newName = QDir::homePath()+"/.local/share/Trash/files/" + QFileInfo(filepath).fileName();
+            QString newName = QDir::homePath() + "/.local/share/Trash/files/" + QFileInfo(filepath).fileName();
             if(QFile::copy(filepath, newName)){
-                QString pathinfo=QDir::homePath()+"/.local/share/Trash/info/" + QFileInfo(filepath).fileName()+".trashinfo";
+                QString pathinfo = QDir::homePath() + "/.local/share/Trash/info/" + QFileInfo(filepath).fileName() + ".trashinfo";
                 QFile file(pathinfo);
-                if(file.open(QIODevice::WriteOnly|QIODevice::Text))
-                {
+                if(file.open(QIODevice::WriteOnly|QIODevice::Text)) {
                     QTextStream stream(&file);
                     QDateTime time;
                     time = QDateTime::currentDateTime();
-                    stream<<"[Trash Info]\nPath="+filepath+"\nDeletionDate="+time.toString("yyyy-MM-ddThh:mm:ss");
+                    stream << "[Trash Info]\nPath=" + filepath + "\nDeletionDate=" + time.toString("yyyy-MM-ddThh:mm:ss");
                     file.close();
                 }
                 if(!QFile::remove(filepath)){
@@ -1245,18 +1240,18 @@ void MainWindow::deleteFiles()
     foreach(QModelIndex modelIndex, modelIndexList){
         QString filepath = model->data(modelIndex,QFileSystemModel::FilePathRole).toString();
         qDebug() << "delete" << filepath;
-        QString MIME= QMimeDatabase().mimeTypeForFile(filepath).name();
-        if(MIME=="inode/directory"){
-            QDir *dir=new QDir;
+        QString MIME = QMimeDatabase().mimeTypeForFile(filepath).name();
+        if(MIME == "inode/directory"){
+            QDir *dir = new QDir;
             if(!dir->rmdir(filepath)){
-                QMessageBox::critical(this,"错误","无法删除文件夹 "+filepath);
+                QMessageBox::critical(this,"错误","无法删除文件夹 " + filepath);
             }
         }else{
             if(QFile::remove(filepath)){
-                QString dirTrash=QDir::homePath()+"/.local/share/Trash/files";
-                if(QFileInfo(filepath).absolutePath()==dirTrash)QFile::remove(QDir::homePath()+"/.local/share/Trash/info/"+QFileInfo(filepath).fileName()+".trashinfo");
+                QString dirTrash = QDir::homePath() + "/.local/share/Trash/files";
+                if(QFileInfo(filepath).absolutePath() == dirTrash)QFile::remove(QDir::homePath() + "/.local/share/Trash/info/" + QFileInfo(filepath).fileName() + ".trashinfo");
             }else{
-                QMessageBox::critical(NULL, "错误", "无法删除文件 "+filepath);
+                QMessageBox::critical(NULL, "错误", "无法删除文件 " + filepath);
             }
         }
     }

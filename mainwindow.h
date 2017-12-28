@@ -34,7 +34,7 @@ private:
     int cut;
     PropertyDesktop *dialogPD;
     QMenu *sortMenu;
-    QAction *action_sortName,*action_sortSize,*action_sortType,*action_sortTime;
+    QAction *action_sortName, *action_sortSize, *action_sortType, *action_sortTime;
     QModelIndexList modelIndexList;
     void trashFiles();
     void deleteFiles();
