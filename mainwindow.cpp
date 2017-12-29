@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //setStyleSheet("#listView{background-image:url(bg.jpg);} #listView::item { background: transparent;}");
+    setStyleSheet(" #listView { background-image:url(bg.jpg); } #listView::item { background:transparent; } #listView::item:selected { background: DodgerBlue; } ");
     ui->action_icon->setIcon(style()->standardIcon(QStyle::SP_FileDialogListView));
     ui->action_icon->setChecked(true);
     //ui->action_list->setIcon(style()->standardIcon(QStyle::SP_TitleBarMenuButton));
@@ -573,7 +573,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
                     }
                 }
                 if(SB == QMessageBox::No){
-                    newName =  path + "/副本" + QFileInfo(model->data(modelIndex,QFileSystemModel::FilePathRole).toString()).fileName();
+                    newName =  path + "/副本-" + QFileInfo(model->data(modelIndex,QFileSystemModel::FilePathRole).toString()).fileName();
                     if(!QFile::copy(source, newName)){
                         QMessageBox::critical(NULL, "错误", "粘贴失败！");
                     }
