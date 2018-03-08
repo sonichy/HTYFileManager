@@ -586,6 +586,13 @@ void MainWindow::viewContextMenu(const QPoint &position)
                 }
                 cut=0;
             }
+
+            // 修改粘贴文件时间为原文件时间
+            QProcess *proc = new QProcess;
+            QString sp = "touch -d \"" + QFileInfo(source).lastModified().toString("yyyy-MM-dd hh:mm:ss") + "\" "+ newName;
+            qDebug() << sp;
+            proc->start(sp);
+
         }
         return;
     }
@@ -697,8 +704,8 @@ void MainWindow::viewContextMenu(const QPoint &position)
         return;
     }
 
-    if(result_action == action_property){
-        if(MIME=="application/x-desktop"){
+    if (result_action == action_property) {
+        if (MIME=="application/x-desktop") {
             //pathDesktop=filepath;
             QString sname="",sexec="",spath="",scomment="";
             QFile file(filepath);
@@ -706,7 +713,7 @@ void MainWindow::viewContextMenu(const QPoint &position)
             while(!file.atEnd()){
                 QString sl=file.readLine().replace("\n","");
                 //qDebug() << sl;
-                if(sl.left(sl.indexOf("=")).toLower()=="name"){
+                if(sl.left(sl.indexOf("=")).toLower()=="name") {
                     sname=sl.mid(sl.indexOf("=")+1);
                     continue;
                 }
@@ -741,18 +748,18 @@ void MainWindow::viewContextMenu(const QPoint &position)
             dialogPD->show();
         }else{
             qDebug() << "property" << filepath;
-            QMessageBox MBox(QMessageBox::NoIcon, "属性", "文件名：\t"+QFileInfo(filepath).fileName()+"\n大小：\t"+BS(QFileInfo(filepath).size())+"\n类型：\t"+QMimeDatabase().mimeTypeForFile(filepath).name()+"\n访问时间：\t"+QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss")+"\n修改时间：\t"+QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
-            if(filetype=="image"){
+            QMessageBox MBox(QMessageBox::NoIcon, "属性", "文件名：\t" + QFileInfo(filepath).fileName() + "\n大小：\t" + BS(QFileInfo(filepath).size()) + "\n类型：\t" + QMimeDatabase().mimeTypeForFile(filepath).name() + "\n访问时间：\t" + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
+            if (filetype=="image") {
                 QSize iconSize(200,200);
                 MBox.setIconPixmap(QPixmap(filepath).scaled(iconSize, Qt::KeepAspectRatio));
             }else{
-                if(MIME=="inode/directory"){
+                if(MIME=="inode/directory") {
                     QFileInfo fileinfo(filepath);
                     QFileIconProvider iconProvider;
                     QIcon icon = iconProvider.icon(fileinfo);
                     MBox.setIconPixmap(icon.pixmap(QSize(128,128)));
                 }else{
-                    MBox.setIconPixmap(QPixmap("/usr/share/icons/deepin/mimetypes/128/"+MIME.replace("/","-")+".svg"));
+                    MBox.setIconPixmap(QPixmap("/usr/share/icons/deepin/mimetypes/128/" + MIME.replace("/","-")+".svg"));
                 }
             }
             MBox.exec();
