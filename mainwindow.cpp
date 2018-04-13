@@ -113,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent) :
     sortMenu->addAction(actionGroupSort->addAction(action_sortType));
     sortMenu->addAction(actionGroupSort->addAction(action_sortTime));
 
-    QStringList Largs=QApplication::arguments();
+    QStringList Largs = QApplication::arguments();
     qDebug() << Largs;
     if(Largs.length()>1){
         LELocation->setText(Largs.at(1));
@@ -279,8 +279,7 @@ void MainWindow::info(QModelIndex index)
     }
     qDebug() << newpath;
     QString MIME= QMimeDatabase().mimeTypeForFile(newpath).name();
-    ui->statusBar->showMessage(MIME + " , " + QFileInfo(newpath).fileName());
-
+    ui->statusBar->showMessage("类型: " + MIME + ", 大小: " + BS(QFileInfo(newpath).size()) + ", 访问时间: " + QFileInfo(newpath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + ", 修改时间: " + QFileInfo(newpath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
 }
 
 void MainWindow::openL()
@@ -599,51 +598,11 @@ void MainWindow::viewContextMenu(const QPoint &position)
 
     if(result_action == action_trash){
         trashFiles();
-//        qDebug() << "trash" << filepath;
-//        if(MIME=="inode/directory"){
-//            QDir *dir=new QDir;
-//            if(!dir->rmdir(filepath)){
-//                QMessageBox::critical(this,"错误","无法删除文件夹 "+filepath);
-//            }
-//        }else{
-//            QString newName = QDir::homePath()+"/.local/share/Trash/files/" + QFileInfo(filepath).fileName();
-//            if(QFile::copy(filepath, newName)){
-//                QString pathinfo=QDir::homePath()+"/.local/share/Trash/info/" + QFileInfo(filepath).fileName()+".trashinfo";
-//                QFile file(pathinfo);
-//                if(file.open(QIODevice::WriteOnly|QIODevice::Text))
-//                {
-//                    QTextStream stream(&file);
-//                    QDateTime time;
-//                    time = QDateTime::currentDateTime();
-//                    stream<<"[Trash Info]\nPath="+filepath+"\nDeletionDate="+time.toString("yyyy-MM-ddThh:mm:ss");
-//                    file.close();
-//                }
-//                if(!QFile::remove(filepath)){
-//                    QMessageBox::critical(NULL, "错误", "无法删除文件 "+filepath);
-//                }
-//            }else{
-//                QMessageBox::critical(NULL, "错误", "无法移动 "+filepath+" 到回收站");
-//            }
-//        }
         return;
     }
 
     if(result_action == action_delete){
         deleteFiles();
-//        qDebug() << "delete" << filepath;
-//        if(MIME=="inode/directory"){
-//            QDir *dir=new QDir;
-//            if(!dir->rmdir(filepath)){
-//                QMessageBox::critical(this,"错误","无法删除文件夹 "+filepath);
-//            }
-//        }else{
-//            if(QFile::remove(filepath)){
-//                QString dirTrash=QDir::homePath()+"/.local/share/Trash/files";
-//                if(QFileInfo(filepath).absolutePath()==dirTrash)QFile::remove(QDir::homePath()+"/.local/share/Trash/info/"+QFileInfo(filepath).fileName()+".trashinfo");
-//            }else{
-//                QMessageBox::critical(NULL, "错误", "无法删除文件 "+filepath);
-//            }
-//        }
         return;
     }
 
@@ -918,16 +877,15 @@ void MainWindow::viewContextMenu(const QPoint &position)
     }
 
     if(result_action == HTYMP){
-        QFile file("/home/sonichy/.local/share/applications/HTYMediaPlayer.desktop");
+        QFile file("/home/sonichy/.local/share/applications/HTYMP.desktop");
         file.open(QIODevice::ReadOnly);
         while(!file.atEnd()){
-            QString sl=file.readLine().replace("\n","");
+            QString sl = file.readLine().replace("\n","");
             if(sl.left(sl.indexOf("=")).toLower()=="exec"){
-                QString sexec=sl.mid(sl.indexOf("=")+1) + " \"" + filepath + "\"";
+                QString sexec = sl.mid(sl.indexOf("=")+1) + " \"" + filepath + "\"";
                 qDebug() << sexec;
                 QProcess *proc = new QProcess;
-                proc->start(sexec);
-                //break;
+                proc->start(sexec);                
                 return;
             }
         }
