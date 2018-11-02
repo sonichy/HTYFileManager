@@ -15,12 +15,18 @@ public:
     explicit PropertyDesktop(QWidget *parent = 0);
     ~PropertyDesktop();
     Ui::PropertyDesktop *ui;
+    QString filePath, iconPath;
+
+private:
+    void writeSettings(QString path, QString group, QString key, QString value);
 
 private slots:
     void changeIcon();
-    void desktopPath();
+    void changeExec();
+    void openPath();
+    void lineEditExecTextChanged(QString newpath);
 
-public slots:
+//public slots:
     void saveDesktop();
 };
 

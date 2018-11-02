@@ -1,14 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#define LOCATION_OF_REAL_PATH Qt::UserRole + 1
+
+#include "propertydesktop.h"
+#include "ui_propertydesktop.h"
 #include <QMainWindow>
 #include <QModelIndex>
 #include <QLineEdit>
-#include <QFileSystemModel>
-#include <QStandardItem>
-#include "propertydesktop.h"
-#include "ui_propertydesktop.h"
-//#include "filemodel.h"
+#include <QFileInfoList>
+#include <QListWidgetItem>
+#include <QFileSystemWatcher>
 
 namespace Ui {
 class MainWindow;
@@ -25,12 +27,8 @@ public:
 private:
     Ui::MainWindow *ui;
     QString BS(qint64 b);
-    QLineEdit *LELocation,*LESearch;
-    QFileSystemModel *model;
-    //FileModel *model;
-    QString path,source,pathIcon,pathDesktop,dir,pathSource,dirTrash;
-    QStandardItem *SI1,*SI2,*SI3,*SI4,*SI5,*SI6;
-    QStandardItemModel *SIM;
+    QLineEdit *lineEditLocation, *lineEditSearch;
+    QString path, source, pathIcon, pathDesktop, dir, pathSource, dirTrash, dirTrashInfo;
     int cut;
     PropertyDesktop *dialogPD;
     QMenu *sortMenu;
@@ -38,6 +36,14 @@ private:
     QModelIndexList modelIndexList;
     void trashFiles();
     void deleteFiles();
+    QString readSettings(QString path, QString group, QString key);
+    void open(QString path);
+    QFileInfoList list;
+    bool delDir(QString dirpath);
+    QScrollBar *verticalScrollBar;
+    void iconPreview(int v);
+    bool isPreviewFinish, isShowHidden;
+    QFileSystemWatcher *watcher;
 
 protected:
     void wheelEvent(QWheelEvent*);
@@ -49,17 +55,26 @@ private slots:
     void on_action_list_triggered();
     void on_action_back_triggered();
     void on_action_forward_triggered();
-    void open(QModelIndex index);
-    void info(QModelIndex index);
-    void nav(QModelIndex index);
-    void openL();
-    void viewContextMenu(const QPoint &position);
-    void viewContextMenuTV(const QPoint &position);
+    //void nav(QModelIndex index);
+    void nav(QListWidgetItem *item);
+    //void listWidgetClicked(QModelIndex index);
+    void listWidgetDoubleClicked(QModelIndex index);
+    void listWidgetItemClicked(QListWidgetItem *item);
+    void listWidgetItemSelectionChanged();
+    void tableWidgetDoubleClicked(QModelIndex index);
+    void lineEditLocationReturnPressed();
+    void customContextMenu(const QPoint &pos);
+    //void viewContextMenuTV(const QPoint &pos);
     void enterOpen();
     void search();
     void trashDelete();
     void copy();
     void paste();
+    void genList(QString spath);
+    void verticalScrollBarValueChanged(int v);
+    void switchHidden();
+    void refresh();
+
 };
 
 #endif // MAINWINDOW_H

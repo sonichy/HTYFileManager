@@ -38,12 +38,12 @@
      <number>0</number>
     </property>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">
       <property name="spacing">
        <number>0</number>
       </property>
       <item>
-       <widget class="QListView" name="listViewNav">
+       <widget class="QListWidget" name="listWidgetNav">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -71,12 +71,113 @@
        </widget>
       </item>
       <item>
+       <widget class="QWidget" name="widget_computer" native="true">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_userdir">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border-bottom:1px solid #cccccc;</string>
+           </property>
+           <property name="text">
+            <string>用户目录</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="listWidget_userdir">
+           <property name="styleSheet">
+            <string notr="true">border:none;</string>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>70</width>
+             <height>70</height>
+            </size>
+           </property>
+           <property name="movement">
+            <enum>QListView::Static</enum>
+           </property>
+           <property name="resizeMode">
+            <enum>QListView::Adjust</enum>
+           </property>
+           <property name="spacing">
+            <number>50</number>
+           </property>
+           <property name="gridSize">
+            <size>
+             <width>120</width>
+             <height>100</height>
+            </size>
+           </property>
+           <property name="viewMode">
+            <enum>QListView::IconMode</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_partition">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border-bottom:1px solid #cccccc;</string>
+           </property>
+           <property name="text">
+            <string>内置磁盘</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="listWidget_partition">
+           <property name="styleSheet">
+            <string notr="true">border:none;</string>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>70</width>
+             <height>70</height>
+            </size>
+           </property>
+           <property name="movement">
+            <enum>QListView::Static</enum>
+           </property>
+           <property name="resizeMode">
+            <enum>QListView::Adjust</enum>
+           </property>
+           <property name="spacing">
+            <number>50</number>
+           </property>
+           <property name="gridSize">
+            <size>
+             <width>130</width>
+             <height>120</height>
+            </size>
+           </property>
+           <property name="viewMode">
+            <enum>QListView::IconMode</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
          <number>0</number>
         </property>
         <item>
-         <widget class="QListView" name="listView">
+         <widget class="QListWidget" name="listWidget">
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
@@ -86,18 +187,36 @@
           <property name="selectionMode">
            <enum>QAbstractItemView::ExtendedSelection</enum>
           </property>
+          <property name="iconSize">
+           <size>
+            <width>50</width>
+            <height>50</height>
+           </size>
+          </property>
           <property name="resizeMode">
            <enum>QListView::Adjust</enum>
+          </property>
+          <property name="gridSize">
+           <size>
+            <width>100</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="viewMode">
+           <enum>QListView::IconMode</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QTableView" name="tableView">
+         <widget class="QTableWidget" name="tableWidget">
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
           <property name="autoFillBackground">
            <bool>true</bool>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
           </property>
           <property name="selectionMode">
            <enum>QAbstractItemView::ExtendedSelection</enum>
@@ -111,6 +230,21 @@
           <property name="sortingEnabled">
            <bool>true</bool>
           </property>
+          <property name="columnCount">
+           <number>9</number>
+          </property>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
          </widget>
         </item>
        </layout>
@@ -125,7 +259,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
