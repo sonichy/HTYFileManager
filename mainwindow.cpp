@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //connect(lineEditSearch,SIGNAL(textChanged(QString)),this,SLOT(search()));
     connect(lineEditSearch,SIGNAL(returnPressed()),this,SLOT(search()));
 
+    //左侧导航列表
     QListWidgetItem *LWI;
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-home"),"主目录");
     LWI->setData(LOCATION_OF_REAL_PATH, QDir::homePath());
@@ -90,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //connect(ui->listWidgetNav, SIGNAL(clicked(QModelIndex)), this, SLOT(nav(QModelIndex)));
     connect(ui->listWidgetNav, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(nav(QListWidgetItem*)));
 
+    //首页
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-videos"),"视频");
     LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0));
     ui->listWidget_userdir->insertItem(0, LWI);
@@ -118,7 +120,6 @@ MainWindow::MainWindow(QWidget *parent) :
                 LWI = new QListWidgetItem(style()->standardIcon(QStyle::SP_DriveHDIcon), name);
                 LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
                 ui->listWidgetNav->insertItem(ui->listWidgetNav->count(), LWI);
-
                 LWI = new QListWidgetItem(style()->standardIcon(QStyle::SP_DriveHDIcon), name + "\n" + BS(storage.bytesFree()) + " / " + BS(storage.bytesTotal()));
                 LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
                 ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
@@ -190,14 +191,19 @@ MainWindow::MainWindow(QWidget *parent) :
     sortMenu->addAction(actionGroupSort->addAction(action_sortType));
     sortMenu->addAction(actionGroupSort->addAction(action_sortTime));
 
-    //path = "/";
-    //genList(path);
-
-    QStringList Largs = QApplication::arguments();
-    qDebug() << Largs;
-    if (Largs.length() > 1) {
-        lineEditLocation->setText(Largs.at(1));
+    QStringList args = QApplication::arguments();
+    qDebug() << args;
+    if (args.length() > 1) {
+        path = args.at(1);
+        if(path.startsWith("file://")){
+            QUrl url(args.at(1));
+            path = url.toLocalFile();
+        }
+        lineEditLocation->setText(path);
         lineEditLocationReturnPressed();
+        ui->computerWidget->hide();
+        if(ui->action_icon->isChecked())ui->listWidget->show();
+        if(ui->action_list->isChecked())ui->tableWidget->show();
     }
 }
 
@@ -208,7 +214,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.3\n2018-11\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.3\n2018-11\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -244,11 +250,11 @@ void MainWindow::nav(QListWidgetItem *item)
     //qDebug() << path;
     lineEditLocation->setText(path);
     if(path == "computer://"){
-        ui->widget_computer->show();
+        ui->computerWidget->show();
         ui->listWidget->hide();
         ui->tableWidget->hide();
     }else{
-        ui->widget_computer->hide();
+        ui->computerWidget->hide();
         if(ui->action_icon->isChecked())ui->listWidget->show();
         if(ui->action_list->isChecked())ui->tableWidget->show();
         genList(path);
@@ -521,7 +527,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
         action_unzip->setVisible(true);
     }
 
-    if (MIME != "application/x-executable" && MIME != "application/x-shellscript" && MIME != "application/x-ms-dos-executable" && MIME !="application/x-sharedlib") action_desktop->setVisible(false);
+    if (MIME != "application/x-executable" && MIME != "application/x-shellscript" && MIME != "application/x-ms-dos-executable" && MIME !="application/x-sharedlib" && MIME != "application/vnd.appimage") action_desktop->setVisible(false);
 
     if (filetype == "image"){
         action_openwith->setMenu(openwithImage);
@@ -805,15 +811,18 @@ void MainWindow::customContextMenu(const QPoint &pos)
 
     if (result_action == action_desktop) {
         qDebug() << "Create desktop file";
-        QString str = "[Desktop Entry]\nName=" + QFileInfo(filepath).fileName() + "\nComment=\nExec=" + filepath + "\nIcon=" + QFileInfo(filepath).absolutePath() + "/icon.png\nPath=" + QFileInfo(filepath).absolutePath() + "\nTerminal=false\nType=Application\nMimeType=\nCategories=";
+        QString iconName = "icon.png";
+        if(MIME == "application/vnd.appimage") iconName = QFileInfo(filepath).baseName() + ".png";
+        QString str = "[Desktop Entry]\nName=" + QFileInfo(filepath).baseName() + "\nComment=\nExec=" + filepath + "\nIcon=" + QFileInfo(filepath).absolutePath() + "/" + iconName + "\nPath=" + QFileInfo(filepath).absolutePath() + "\nTerminal=false\nType=Application\nMimeType=\nCategories=";
         qDebug() << str;
-        QFile file(QFileInfo(filepath).absolutePath() + "/" + QFileInfo(filepath).fileName() + ".desktop");
+        QFile file(QFileInfo(filepath).absolutePath() + "/" + QFileInfo(filepath).baseName() + ".desktop");
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QMessageBox::warning(this,"错误","不能创建 "+filepath+".desktop",QMessageBox::Yes);
+            QMessageBox::warning(this,"错误","不能创建 " + filepath + ".desktop", QMessageBox::Yes);
         }
         QTextStream in(&file);
         in << str;
         file.close();
+        genList(path);
         return;
     }
 
