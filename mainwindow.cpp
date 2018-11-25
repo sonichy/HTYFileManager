@@ -214,7 +214,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.3\n2018-11\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.3\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -884,7 +884,8 @@ void MainWindow::customContextMenu(const QPoint &pos)
                     if (!QFile::remove(newName)) {
                         QMessageBox::critical(NULL, "错误", "无法覆盖新文件 "+newName);
                     } else {
-                        qDebug() << "remove" << newName;
+                        qDebug() << "copyto" << newName;
+                        refresh();
                     }
                     if (!QFile::copy(filepath, newName)) {
                         QMessageBox::critical(NULL, "错误", "粘贴失败！");
@@ -898,21 +899,27 @@ void MainWindow::customContextMenu(const QPoint &pos)
     }
 
     if (result_action == action_moveto) {
-        if (dir == "") {
-            dir = QFileDialog::getExistingDirectory(this, "选择路径", "/home", QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
-        } else {
-            dir = QFileDialog::getExistingDirectory(this, "选择路径", dir, QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
-        }
+        if (dir == "") dir = "/home";
+        dir = QFileDialog::getExistingDirectory(this, "选择路径", dir, QFileDialog::ShowDirsOnly |QFileDialog::DontResolveSymlinks);
         if (dir != "") {
             QString newName = dir + "/" + QFileInfo(filepath).fileName();
-            qDebug() << "copyto:" << filepath << newName;
-            if (!QFile::copy(filepath, newName)) {
-                QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 "+newName+" ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+            qDebug() << "moveto:" << filepath << newName;
+            if (QFile::copy(filepath, newName)) {
+                qDebug() << "copy" << filepath << newName;
+                if (QFile::remove(filepath)) {
+                    qDebug() << "remove" << filepath;
+                    refresh();
+                }else{
+                    QMessageBox::critical(NULL, "错误", "无法删除源文件 " + filepath);
+                }
+            }else{
+                QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 " + newName + " ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                 if (SB == QMessageBox::Yes) {
-                    if (!QFile::remove(newName)) {
-                        QMessageBox::critical(NULL, "错误", "无法覆盖新文件 " + newName);
-                    } else {
+                    if (QFile::remove(newName)) {
                         qDebug() << "remove" << newName;
+                        refresh();
+                    } else {
+                        QMessageBox::critical(NULL, "错误", "无法覆盖新文件 " + newName);
                     }
                     if (!QFile::copy(filepath, newName)) {
                         QMessageBox::critical(NULL, "错误", "粘贴失败！");
@@ -925,15 +932,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
                         }
                     }
                 }
-            } else {
-                qDebug() << "copy" << filepath << newName;
-                if (!QFile::remove(filepath)) {
-                    QMessageBox::critical(NULL, "错误", "无法删除源文件 " + filepath);
-                } else {
-                    qDebug() << "remove" << filepath;
-                }
             }
-            open(QFileInfo(filepath).filePath());
         }
         return;
     }
@@ -1403,7 +1402,7 @@ void MainWindow::genList(QString spath)
     QTextCodec *TC = QTextCodec::codecForName("GBK");
     //QTextCodec *TC = QTextCodec::codecForLocale();
     for (int i = 0; i < list.size(); i++) {
-        QString sname="",TAG="",Title="",Artist="",Album="",Year="",Comment="";
+        QString sname="", TAG="", Title="", Artist="", Album="", Year="", Comment="";
         QFileInfo fileInfo = list.at(i);
         sname = fileInfo.fileName();
         QIcon icon;
@@ -1495,6 +1494,9 @@ void MainWindow::genList(QString spath)
             }
         } else {
             icon = QIcon::fromTheme(MIME.replace("/","-"));
+            if(icon.isNull()){
+                icon = QIcon::fromTheme("unknown");
+            }
         }
 
         QListWidgetItem *LWI;
