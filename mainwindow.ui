@@ -288,11 +288,17 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_about">
+   <property name="icon">
+    <iconset theme="help-about"/>
+   </property>
    <property name="text">
     <string>关于</string>
    </property>
   </action>
   <action name="action_back">
+   <property name="icon">
+    <iconset theme="go-previous"/>
+   </property>
    <property name="text">
     <string>后退</string>
    </property>
@@ -301,6 +307,9 @@
    </property>
   </action>
   <action name="action_forward">
+   <property name="icon">
+    <iconset theme="go-next"/>
+   </property>
    <property name="text">
     <string>前进</string>
    </property>
@@ -336,6 +345,9 @@
    </property>
   </action>
   <action name="action_changelog">
+   <property name="icon">
+    <iconset theme="help-faq"/>
+   </property>
    <property name="text">
     <string>更新日志</string>
    </property>
