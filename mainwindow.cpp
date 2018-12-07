@@ -817,7 +817,13 @@ void MainWindow::customContextMenu(const QPoint &pos)
         qDebug() << "Create desktop file";
         QString iconName = "icon.png";
         if(MIME == "application/vnd.appimage") iconName = QFileInfo(filepath).baseName() + ".png";
-        QString str = "[Desktop Entry]\nName=" + QFileInfo(filepath).baseName() + "\nComment=\nExec=" + filepath + "\nIcon=" + QFileInfo(filepath).absolutePath() + "/" + iconName + "\nPath=" + QFileInfo(filepath).absolutePath() + "\nTerminal=false\nType=Application\nMimeType=\nCategories=";
+        QString sExec;
+        if(MIME=="application/x-ms-dos-executable"){
+            sExec = "deepin-wine " + filepath;
+        }else{
+            sExec = filepath;
+        }
+        QString str = "[Desktop Entry]\nName=" + QFileInfo(filepath).baseName() + "\nComment=\nExec=" + sExec + "\nIcon=" + QFileInfo(filepath).absolutePath() + "/" + iconName + "\nPath=" + QFileInfo(filepath).absolutePath() + "\nTerminal=false\nType=Application\nMimeType=\nCategories=";
         qDebug() << str;
         QFile file(QFileInfo(filepath).absolutePath() + "/" + QFileInfo(filepath).baseName() + ".desktop");
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
