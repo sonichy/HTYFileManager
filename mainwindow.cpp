@@ -57,26 +57,26 @@ MainWindow::MainWindow(QWidget *parent) :
     LWI->setData(LOCATION_OF_REAL_PATH, QDir::homePath());
     ui->listWidgetNav->insertItem(0, LWI);
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-desktop"),"桌面");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0));
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
     ui->listWidgetNav->insertItem(1, LWI);
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-videos"),"视频");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0));
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MoviesLocation));
     ui->listWidgetNav->insertItem(2, LWI);
     ui->listWidget_userdir->insertItem(0, LWI);
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-pictures"),"图片");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0));
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
     ui->listWidgetNav->insertItem(3, LWI);
     ui->listWidget_userdir->insertItem(1, LWI);
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-music"),"音乐");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0));
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
     ui->listWidgetNav->insertItem(4, LWI);
     ui->listWidget_userdir->insertItem(2, LWI);
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-documents"),"文档");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0));
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
     ui->listWidgetNav->insertItem(5, LWI);
     ui->listWidget_userdir->insertItem(3, LWI);
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-downloads"),"下载");
-    LWI->setData(LOCATION_OF_REAL_PATH,  QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0));
+    LWI->setData(LOCATION_OF_REAL_PATH,  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
     ui->listWidgetNav->insertItem(6, LWI);
     ui->listWidget_userdir->insertItem(4, LWI);
     LWI = new QListWidgetItem(QIcon::fromTheme("user-trash"),"回收站");
@@ -93,19 +93,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //首页
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-videos"),"视频");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0));
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MoviesLocation));
     ui->listWidget_userdir->insertItem(0, LWI);
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-pictures"),"图片");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0));
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
     ui->listWidget_userdir->insertItem(1, LWI);
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-music"),"音乐");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0));
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
     ui->listWidget_userdir->insertItem(2, LWI);
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-documents"),"文档");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0));
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
     ui->listWidget_userdir->insertItem(3, LWI);
     LWI = new QListWidgetItem(QIcon::fromTheme("folder-downloads"),"下载");
-    LWI->setData(LOCATION_OF_REAL_PATH,  QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0));
+    LWI->setData(LOCATION_OF_REAL_PATH,  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
     ui->listWidget_userdir->insertItem(4, LWI);
     connect(ui->listWidget_userdir, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(nav(QListWidgetItem*)));
     connect(ui->listWidget_partition, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(nav(QListWidgetItem*)));
@@ -214,7 +214,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.3\n2018-12\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.3\n2018-12\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -823,16 +823,30 @@ void MainWindow::customContextMenu(const QPoint &pos)
         }else{
             sExec = filepath;
         }
-        QString str = "[Desktop Entry]\nName=" + QFileInfo(filepath).baseName() + "\nComment=\nExec=" + sExec + "\nIcon=" + QFileInfo(filepath).absolutePath() + "/" + iconName + "\nPath=" + QFileInfo(filepath).absolutePath() + "\nTerminal=false\nType=Application\nMimeType=\nCategories=";
-        qDebug() << str;
         QFile file(QFileInfo(filepath).absolutePath() + "/" + QFileInfo(filepath).baseName() + ".desktop");
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QMessageBox::warning(this,"错误","不能创建 " + filepath + ".desktop", QMessageBox::Yes);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QString str = "[Desktop Entry]\nName=" + QFileInfo(filepath).baseName() + "\nComment=\nExec=" + sExec + "\nIcon=" + QFileInfo(filepath).absolutePath() + "/" + iconName + "\nPath=" + QFileInfo(filepath).absolutePath() + "\nTerminal=false\nType=Application\nMimeType=\nCategories=";
+            qDebug() << str;
+            QTextStream in(&file);
+            in << str;
+            file.close();
+            genList(path);
+        }else{
+            //QMessageBox::warning(this,"错误","不能创建 " + filepath + ".desktop", QMessageBox::Yes);
+            QMessageBox MB(QMessageBox::Question, "错误", "不能创建 " + filepath + ".desktop，是否在桌面创建？", QMessageBox::Yes | QMessageBox::No, NULL);
+            if (MB.exec() ==  QMessageBox::Yes) {
+                file.setFileName(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/" + QFileInfo(filepath).baseName() + ".desktop");
+                if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                    iconName = QFileInfo(filepath).baseName();
+                    QString str = "[Desktop Entry]\nName=" + QFileInfo(filepath).baseName() + "\nComment=\nExec=" + sExec + "\nIcon=" + iconName + "\nPath=" + QFileInfo(filepath).absolutePath() + "\nTerminal=false\nType=Application\nMimeType=\nCategories=";
+                    qDebug() << str;
+                    QTextStream in(&file);
+                    in << str;
+                    file.close();
+                    genList(path);
+                }
+            }
         }
-        QTextStream in(&file);
-        in << str;
-        file.close();
-        genList(path);
         return;
     }
 
