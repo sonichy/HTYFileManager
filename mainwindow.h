@@ -74,6 +74,8 @@ private slots:
     void verticalScrollBarValueChanged(int v);
     void switchHidden();
     void refresh();
+    void rename();
+    void listWidgetItemChanged(QListWidgetItem *LWI);
 
 };
 

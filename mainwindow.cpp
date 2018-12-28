@@ -35,9 +35,6 @@ MainWindow::MainWindow(QWidget *parent) :
     move((QApplication::desktop()->width() - width())/2, (QApplication::desktop()->height() - height())/2);
     ui->action_icon->setIcon(style()->standardIcon(QStyle::SP_FileDialogListView));
     ui->action_icon->setChecked(true);
-    //ui->action_list->setIcon(style()->standardIcon(QStyle::SP_TitleBarMenuButton));
-    //ui->action_back->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
-    //ui->action_forward->setIcon(style()->standardIcon(QStyle::SP_ArrowForward));
 
     dirTrash = QDir::homePath() + "/.local/share/Trash/files";
     dirTrashInfo = QDir::homePath() + "/.local/share/Trash/info/";
@@ -136,6 +133,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(listWidgetItemSelectionChanged()));
     connect(ui->listWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(listWidgetDoubleClicked(QModelIndex)));
     connect(ui->listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenu(QPoint)));
+    connect(ui->listWidget, SIGNAL(itemChanged(QListWidgetItem)), this, SLOT(listWidgetItemChanged(QListWidgetItem)));
+
     verticalScrollBar = ui->listWidget->verticalScrollBar();
     connect(verticalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(verticalScrollBarValueChanged(int)));
 /*
@@ -160,6 +159,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_C),this), SIGNAL(activated()),this, SLOT(copy()));
     connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_V),this), SIGNAL(activated()),this, SLOT(paste()));
     connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_H),this), SIGNAL(activated()),this, SLOT(switchHidden()));
+    connect(new QShortcut(QKeySequence(Qt::Key_F2),this), SIGNAL(activated()),this, SLOT(rename()));
     connect(new QShortcut(QKeySequence(Qt::Key_F5),this), SIGNAL(activated()),this, SLOT(refresh()));
 
     QStringList header;
@@ -214,7 +214,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.3\n2018-12\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -1408,6 +1408,17 @@ void MainWindow::paste()
 
 void MainWindow::genList(QString spath)
 {
+    qDebug() << "genList" << spath;
+
+    for(int i=0; i<ui->listWidgetNav->count(); i++){
+        QString LWI_path = ui->listWidgetNav->item(i)->data(LOCATION_OF_REAL_PATH).toString();
+        qDebug() << "listWidgetNav.path" << LWI_path << spath.contains(LWI_path);
+        if(LWI_path != "/" && LWI_path != QDir::homePath() && spath.contains(LWI_path)){
+            ui->listWidgetNav->setCurrentRow(i);
+            break;
+        }
+    }
+
     QTime time;
     time.start();
     ui->listWidget->clear();
@@ -1603,7 +1614,6 @@ void MainWindow::listWidgetItemSelectionChanged()
     qDebug() << "listWidgetItemSelectionChanged()" << ui->listWidget->currentItem();
 }
 
-
 void MainWindow::switchHidden()
 {
     isShowHidden = !isShowHidden;
@@ -1613,4 +1623,30 @@ void MainWindow::switchHidden()
 void MainWindow::refresh()
 {
     genList(path);
+}
+
+void MainWindow::rename()
+{
+    QList<QListWidgetItem*> list = ui->listWidget->selectedItems();
+    foreach(QListWidgetItem *LWI, list) {
+       //LWI->setFlags(LWI->flags() | Qt::ItemIsEditable);
+        ui->listWidget->openPersistentEditor(LWI);
+    }
+}
+
+void MainWindow::listWidgetItemChanged(QListWidgetItem *LWI)
+{
+    //QListWidgetItem *LWI = ui->listWidget->currentItem();
+    //LWI->setFlags(LWI->flags() & (~Qt::ItemIsEditable));
+    //QString oldName = LWI->text();
+    QString oldName = ui->listWidget->currentItem()->text();
+    QString oldPath = path + "/" + oldName;
+    QString newPath = path + "/" + LWI->text();
+    qDebug() << "rename" << oldPath << newPath;
+    if (QFile::rename(oldPath, newPath)) {
+        genList(path);
+    }else{
+        LWI->setText(oldName);
+        QMessageBox::critical(NULL, "错误", oldName + " 无法重命名为 " + LWI->text() + " ！", QMessageBox::Ok);
+    }
 }

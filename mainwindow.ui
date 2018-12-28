@@ -84,7 +84,8 @@
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">border-bottom:1px solid #cccccc;</string>
+            <string notr="true">border-bottom:1px solid #cccccc;
+padding-left:5px;</string>
            </property>
            <property name="text">
             <string>用户目录</string>
@@ -130,7 +131,8 @@
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">border-bottom:1px solid #cccccc;</string>
+            <string notr="true">border-bottom:1px solid #cccccc;
+padding-left:5px;</string>
            </property>
            <property name="text">
             <string>内置磁盘</string>
@@ -155,7 +157,7 @@
             <enum>QListView::Adjust</enum>
            </property>
            <property name="spacing">
-            <number>50</number>
+            <number>10</number>
            </property>
            <property name="gridSize">
             <size>
@@ -259,7 +261,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -289,7 +291,8 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_about">
    <property name="icon">
-    <iconset theme="help-about"/>
+    <iconset theme="help-about">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>关于</string>
@@ -297,7 +300,8 @@
   </action>
   <action name="action_back">
    <property name="icon">
-    <iconset theme="go-previous"/>
+    <iconset theme="go-previous">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>后退</string>
@@ -308,7 +312,8 @@
   </action>
   <action name="action_forward">
    <property name="icon">
-    <iconset theme="go-next"/>
+    <iconset theme="go-next">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>前进</string>
@@ -346,7 +351,8 @@
   </action>
   <action name="action_changelog">
    <property name="icon">
-    <iconset theme="help-faq"/>
+    <iconset theme="help-faq">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>更新日志</string>
