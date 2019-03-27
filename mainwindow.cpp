@@ -389,7 +389,7 @@ void MainWindow::on_action_list_triggered()
 
 void MainWindow::customContextMenu(const QPoint &pos)
 {
-    QAction *action_copy, *action_cut, *action_rename, *action_trash, *action_emptyTrash, *action_delete, *action_restore, *action_paste, *action_newdir, *action_sort, *action_property, *action_desktop, *action_gksu, *action_copyto, *action_moveto, *action_setWallpaper, *action_terminal, *action_zip, *action_unzip;
+    QAction *action_copy, *action_cut, *action_rename, *action_trash, *action_emptyTrash, *action_delete, *action_restore, *action_paste, *action_newdir, *action_sort, *action_property, *action_desktop, *action_gksu, *action_copyto, *action_moveto, *action_setWallpaper, *action_terminal, *action_zip, *action_unzip, *action_createLink;
     QModelIndex index = ui->listWidget->indexAt(pos);
     //QString filepath = path + "/" + index.data(Qt::DisplayRole).toString();
     QString filepath = "";
@@ -511,6 +511,10 @@ void MainWindow::customContextMenu(const QPoint &pos)
     action_gksu->setText("以管理员身份打开");
     actions.append(action_gksu);
 
+    action_createLink = new QAction(this);
+    action_createLink->setText("创建链接");
+    actions.append(action_createLink);
+
     if (filetype == "video" || filetype == "audio" || MIME == "application/vnd.rn-realmedia") {
         action_openwith->setMenu(openwithVideo);
     }
@@ -558,7 +562,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
     if (index.isValid()) {
         action_newdir->setVisible(false);
         action_sort->setVisible(false);
-    }else{
+    } else {
         qDebug() << "viewContextMenu: index is not valid";
         action_copy->setVisible(false);
         action_cut->setVisible(false);
@@ -567,7 +571,9 @@ void MainWindow::customContextMenu(const QPoint &pos)
         action_delete->setVisible(false);
         action_gksu->setVisible(false);
         action_restore->setVisible(false);
+        action_createLink->setVisible(false);
     }
+    if (QFileInfo(filepath).isFile()) action_terminal->setVisible(false);
 
     QAction *result_action = QMenu::exec(actions, ui->listWidget->mapToGlobal(pos));
 
@@ -990,6 +996,17 @@ void MainWindow::customContextMenu(const QPoint &pos)
         QString sexec = readSettings(desktopPath, "Desktop Entry", "Exec");
         QProcess *proc = new QProcess;
         proc->start(sexec);
+        return;
+    }
+
+    if (result_action == action_createLink) {
+        QString dest = QFileInfo(filepath).absolutePath() + "/快捷方式" + QFileInfo(filepath).fileName();
+        QString sexec = "ln -s " + filepath + " " + dest;
+        qDebug() << sexec;
+        QProcess *process = new QProcess;
+        process->start(sexec);
+        process->waitForFinished();
+        genList(QFileInfo(filepath).absolutePath());
         return;
     }
 
