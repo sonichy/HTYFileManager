@@ -10,7 +10,7 @@
 #include <QLineEdit>
 #include <QFileInfoList>
 #include <QListWidgetItem>
-#include <QFileSystemWatcher>
+//#include <QFileSystemWatcher>
 
 namespace Ui {
 class MainWindow;
@@ -34,6 +34,8 @@ private:
     QMenu *sortMenu;
     QAction *action_sortName, *action_sortSize, *action_sortType, *action_sortTime;
     QModelIndexList modelIndexList;
+    //QList<QListWidgetItem*> selected_files;
+    QStringList SL_selected_files;
     void trashFiles();
     void deleteFiles();
     QString readSettings(QString path, QString group, QString key);
@@ -43,10 +45,12 @@ private:
     QScrollBar *verticalScrollBar;
     void iconPreview(int v);
     bool isPreviewFinish, isShowHidden;
-    QFileSystemWatcher *watcher;
+    //QFileSystemWatcher *watcher;
+    void readSettings();
 
 protected:
     void wheelEvent(QWheelEvent*);
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void on_action_changelog_triggered();

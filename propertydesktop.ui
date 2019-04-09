@@ -19,13 +19,80 @@
    </property>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="4" column="1" colspan="2">
-      <widget class="QLineEdit" name="lineEditComment"/>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_name">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>名称：</string>
+       </property>
+      </widget>
      </item>
-     <item row="0" column="0" colspan="3">
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_comment">
+       <property name="text">
+        <string>说明：</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_path">
+       <property name="text">
+        <string>路径：</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_exec">
+       <property name="text">
+        <string>执行：</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_categories">
+       <property name="text">
+        <string>类别：</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_filename">
+       <property name="text">
+        <string>文件路径：</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEdit_filepath">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="lineEdit_name"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="lineEdit_exec"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="lineEdit_path"/>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="lineEdit_comment"/>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLineEdit" name="lineEdit_categories"/>
+     </item>
+     <item row="0" column="0" colspan="2">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="pushButtonIcon">
+        <widget class="QPushButton" name="pushButton_icon">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -60,59 +127,6 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="labelName">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>名称：</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1" colspan="2">
-      <widget class="QLineEdit" name="lineEditPath"/>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="labelComment">
-       <property name="text">
-        <string>说明：</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" colspan="2">
-      <widget class="QLineEdit" name="lineEditName"/>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="labelPath">
-       <property name="text">
-        <string>路径：</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="labelExec">
-       <property name="text">
-        <string>执行：</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="labelCategories">
-       <property name="text">
-        <string>类别：</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1" colspan="2">
-      <widget class="QLineEdit" name="lineEditCategories"/>
-     </item>
-     <item row="2" column="1" colspan="2">
-      <widget class="QLineEdit" name="lineEditExec"/>
-     </item>
     </layout>
    </item>
    <item>
@@ -128,11 +142,11 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>lineEditName</tabstop>
-  <tabstop>lineEditExec</tabstop>
-  <tabstop>lineEditPath</tabstop>
-  <tabstop>lineEditComment</tabstop>
-  <tabstop>lineEditCategories</tabstop>
+  <tabstop>lineEdit_name</tabstop>
+  <tabstop>lineEdit_exec</tabstop>
+  <tabstop>lineEdit_path</tabstop>
+  <tabstop>lineEdit_comment</tabstop>
+  <tabstop>lineEdit_categories</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -16,6 +16,8 @@ void writeLog(QString s){
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setOrganizationName("HTY");
+    a.setApplicationName("HTYFileManager");
     qSetMessagePattern("[ %{file}: %{line} ] %{message}");
 
     QString log = "";
