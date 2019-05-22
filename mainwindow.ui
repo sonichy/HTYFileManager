@@ -198,6 +198,9 @@ padding-left:5px;</string>
           <property name="resizeMode">
            <enum>QListView::Adjust</enum>
           </property>
+          <property name="spacing">
+           <number>10</number>
+          </property>
           <property name="gridSize">
            <size>
             <width>100</width>

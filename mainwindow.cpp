@@ -146,7 +146,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     verticalScrollBar = ui->listWidget->verticalScrollBar();
     connect(verticalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(verticalScrollBarValueChanged(int)));
-/*
+    /*
     QShortcut *shortCutReturnListWidget = new QShortcut(QKeySequence(Qt::Key_Return), ui->listWidget);
     shortCutReturnListWidget->setObjectName("shortCutReturnListWidget");
     connect(shortCutReturnListWidget, SIGNAL(activated()),this, SLOT(enterOpen()));
@@ -223,7 +223,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -450,20 +450,24 @@ void MainWindow::customContextMenu(const QPoint &pos)
     action_copy = new QAction(this);
     action_copy->setText("复制");
     action_copy->setIcon(QIcon::fromTheme("edit-copy"));
+    action_copy->setShortcut(QKeySequence(Qt::Key_C));
     actions.append(action_copy);
 
     action_cut = new QAction(this);
     action_cut->setText("剪切");
     action_cut->setIcon(QIcon::fromTheme("edit-cut"));
+    action_cut->setShortcut(QKeySequence(Qt::Key_X));
     actions.append(action_cut);
 
     action_paste = new QAction(this);
     action_paste->setText("粘贴");
     action_paste->setIcon(QIcon::fromTheme("edit-paste"));
+    action_paste->setShortcut(QKeySequence(Qt::Key_V));
     actions.append(action_paste);
 
     action_rename = new QAction(this);
     action_rename->setText("重命名");
+    action_rename->setShortcut(QKeySequence(Qt::Key_M));
     actions.append(action_rename);
 
     action_moveto = new QAction(this);
@@ -521,6 +525,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
     action_property = new QAction(this);
     action_property->setText("属性");
     action_property->setIcon(QIcon::fromTheme("document-properties"));
+    action_property->setShortcut(QKeySequence(Qt::Key_R));
     actions.append(action_property);
 
     action_terminal = new QAction(this);
@@ -601,6 +606,11 @@ void MainWindow::customContextMenu(const QPoint &pos)
     }
     if (QFileInfo(filepath).isFile()) action_terminal->setVisible(false);
 
+    //在菜单中显示快捷键
+    foreach(QAction *action, actions){
+        action->setShortcutVisibleInContextMenu(true);
+    }
+
     QAction *result_action = QMenu::exec(actions, ui->listWidget->mapToGlobal(pos));
 
     if (result_action == DFM) {
@@ -660,16 +670,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
     }
 
     if (result_action == action_copy) {
-        //source=filepath;
-        //qDebug() << "copy" << source;
-        //pathSource = path;
-        QList<QListWidgetItem*> selected_files = ui->listWidget->selectedItems();
-        SL_selected_files.clear();
-        for(int i=0; i<selected_files.length(); i++){
-            QString fp = path + "/" + selected_files.at(i)->text();
-            qDebug() << "copy:add(" << source << ")";
-            SL_selected_files.append(fp);
-        }
+        copy();
         return;
     }
 
@@ -681,6 +682,8 @@ void MainWindow::customContextMenu(const QPoint &pos)
     }
 
     if(result_action == action_paste){
+        paste();
+        /*
         qDebug() << "paste";
         for(int i=0; i<SL_selected_files.length(); i++){
             QString source = SL_selected_files.at(i);
@@ -695,9 +698,9 @@ void MainWindow::customContextMenu(const QPoint &pos)
                     if(!QFile::copy(source, newName)){
                         QMessageBox::critical(NULL, "错误", "粘贴失败！");
                     }
-                }
-                if(SB == QMessageBox::No){
-                    newName =  path + "/副本-" + SL_selected_files.at(i);
+                }else if(SB == QMessageBox::No){
+                    newName =  path + "/副本-" + QFileInfo(SL_selected_files.at(i)).fileName();
+                    qDebug() << "副本" << source << newName;
                     if(!QFile::copy(source, newName)){
                         QMessageBox::critical(NULL, "错误", "粘贴失败！");
                     }
@@ -714,6 +717,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
                 cut=0;
             }
         }
+        */
         return;
     }
 
@@ -802,43 +806,53 @@ void MainWindow::customContextMenu(const QPoint &pos)
     }
 
     if (result_action == action_property) {
-        if (MIME == "application/x-desktop") {
-            QString sExec = readSettings(filepath, "Desktop Entry", "Exec");
-            QString sName = readSettings(filepath, "Desktop Entry", "Name");
-            QString sIcon = readSettings(filepath, "Desktop Entry", "Icon");
-            QString sPath = readSettings(filepath, "Desktop Entry", "Path");
-            QString sComment = readSettings(filepath, "Desktop Entry", "Comment");
-            QString sCategories = readSettings(filepath, "Desktop Entry", "Categories");
-            //dialogPD->ui->lineEditPathDesktop->setText(filepath);
-            dialogPD->filePath = filepath;
-            dialogPD->ui->pushButton_icon->setIcon(QIcon(sIcon));
-            //dialogPD->ui->lineEditIcon->setText(sicon);
-            dialogPD->iconPath = sIcon;
-            dialogPD->ui->lineEdit_filepath->setText(filepath);
-            dialogPD->ui->lineEdit_name->setText(sName);
-            dialogPD->ui->lineEdit_name->setCursorPosition(0);
-            dialogPD->ui->lineEdit_exec->setText(sExec);
-            dialogPD->ui->lineEdit_exec->setCursorPosition(0);
-            dialogPD->ui->lineEdit_path->setText(sPath);
-            dialogPD->ui->lineEdit_path->setCursorPosition(0);
-            dialogPD->ui->lineEdit_comment->setText(sComment);
-            dialogPD->ui->lineEdit_comment->setCursorPosition(0);
-            dialogPD->ui->lineEdit_categories->setText(sCategories);
-            dialogPD->ui->lineEdit_categories->setCursorPosition(0);
-            dialogPD->show();
-        } else {
-            qDebug() << "property" << filepath;
-            QMessageBox MBox(QMessageBox::NoIcon, "属性", "文件名：\t" + QFileInfo(filepath).fileName() + "\n大小：\t" + BS(QFileInfo(filepath).size()) + "\n类型：\t" + QMimeDatabase().mimeTypeForFile(filepath).name() + "\n访问时间：\t" + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
-            if (filetype == "image") {
-                //MBox.setIconPixmap(QPixmap(filepath).scaled(200,200, Qt::KeepAspectRatio));
-                QImageReader reader(filepath);
-                reader.setAutoTransform(true);
-                QImage image = reader.read();
-                MBox.setIconPixmap(QPixmap::fromImage(image.scaled(200,200, Qt::KeepAspectRatio)));
+        if (index.isValid()) {
+            if (MIME == "application/x-desktop") {
+                QString sExec = readSettings(filepath, "Desktop Entry", "Exec");
+                QString sName = readSettings(filepath, "Desktop Entry", "Name");
+                QString sIcon = readSettings(filepath, "Desktop Entry", "Icon");
+                QString sPath = readSettings(filepath, "Desktop Entry", "Path");
+                QString sComment = readSettings(filepath, "Desktop Entry", "Comment");
+                QString sCategories = readSettings(filepath, "Desktop Entry", "Categories");
+                //dialogPD->ui->lineEditPathDesktop->setText(filepath);
+                dialogPD->filePath = filepath;
+                if(sIcon.contains("/")){
+                    dialogPD->ui->pushButton_icon->setIcon(QIcon(sIcon));
+                }else{
+                    dialogPD->ui->pushButton_icon->setIcon(QIcon::fromTheme(sIcon));
+                }
+                //dialogPD->ui->lineEditIcon->setText(sicon);
+                dialogPD->iconPath = sIcon;
+                dialogPD->ui->lineEdit_filepath->setText(filepath);
+                dialogPD->ui->lineEdit_name->setText(sName);
+                dialogPD->ui->lineEdit_name->setCursorPosition(0);
+                dialogPD->ui->lineEdit_exec->setText(sExec);
+                dialogPD->ui->lineEdit_exec->setCursorPosition(0);
+                dialogPD->ui->lineEdit_path->setText(sPath);
+                dialogPD->ui->lineEdit_path->setCursorPosition(0);
+                dialogPD->ui->lineEdit_comment->setText(sComment);
+                dialogPD->ui->lineEdit_comment->setCursorPosition(0);
+                dialogPD->ui->lineEdit_categories->setText(sCategories);
+                dialogPD->ui->lineEdit_categories->setCursorPosition(0);
+                dialogPD->show();
             } else {
-                QIcon icon = ui->listWidget->currentItem()->icon();
-                MBox.setIconPixmap(icon.pixmap(QSize(150,150)));
+                qDebug() << "property" << filepath;
+                QMessageBox MBox(QMessageBox::NoIcon, "属性", "文件名：\t" + QFileInfo(filepath).fileName() + "\n大小：\t" + BS(QFileInfo(filepath).size()) + "\n类型：\t" + QMimeDatabase().mimeTypeForFile(filepath).name() + "\n访问时间：\t" + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
+                if (filetype == "image") {
+                    //MBox.setIconPixmap(QPixmap(filepath).scaled(200,200, Qt::KeepAspectRatio));
+                    QImageReader reader(filepath);
+                    reader.setAutoTransform(true);
+                    QImage image = reader.read();
+                    MBox.setIconPixmap(QPixmap::fromImage(image.scaled(200,200, Qt::KeepAspectRatio)));
+                } else {
+                    QIcon icon = ui->listWidget->currentItem()->icon();
+                    MBox.setIconPixmap(icon.pixmap(QSize(150,150)));
+                }
+                MBox.exec();
             }
+        }else{
+            QMessageBox MBox(QMessageBox::NoIcon, "文件夹属性", "路径：\t" + path + "\n大小：\t" + BS(QFileInfo(path).size()) + "\n访问时间：\t" + QFileInfo(path).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(path).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
+            MBox.setIconPixmap(QIcon::fromTheme("folder").pixmap(QSize(150,150)));
             MBox.exec();
         }
         return;
@@ -1338,7 +1352,7 @@ void MainWindow::trashFiles()
     if(!QDir(dirTrashInfo).exists()) QDir().mkpath(dirTrashInfo);
     modelIndexList = ui->listWidget->selectionModel()->selectedIndexes();
     foreach (QModelIndex modelIndex, modelIndexList) {
-        QString filepath = path + "/" + modelIndex.data().toString();
+        QString filepath = modelIndex.data(LOCATION_OF_REAL_PATH).toString();
         qDebug() << "trash" << filepath;
         QString MIME = QMimeDatabase().mimeTypeForFile(filepath).name();
         if (MIME == "inode/directory") {
@@ -1425,34 +1439,54 @@ void MainWindow::trashDelete()
 void MainWindow::copy()
 {
     qDebug() << "copy";
-    pathSource = path;
-    modelIndexList = ui->listWidget->selectionModel()->selectedIndexes();
+    //pathSource = path;
+    //modelIndexList = ui->listWidget->selectionModel()->selectedIndexes();//只保存了数字，切换目录粘贴不行。
+    QList<QListWidgetItem*> selected_items = ui->listWidget->selectedItems();
+    SL_selected_files.clear();
+    for(int i=0; i<selected_items.length(); i++){
+        QString fp = selected_items.at(i)->data(LOCATION_OF_REAL_PATH).toString();
+        qDebug() << "copy:add(" << fp << ")";
+        SL_selected_files.append(fp);
+    }
 }
 
 void MainWindow::paste()
 {
     qDebug() << "paste";
-    foreach(QModelIndex modelIndex, modelIndexList){
-        source = modelIndex.data().toString();
-        QString newName = path + "/" + QFileInfo(modelIndex.data().toString()).fileName();
+    //foreach(QModelIndex modelIndex, modelIndexList){
+    for(int i=0; i<SL_selected_files.length(); i++){
+        //source = modelIndex.data(LOCATION_OF_REAL_PATH).toString();
+        source = SL_selected_files.at(i);
+        QString newName = path + "/" + QFileInfo(source).fileName();
         qDebug() << "paste" << source << newName;
         if(!QFile::copy(source, newName)){
-            QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 " + newName + " ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+            QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 " + newName + " ?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Yes);
             if(SB == QMessageBox::Yes){
                 if(!QFile::remove(newName)){
-                    QMessageBox::critical(NULL, "错误", "无法覆盖新文件 "+newName);
+                    QMessageBox::critical(NULL, "错误", "无法覆盖新文件 " + newName);
                 }
+                if(!QFile::copy(source, newName)){
+                    QMessageBox::critical(NULL, "错误", "粘贴失败！");
+                }
+            }else if(SB == QMessageBox::No){
+                newName =  path + "/副本-" + QFileInfo(newName).fileName();
+                qDebug() << "副本" << source << newName;
                 if(!QFile::copy(source, newName)){
                     QMessageBox::critical(NULL, "错误", "粘贴失败！");
                 }
             }
         }else{
+            // 修改文件时间
+            QFile file(newName);
+            qDebug() << "修改粘贴文件时间为原文件时间" << file.setFileTime(QFileInfo(source).lastModified(), QFileDevice::FileModificationTime);
+
             if(cut){
                 if(!QFile::remove(source)){
                     QMessageBox::critical(NULL, "错误", "无法删除剪切的源文件 " + source, QMessageBox::Ok);
                 }
             }
             cut=0;
+            genList(path);
         }
     }
 }
@@ -1497,7 +1531,7 @@ void MainWindow::genList(QString spath)
         if (MIME == "application/x-desktop") {
             sname = readSettings(fileInfo.absoluteFilePath(), "Desktop Entry", "Name");
             QString sicon = readSettings(fileInfo.absoluteFilePath(), "Desktop Entry", "Icon");
-            qDebug() << sicon;
+            //qDebug() << sicon;
             if(sicon=="")
                 sicon = "applications-system-symbolic";
             if (QFileInfo(sicon).isFile()) {
@@ -1590,6 +1624,7 @@ void MainWindow::genList(QString spath)
 
         QListWidgetItem *LWI;
         LWI = new QListWidgetItem(icon, sname);
+        LWI->setData(LOCATION_OF_REAL_PATH, fileInfo.absoluteFilePath());
         LWI->setSizeHint(QSize(100,100));
         ui->listWidget->insertItem(i, LWI);
         ui->statusBar->showMessage("正在预览：" + QString::number(i) + "/" + QString::number(list.size()));
@@ -1680,7 +1715,7 @@ void MainWindow::rename()
 {
     QList<QListWidgetItem*> list = ui->listWidget->selectedItems();
     foreach(QListWidgetItem *LWI, list) {
-       //LWI->setFlags(LWI->flags() | Qt::ItemIsEditable);
+        //LWI->setFlags(LWI->flags() | Qt::ItemIsEditable);
         ui->listWidget->openPersistentEditor(LWI);
     }
 }
