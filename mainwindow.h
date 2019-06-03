@@ -10,6 +10,7 @@
 #include <QLineEdit>
 #include <QFileInfoList>
 #include <QListWidgetItem>
+#include <QSettings>
 //#include <QFileSystemWatcher>
 
 namespace Ui {
@@ -47,6 +48,8 @@ private:
     bool isPreviewFinish, isShowHidden;
     //QFileSystemWatcher *watcher;
     void readSettings();
+    void genHomePage();
+    QSettings settings;
 
 protected:
     void wheelEvent(QWheelEvent*);
@@ -69,6 +72,7 @@ private slots:
     void lineEditLocationReturnPressed();
     void customContextMenu(const QPoint &pos);
     //void viewContextMenuTV(const QPoint &pos);
+    void customContextMenuPartition(const QPoint &pos);
     void enterOpen();
     void search();
     void trashDelete();

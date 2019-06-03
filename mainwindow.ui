@@ -43,7 +43,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QListWidget" name="listWidgetNav">
+       <widget class="QListWidget" name="listWidget_nav">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -141,6 +141,9 @@ padding-left:5px;</string>
          </item>
          <item>
           <widget class="QListWidget" name="listWidget_partition">
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
            <property name="styleSheet">
             <string notr="true">border:none;</string>
            </property>
@@ -327,6 +330,9 @@ padding-left:5px;</string>
   </action>
   <action name="action_icon">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">

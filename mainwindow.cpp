@@ -15,16 +15,17 @@
 #include <QShortcut>
 #include <QFileIconProvider>
 #include <QTextBrowser>
-#include <QSettings>
 #include <QListWidgetItem>
 #include <QStandardPaths>
 #include <QTextCodec>
 #include <QImageReader>
 #include <QStorageInfo>
+#include <QCheckBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    settings(QCoreApplication::organizationName(), QCoreApplication::applicationName())
 {
     ui->setupUi(this);
     readSettings();
@@ -34,7 +35,9 @@ MainWindow::MainWindow(QWidget *parent) :
                   "QListWidget::item:selected { background: rgba(0,0,0,30); color: blue;} ");
     ui->tableWidget->setVisible(false);
     ui->action_icon->setIcon(style()->standardIcon(QStyle::SP_FileDialogListView));
-    ui->action_icon->setChecked(true);
+    QActionGroup *AG = new QActionGroup(this);
+    AG->addAction(ui->action_icon);
+    AG->addAction(ui->action_list);
 
     dirTrash = QDir::homePath() + "/.local/share/Trash/files";
     dirTrashInfo = QDir::homePath() + "/.local/share/Trash/info/";
@@ -48,94 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //connect(lineEditSearch,SIGNAL(textChanged(QString)),this,SLOT(search()));
     connect(lineEditSearch,SIGNAL(returnPressed()),this,SLOT(search()));
 
-    //左侧导航列表
-    QListWidgetItem *LWI;
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-home"),"主目录");
-    LWI->setData(LOCATION_OF_REAL_PATH, QDir::homePath());
-    ui->listWidgetNav->insertItem(0, LWI);
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-desktop"),"桌面");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
-    ui->listWidgetNav->insertItem(1, LWI);
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-videos"),"视频");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MoviesLocation));
-    ui->listWidgetNav->insertItem(2, LWI);
-    ui->listWidget_userdir->insertItem(0, LWI);
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-pictures"),"图片");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
-    ui->listWidgetNav->insertItem(3, LWI);
-    ui->listWidget_userdir->insertItem(1, LWI);
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-music"),"音乐");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
-    ui->listWidgetNav->insertItem(4, LWI);
-    ui->listWidget_userdir->insertItem(2, LWI);
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-documents"),"文档");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-    ui->listWidgetNav->insertItem(5, LWI);
-    ui->listWidget_userdir->insertItem(3, LWI);
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-downloads"),"下载");
-    LWI->setData(LOCATION_OF_REAL_PATH,  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
-    ui->listWidgetNav->insertItem(6, LWI);
-    ui->listWidget_userdir->insertItem(4, LWI);
-    LWI = new QListWidgetItem(QIcon::fromTheme("user-trash"),"回收站");
-    LWI->setData(LOCATION_OF_REAL_PATH, QDir::homePath() + "/.local/share/Trash/files");
-    ui->listWidgetNav->insertItem(7, LWI);
-    LWI = new QListWidgetItem(style()->standardIcon(QStyle::SP_ComputerIcon),"计算机");
-    LWI->setData(LOCATION_OF_REAL_PATH, "computer://");
-    ui->listWidgetNav->insertItem(8, LWI);
-    LWI = new QListWidgetItem(style()->standardIcon(QStyle::SP_DriveHDIcon),"系统盘");
-    LWI->setData(LOCATION_OF_REAL_PATH, "/");
-    ui->listWidgetNav->insertItem(9, LWI);
-    //connect(ui->listWidgetNav, SIGNAL(clicked(QModelIndex)), this, SLOT(nav(QModelIndex)));
-    connect(ui->listWidgetNav, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(nav(QListWidgetItem*)));
-
-    //首页
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-videos"),"视频");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MoviesLocation));
-    ui->listWidget_userdir->insertItem(0, LWI);
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-pictures"),"图片");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
-    ui->listWidget_userdir->insertItem(1, LWI);
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-music"),"音乐");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
-    ui->listWidget_userdir->insertItem(2, LWI);
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-documents"),"文档");
-    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-    ui->listWidget_userdir->insertItem(3, LWI);
-    LWI = new QListWidgetItem(QIcon::fromTheme("folder-downloads"),"下载");
-    LWI->setData(LOCATION_OF_REAL_PATH,  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
-    ui->listWidget_userdir->insertItem(4, LWI);
-    connect(ui->listWidget_userdir, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(nav(QListWidgetItem*)));
-    connect(ui->listWidget_partition, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(nav(QListWidgetItem*)));
-
-
-    //系统盘
-    QStorageInfo storage("/");
-    QString mountPath = storage.rootPath();
-    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘");
-    LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
-    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘\n" + BS(storage.bytesFree()) + " / " + BS(storage.bytesTotal()));
-    LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
-    ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
-    //获取挂载路径
-    foreach (const QStorageInfo &storage, QStorageInfo::mountedVolumes()) {
-        if (storage.isValid() && storage.isReady()) {
-            //qDebug() << "mount" << storage.name();
-            QString name = storage.name();
-            if(name != ""){
-                QString mountPath = storage.rootPath();
-                LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name);
-                LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
-                ui->listWidgetNav->insertItem(ui->listWidgetNav->count(), LWI);
-                LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name + "\n" + BS(storage.bytesFree()) + " / " + BS(storage.bytesTotal()));
-                LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
-                ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
-            }
-        }
-    }
-
-    ui->listWidgetNav->setCurrentRow(8);
-    lineEditLocation->setText("computer://");
-    ui->listWidget->hide();
+    genHomePage();
 
     //connect(ui->listWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(listWidgetClicked(QModelIndex)));
     connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(listWidgetItemClicked(QListWidgetItem*)));
@@ -143,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->listWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(listWidgetDoubleClicked(QModelIndex)));
     connect(ui->listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenu(QPoint)));
     connect(ui->listWidget, SIGNAL(itemChanged(QListWidgetItem)), this, SLOT(listWidgetItemChanged(QListWidgetItem)));
+
+    connect(ui->listWidget_partition, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenuPartition(QPoint)));
 
     verticalScrollBar = ui->listWidget->verticalScrollBar();
     connect(verticalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(verticalScrollBarValueChanged(int)));
@@ -223,7 +141,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -248,7 +166,7 @@ void MainWindow::on_action_changelog_triggered()
 
 void MainWindow::on_action_about_triggered()
 {
-    QMessageBox aboutMB(QMessageBox::NoIcon, "关于", "海天鹰文件管理器 2.4\n一款基于 Qt5 的文件管理器。\n作者：黄颖\nE-mail: sonichy@163.com\n主页：https://github.com/sonichy\n参考：\n右键菜单：http://windrocblog.sinaapp.com/?p=1016\n二级菜单：http://blog.csdn.net/u011417605/article/details/51219019\nQAction组群单选：http://qiusuoge.com/12287.html\nQListView添加项目：http://blog.csdn.net/u010142953/article/details/46694419\n修改文本：http://blog.csdn.net/caoshangpa/article/details/51775147\n获取系统文件图标：http://www.cnblogs.com/RainyBear/p/5223103.html");
+    QMessageBox aboutMB(QMessageBox::NoIcon, "关于", "海天鹰文件管理器 2.6\n一款基于 Qt5 的文件管理器。\n作者：黄颖\nE-mail: sonichy@163.com\n主页：https://github.com/sonichy\n参考：\n右键菜单：http://windrocblog.sinaapp.com/?p=1016\n二级菜单：http://blog.csdn.net/u011417605/article/details/51219019\nQAction组群单选：http://qiusuoge.com/12287.html\nQListView添加项目：http://blog.csdn.net/u010142953/article/details/46694419\n修改文本：http://blog.csdn.net/caoshangpa/article/details/51775147\n获取系统文件图标：http://www.cnblogs.com/RainyBear/p/5223103.html");
     aboutMB.setIconPixmap(QPixmap(":/icon.png"));
     aboutMB.exec();
 }
@@ -382,18 +300,18 @@ void MainWindow::on_action_forward_triggered()
 
 void MainWindow::on_action_icon_triggered()
 {
-    ui->action_icon->setChecked(true);
-    ui->action_list->setChecked(false);
-    ui->listWidget->setVisible(true);
-    ui->tableWidget->setVisible(false);
+    if(path != "computer://"){
+        ui->listWidget->setVisible(true);
+        ui->tableWidget->setVisible(false);
+    }
 }
 
 void MainWindow::on_action_list_triggered()
 {
-    ui->action_list->setChecked(true);
-    ui->action_icon->setChecked(false);
-    ui->listWidget->setVisible(false);
-    ui->tableWidget->setVisible(true);
+    if(path != "computer://"){
+        ui->listWidget->setVisible(false);
+        ui->tableWidget->setVisible(true);
+    }
 }
 
 void MainWindow::customContextMenu(const QPoint &pos)
@@ -1285,6 +1203,116 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
 }
 */
 
+void MainWindow::customContextMenuPartition(const QPoint &pos)
+{
+    QModelIndex index = ui->listWidget_partition->indexAt(pos);
+    QListWidgetItem *LWI = ui->listWidget_partition->itemAt(pos);
+    QAction *action_hide, *action_property;
+    QList<QAction *> actions;
+    action_hide = new QAction(this);
+    action_hide->setText("隐藏");
+    actions.append(action_hide);
+
+    action_property = new QAction(this);
+    action_property->setText("&R属性");
+    action_property->setShortcut(QKeySequence(Qt::Key_R));
+    actions.append(action_property);
+
+    if (index.isValid()) {
+        action_property->setVisible(false);
+    }else{
+        action_hide->setVisible(false);
+    }
+
+    foreach(QAction *action, actions){
+        action->setShortcutVisibleInContextMenu(true);
+    }
+
+    QAction *result_action = QMenu::exec(actions, ui->listWidget_partition->mapToGlobal(pos));
+
+    if (result_action == action_hide) {
+        QString name = QFileInfo(LWI->data(LOCATION_OF_REAL_PATH).toString()).fileName();
+        qDebug() << name;
+        if(name != ""){
+            QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+            if(settings.value("partition_hide") == ""){
+                settings.setValue("partition_hide", name);
+            }else{
+                settings.setValue("partition_hide", settings.value("partition_hide").toString() + ";" + name);
+            }
+            genHomePage();
+        }
+        return;
+    }
+
+    if (result_action == action_property) {
+        QDialog *dialog = new QDialog;
+        dialog->setWindowTitle("属性");
+        QVBoxLayout *vbox = new QVBoxLayout;
+        QLabel *label = new QLabel("隐藏的分区");
+        vbox->addWidget(label);
+        QString partition_hide = settings.value("partition_hide", "").toString();
+        if (partition_hide != "") {
+            QStringList SL_partition_hide = partition_hide.split(";");
+            for (int i=0; i<SL_partition_hide.length(); i++) {
+                QCheckBox *checkBox = new QCheckBox(SL_partition_hide.at(i), this);
+                checkBox->setChecked(true);
+                connect(checkBox, static_cast<void (QCheckBox::*)(int)>(&QCheckBox::stateChanged), [=](int state){
+                    if (state == Qt::Checked) {
+                        settings.sync();
+                        QString partition_hide1 = settings.value("partition_hide", "").toString();
+                        if(partition_hide1 == ""){
+                            partition_hide1 = checkBox->text();
+                        }else{
+                            partition_hide1 = partition_hide1 + ";" + checkBox->text();
+                        }
+                        settings.setValue("partition_hide", partition_hide1);
+                    } else if (state == Qt::PartiallyChecked) {
+
+                    } else if (state == Qt::Unchecked) {
+                        settings.sync();
+                        QString partition_hide1 = settings.value("partition_hide", "").toString();
+                        QStringList SL_partition_hide1 = partition_hide1.split(";");
+                        if(SL_partition_hide1.contains(checkBox->text())){
+                            for(int j=0; j<SL_partition_hide1.length(); j++){
+                                if(SL_partition_hide1.at(j) == checkBox->text()){
+                                    SL_partition_hide1.removeAt(j);
+                                }
+                            }
+                        }
+                        QString s = "";
+                        for(int j=0; j<SL_partition_hide1.length(); j++){
+                            if(j < SL_partition_hide1.length() - 1){
+                                s += SL_partition_hide1.at(j) + ";";
+                            }else{
+                                s += SL_partition_hide1.at(j);
+                            }
+                        }
+                        settings.setValue("partition_hide", s);
+
+                    }
+                });
+                vbox->addWidget(checkBox);
+            }
+        }
+        QPushButton *pushButton_confirm = new QPushButton("确定");
+        QPushButton *pushButton_cancel = new QPushButton("取消");
+        QHBoxLayout *hbox = new QHBoxLayout;
+        hbox->addWidget(pushButton_confirm);
+        hbox->addWidget(pushButton_cancel);
+        vbox->addLayout(hbox);
+        dialog->setLayout(vbox);
+        connect(pushButton_confirm, SIGNAL(clicked()), dialog, SLOT(accept()));
+        connect(pushButton_cancel, SIGNAL(clicked()), dialog, SLOT(reject()));
+        if(dialog->exec() == QDialog::Accepted){
+            genHomePage();
+        }
+        dialog->close();
+        return;
+    }
+
+}
+
 void MainWindow::wheelEvent(QWheelEvent *e)
 {
     if(QApplication::keyboardModifiers() == Qt::ControlModifier){
@@ -1495,11 +1523,11 @@ void MainWindow::genList(QString spath)
 {
     qDebug() << "genList" << spath;
 
-    for(int i=0; i<ui->listWidgetNav->count(); i++){
-        QString LWI_path = ui->listWidgetNav->item(i)->data(LOCATION_OF_REAL_PATH).toString();
-        qDebug() << "listWidgetNav.path" << LWI_path << spath.contains(LWI_path);
+    for(int i=0; i<ui->listWidget_nav->count(); i++){
+        QString LWI_path = ui->listWidget_nav->item(i)->data(LOCATION_OF_REAL_PATH).toString();
+        //qDebug() << "listWidget_nav.path" << LWI_path << spath.contains(LWI_path);
         if(LWI_path != "/" && LWI_path != QDir::homePath() && spath.contains(LWI_path)){
-            ui->listWidgetNav->setCurrentRow(i);
+            ui->listWidget_nav->setCurrentRow(i);
             break;
         }
     }
@@ -1708,7 +1736,11 @@ void MainWindow::switchHidden()
 
 void MainWindow::refresh()
 {
-    genList(path);
+    if(path == "computer://"){
+        genHomePage();
+    }else{
+        genList(path);
+    }
 }
 
 void MainWindow::rename()
@@ -1739,7 +1771,6 @@ void MainWindow::listWidgetItemChanged(QListWidgetItem *LWI)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
     QMainWindow::closeEvent(event);
@@ -1747,7 +1778,115 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::readSettings()
 {
-    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     restoreGeometry(settings.value("geometry").toByteArray());
     restoreState(settings.value("windowState").toByteArray());
+}
+
+void MainWindow::genHomePage()
+{
+    ui->listWidget_nav->clear();
+    ui->listWidget_userdir->clear();
+    ui->listWidget_partition->clear();
+    //左侧导航列表
+    QListWidgetItem *LWI;
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-home"),"主目录");
+    LWI->setData(LOCATION_OF_REAL_PATH, QDir::homePath());
+    ui->listWidget_nav->insertItem(0, LWI);
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-desktop"),"桌面");
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+    ui->listWidget_nav->insertItem(1, LWI);
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-videos"),"视频");
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MoviesLocation));
+    ui->listWidget_nav->insertItem(2, LWI);
+    ui->listWidget_userdir->insertItem(0, LWI);
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-pictures"),"图片");
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
+    ui->listWidget_nav->insertItem(3, LWI);
+    ui->listWidget_userdir->insertItem(1, LWI);
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-music"),"音乐");
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
+    ui->listWidget_nav->insertItem(4, LWI);
+    ui->listWidget_userdir->insertItem(2, LWI);
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-documents"),"文档");
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    ui->listWidget_nav->insertItem(5, LWI);
+    ui->listWidget_userdir->insertItem(3, LWI);
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-downloads"),"下载");
+    LWI->setData(LOCATION_OF_REAL_PATH,  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+    ui->listWidget_nav->insertItem(6, LWI);
+    ui->listWidget_userdir->insertItem(4, LWI);
+    LWI = new QListWidgetItem(QIcon::fromTheme("user-trash"),"回收站");
+    LWI->setData(LOCATION_OF_REAL_PATH, QDir::homePath() + "/.local/share/Trash/files");
+    ui->listWidget_nav->insertItem(7, LWI);
+    LWI = new QListWidgetItem(style()->standardIcon(QStyle::SP_ComputerIcon),"计算机");
+    LWI->setData(LOCATION_OF_REAL_PATH, "computer://");
+    ui->listWidget_nav->insertItem(8, LWI);
+    LWI = new QListWidgetItem(style()->standardIcon(QStyle::SP_DriveHDIcon),"系统盘");
+    LWI->setData(LOCATION_OF_REAL_PATH, "/");
+    ui->listWidget_nav->insertItem(9, LWI);
+    //connect(ui->listWidget_nav, SIGNAL(clicked(QModelIndex)), this, SLOT(nav(QModelIndex)));
+    connect(ui->listWidget_nav, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(nav(QListWidgetItem*)));
+
+    //首页
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-videos"),"视频");
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MoviesLocation));
+    ui->listWidget_userdir->insertItem(0, LWI);
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-pictures"),"图片");
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
+    ui->listWidget_userdir->insertItem(1, LWI);
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-music"),"音乐");
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
+    ui->listWidget_userdir->insertItem(2, LWI);
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-documents"),"文档");
+    LWI->setData(LOCATION_OF_REAL_PATH, QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    ui->listWidget_userdir->insertItem(3, LWI);
+    LWI = new QListWidgetItem(QIcon::fromTheme("folder-downloads"),"下载");
+    LWI->setData(LOCATION_OF_REAL_PATH,  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+    ui->listWidget_userdir->insertItem(4, LWI);
+    connect(ui->listWidget_userdir, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(nav(QListWidgetItem*)));
+    connect(ui->listWidget_partition, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(nav(QListWidgetItem*)));
+
+    //系统盘
+    QStorageInfo storage("/");
+    QString mountPath = storage.rootPath();
+    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘");
+    LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
+    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘\n" + BS(storage.bytesFree()) + " / " + BS(storage.bytesTotal()));
+    LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
+    ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
+    //获取挂载路径
+    settings.sync();
+    QString partition_hide = settings.value("partition_hide", "").toString();
+    qDebug() << partition_hide;
+    foreach (const QStorageInfo &storage, QStorageInfo::mountedVolumes()) {
+        if (storage.isValid() && storage.isReady()) {
+            //qDebug() << "mount" << storage.name();
+            QString name = storage.name();
+            if(name != ""){
+                bool isHidePartition = false;
+                if(partition_hide != ""){
+                    QStringList SL_partition_hide = partition_hide.split(";");
+                    for(int i=0; i<SL_partition_hide.length(); i++){
+                        if(name == SL_partition_hide.at(i)){
+                            isHidePartition = true;
+                        }
+                    }
+                }
+                if(!isHidePartition){
+                    QString mountPath = storage.rootPath();
+                    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name);
+                    LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
+                    ui->listWidget_nav->insertItem(ui->listWidget_nav->count(), LWI);
+                    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name + "\n" + BS(storage.bytesFree()) + " / " + BS(storage.bytesTotal()));
+                    LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
+                    ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
+                }
+            }
+        }
+    }
+
+    ui->listWidget_nav->setCurrentRow(8);
+    path = "computer://";
+    lineEditLocation->setText(path);
+    ui->listWidget->hide();
 }

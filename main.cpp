@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
     }
     writeLog(log);
 
-
     MainWindow w;
     w.show();
     return a.exec();
