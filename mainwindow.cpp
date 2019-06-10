@@ -366,25 +366,25 @@ void MainWindow::customContextMenu(const QPoint &pos)
     openwithImage->addAction(HTYIV);
 
     action_copy = new QAction(this);
-    action_copy->setText("复制");
+    action_copy->setText("复制(&C)");
     action_copy->setIcon(QIcon::fromTheme("edit-copy"));
     action_copy->setShortcut(QKeySequence(Qt::Key_C));
     actions.append(action_copy);
 
     action_cut = new QAction(this);
-    action_cut->setText("剪切");
+    action_cut->setText("剪切(&X)");
     action_cut->setIcon(QIcon::fromTheme("edit-cut"));
     action_cut->setShortcut(QKeySequence(Qt::Key_X));
     actions.append(action_cut);
 
     action_paste = new QAction(this);
-    action_paste->setText("粘贴");
+    action_paste->setText("粘贴(&V)");
     action_paste->setIcon(QIcon::fromTheme("edit-paste"));
     action_paste->setShortcut(QKeySequence(Qt::Key_V));
     actions.append(action_paste);
 
     action_rename = new QAction(this);
-    action_rename->setText("重命名");
+    action_rename->setText("重命名(&M)");
     action_rename->setShortcut(QKeySequence(Qt::Key_M));
     actions.append(action_rename);
 
@@ -441,7 +441,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
     actions.append(action_setWallpaper);
 
     action_property = new QAction(this);
-    action_property->setText("属性");
+    action_property->setText("属性(&R)");
     action_property->setIcon(QIcon::fromTheme("document-properties"));
     action_property->setShortcut(QKeySequence(Qt::Key_R));
     actions.append(action_property);
@@ -525,9 +525,9 @@ void MainWindow::customContextMenu(const QPoint &pos)
     if (QFileInfo(filepath).isFile()) action_terminal->setVisible(false);
 
     //在菜单中显示快捷键
-    foreach(QAction *action, actions){
-        action->setShortcutVisibleInContextMenu(true);
-    }
+//    foreach(QAction *action, actions){
+//        action->setShortcutVisibleInContextMenu(true);
+//    }
 
     QAction *result_action = QMenu::exec(actions, ui->listWidget->mapToGlobal(pos));
 
