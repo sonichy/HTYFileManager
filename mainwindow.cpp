@@ -21,6 +21,7 @@
 #include <QImageReader>
 #include <QStorageInfo>
 #include <QCheckBox>
+#include <QDesktopServices>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -214,40 +215,13 @@ void MainWindow::open(QString newpath)
         QProcess *proc = new QProcess;
         QString MIME = QMimeDatabase().mimeTypeForFile(newpath).name();
         qDebug() << MIME;
-        QString filetype = MIME.left(MIME.indexOf("/"));
-        if (filetype == "image") {
-            proc->start("deepin-image-viewer \"" + newpath + "\"");
-            return;
-        }
-        if (filetype == "video" || MIME == "application/vnd.rn-realmedia") {
-            proc->start("deepin-movie \"" + newpath + "\"");
-            return;
-        }
-        if (filetype == "audio") {
-            proc->start("deepin-music \"" + newpath + "\"");
-            return;
-        }
-        if (MIME == "text/plain" || MIME == "application/javascript") {
-            proc->start("gedit \"" + newpath + "\"");
-            return;
-        }
-        if (MIME == "text/markdown") {
-            proc->start("retext \"" + newpath + "\"");
-            return;
-        }
-        if (MIME == "text/html") {
-            proc->start("google-chrome-stable \"" + newpath + "\"");
-            return;
-        }
-        if (MIME == "application/vnd.nokia.qt.qmakeprofile") {
-            proc->start("qtcreator \"" + newpath + "\"");
-            return;
-        }
         if (MIME == "application/x-desktop") {
             QString sexec = readSettings(newpath, "Desktop Entry", "Exec");
             proc->setWorkingDirectory(readSettings(newpath, "Desktop Entry", "Path"));
             qDebug() << sexec;
             proc->start(sexec);
+        }else{
+            QDesktopServices::openUrl(QUrl(newpath));
         }
     }
 }
@@ -328,7 +302,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
     qDebug() << MIME;
     QString filetype = MIME.left(MIME.indexOf("/"));
 
-    QList<QAction *> actions;
+    QList<QAction*> actions;
     QAction *action_openwith = new QAction(this);
     action_openwith->setText("打开方式");
     actions.append(action_openwith);
