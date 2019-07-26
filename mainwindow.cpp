@@ -1864,3 +1864,11 @@ void MainWindow::genHomePage()
     lineEditLocation->setText(path);
     ui->listWidget->hide();
 }
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event);
+    QList<QListWidgetItem*> LWIs = ui->listWidget->selectedItems();
+    if(LWIs.size() > 0)
+        ui->listWidget->scrollToItem(LWIs.at(0), QAbstractItemView::PositionAtCenter);
+}

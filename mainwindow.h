@@ -54,6 +54,7 @@ private:
 protected:
     void wheelEvent(QWheelEvent*);
     void closeEvent(QCloseEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 private slots:
     void on_action_changelog_triggered();
