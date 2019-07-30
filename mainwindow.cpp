@@ -22,6 +22,7 @@
 #include <QStorageInfo>
 #include <QCheckBox>
 #include <QDesktopServices>
+#include <QPainter>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -82,13 +83,17 @@ MainWindow::MainWindow(QWidget *parent) :
     shortCutEnterTableWidget->setObjectName("shortCutEnterTableWidget");
     connect(shortCutEnterTableWidget, SIGNAL(activated()),this, SLOT(enterOpen()));
 */
-    connect(new QShortcut(QKeySequence(Qt::Key_Backspace),this), SIGNAL(activated()),this, SLOT(on_action_back_triggered()));
-    connect(new QShortcut(QKeySequence(Qt::Key_Delete),this), SIGNAL(activated()),this, SLOT(trashDelete()));
-    connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_C),this), SIGNAL(activated()),this, SLOT(copy()));
-    connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_V),this), SIGNAL(activated()),this, SLOT(paste()));
-    connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_H),this), SIGNAL(activated()),this, SLOT(switchHidden()));
-    connect(new QShortcut(QKeySequence(Qt::Key_F2),this), SIGNAL(activated()),this, SLOT(rename()));
-    connect(new QShortcut(QKeySequence(Qt::Key_F5),this), SIGNAL(activated()),this, SLOT(refresh()));
+    connect(new QShortcut(QKeySequence(Qt::Key_Backspace), this), SIGNAL(activated()), this, SLOT(on_action_back_triggered()));
+    connect(new QShortcut(QKeySequence(Qt::Key_Delete), this), SIGNAL(activated()), this, SLOT(trashDelete()));
+    connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_C), this), SIGNAL(activated()), this, SLOT(copy()));
+    connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_V), this), SIGNAL(activated()), this, SLOT(paste()));
+    connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_H), this), SIGNAL(activated()), this, SLOT(switchHidden()));
+    connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Plus), this), SIGNAL(activated()), this, SLOT(zoomIn()));
+    connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Minus), this), SIGNAL(activated()), this, SLOT(zoomOut()));
+    connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_0), this), SIGNAL(activated()), this, SLOT(zoom1()));
+    connect(new QShortcut(QKeySequence(Qt::Key_F2), this), SIGNAL(activated()), this, SLOT(rename()));
+    connect(new QShortcut(QKeySequence(Qt::Key_F5), this), SIGNAL(activated()), this, SLOT(refresh()));
+
 
     QStringList header;
     header << "名称" << "修改时间" << "大小" << "类型" << "歌名" << "歌手" << "专辑" << "年代" << "注释";
@@ -142,7 +147,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.7\n2019-07\n简化打开文件。\nresize自动滚动到选中文件的第一个。\n修复回收站文件还原没有刷新。\n使用Qt内部方法创建链接，识别链接并绘制链接角标。\n增加缩放快捷键。\n\n2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -656,6 +661,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
         if (QFile::copy(filepath, spath)) {
             QFile::remove(filepath);
             QFile::remove(QDir::homePath() + "/.local/share/Trash/info/" + QFileInfo(filepath).fileName() + ".trashinfo");
+            genList(path);
         }
         return;
     }
@@ -940,13 +946,10 @@ void MainWindow::customContextMenu(const QPoint &pos)
     }
 
     if (result_action == action_createLink) {
-        QString dest = QFileInfo(filepath).absolutePath() + "/快捷方式" + QFileInfo(filepath).fileName();
-        QString sexec = "ln -s " + filepath + " " + dest;
-        qDebug() << sexec;
-        QProcess *process = new QProcess;
-        process->start(sexec);
-        process->waitForFinished();
-        genList(QFileInfo(filepath).absolutePath());
+        QString dest = QFileInfo(filepath).absolutePath() + "/快捷方式-" + QFileInfo(filepath).fileName();
+        QFile file(filepath);
+        if(file.link(dest))
+            genList(QFileInfo(filepath).absolutePath());
         return;
     }
 
@@ -1292,18 +1295,38 @@ void MainWindow::wheelEvent(QWheelEvent *e)
     if(QApplication::keyboardModifiers() == Qt::ControlModifier){
         qDebug() << ui->listWidget->iconSize() << ui->listWidget->gridSize();
         if(e->delta() > 0){
-            if(ui->listWidget->gridSize().width()<400){
-                ui->listWidget->setIconSize(QSize(ui->listWidget->iconSize().width()+30, ui->listWidget->iconSize().height()+30));
-                //ui->listWidget->setGridSize(QSize(ui->listWidget->gridSize().width()+20, ui->listWidget->gridSize().height()+20));
-                ui->listWidget->setGridSize(2*ui->listWidget->iconSize());
-            }
+            zoomIn();
         }else{
-            if(ui->listWidget->gridSize().width()>80){
-                ui->listWidget->setIconSize(QSize(ui->listWidget->iconSize().width()-30, ui->listWidget->iconSize().height()-30));
-                //ui->listWidget->setGridSize(QSize(ui->listWidget->gridSize().width()-20, ui->listWidget->gridSize().height()-20));
-                ui->listWidget->setGridSize(2*ui->listWidget->iconSize());
-            }
+            zoomOut();
         }
+    }
+}
+
+void MainWindow::zoomIn()
+{
+    if(!ui->listWidget->isHidden())
+        if(ui->listWidget->gridSize().width() < 400){
+            ui->listWidget->setIconSize(QSize(ui->listWidget->iconSize().width()+30, ui->listWidget->iconSize().height()+30));
+            //ui->listWidget->setGridSize(QSize(ui->listWidget->gridSize().width()+20, ui->listWidget->gridSize().height()+20));
+            ui->listWidget->setGridSize(2*ui->listWidget->iconSize());
+        }
+}
+
+void MainWindow::zoomOut()
+{
+    if(!ui->listWidget->isHidden())
+        if(ui->listWidget->gridSize().width() > 80){
+            ui->listWidget->setIconSize(QSize(ui->listWidget->iconSize().width()-30, ui->listWidget->iconSize().height()-30));
+            //ui->listWidget->setGridSize(QSize(ui->listWidget->gridSize().width()-20, ui->listWidget->gridSize().height()-20));
+            ui->listWidget->setGridSize(2*ui->listWidget->iconSize());
+        }
+}
+
+void MainWindow::zoom1()
+{
+    if(!ui->listWidget->isHidden()){
+        ui->listWidget->setIconSize(QSize(50, 50));
+        ui->listWidget->setGridSize(QSize(100, 100));
     }
 }
 
@@ -1534,7 +1557,7 @@ void MainWindow::genList(QString spath)
             sname = readSettings(fileInfo.absoluteFilePath(), "Desktop Entry", "Name");
             QString sicon = readSettings(fileInfo.absoluteFilePath(), "Desktop Entry", "Icon");
             //qDebug() << sicon;
-            if(sicon=="")
+            if(sicon == "")
                 sicon = "applications-system-symbolic";
             if (QFileInfo(sicon).isFile()) {
                 icon = QIcon(sicon);
@@ -1544,8 +1567,9 @@ void MainWindow::genList(QString spath)
                 icon = QIcon::fromTheme(sicon);
             }
         } else if (MIME == "inode/directory") {
-            QFileIconProvider iconProvider;
-            icon = iconProvider.icon(fileInfo);
+            //QFileIconProvider iconProvider;
+            //icon = iconProvider.icon(fileInfo);
+            icon = QIcon::fromTheme("folder");
         } else if (fileInfo.suffix() == "mp3") {
             QFile file(fileInfo.absoluteFilePath());
             file.open(QIODevice::ReadOnly);
@@ -1618,10 +1642,17 @@ void MainWindow::genList(QString spath)
                 Comment = TC->toUnicode(file.read(28));
             }
         } else {
-            icon = QIcon::fromTheme(MIME.replace("/","-"));
+            icon = QIcon::fromTheme(MIME.replace("/", "-"));
             if(icon.isNull()){
                 icon = QIcon::fromTheme("unknown");
             }
+        }
+
+        if(fileInfo.isSymLink()){
+            QPixmap pixmap = icon.pixmap(200, 200, QIcon::Normal, QIcon::On);
+            QPainter painter(&pixmap);
+            painter.drawPixmap(100, 100, QIcon::fromTheme("emblem-symbolic-link").pixmap(100, 100, QIcon::Normal, QIcon::On));
+            icon = QIcon(pixmap);
         }
 
         QListWidgetItem *LWI;
@@ -1631,15 +1662,15 @@ void MainWindow::genList(QString spath)
         ui->listWidget->insertItem(i, LWI);
         ui->statusBar->showMessage("正在预览：" + QString::number(i) + "/" + QString::number(list.size()));
         ui->tableWidget ->insertRow(i);
-        ui->tableWidget->setItem(i,0,new QTableWidgetItem(QIcon(icon),sname));
-        ui->tableWidget->setItem(i,1,new QTableWidgetItem(fileInfo.lastModified().toString("yyyy/MM/dd HH:mm:ss")));
-        ui->tableWidget->setItem(i,2,new QTableWidgetItem(BS(fileInfo.size())));
-        ui->tableWidget->setItem(i,3,new QTableWidgetItem(QMimeDatabase().mimeTypeForFile(fileInfo.filePath()).name()));
-        ui->tableWidget->setItem(i,4,new QTableWidgetItem(Title));
-        ui->tableWidget->setItem(i,5,new QTableWidgetItem(Artist));
-        ui->tableWidget->setItem(i,6,new QTableWidgetItem(Album));
-        ui->tableWidget->setItem(i,7,new QTableWidgetItem(Year));
-        ui->tableWidget->setItem(i,8,new QTableWidgetItem(Comment));
+        ui->tableWidget->setItem(i, 0, new QTableWidgetItem(QIcon(icon),sname));
+        ui->tableWidget->setItem(i, 1, new QTableWidgetItem(fileInfo.lastModified().toString("yyyy/MM/dd HH:mm:ss")));
+        ui->tableWidget->setItem(i, 2, new QTableWidgetItem(BS(fileInfo.size())));
+        ui->tableWidget->setItem(i, 3, new QTableWidgetItem(QMimeDatabase().mimeTypeForFile(fileInfo.filePath()).name()));
+        ui->tableWidget->setItem(i, 4, new QTableWidgetItem(Title));
+        ui->tableWidget->setItem(i, 5, new QTableWidgetItem(Artist));
+        ui->tableWidget->setItem(i, 6, new QTableWidgetItem(Album));
+        ui->tableWidget->setItem(i, 7, new QTableWidgetItem(Year));
+        ui->tableWidget->setItem(i, 8, new QTableWidgetItem(Comment));
     }
     ui->tableWidget->resizeColumnsToContents();
     iconPreview(0);

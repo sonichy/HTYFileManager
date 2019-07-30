@@ -85,6 +85,9 @@ private slots:
     void refresh();
     void rename();
     void listWidgetItemChanged(QListWidgetItem *LWI);
+    void zoomIn();
+    void zoomOut();
+    void zoom1();
 
 };
 
