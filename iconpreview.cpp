@@ -17,7 +17,7 @@ QIcon IconPreview::getIcon(QString path)
     QFileInfo FI(path);
     if(FI.isSymLink()){
         QPainter painter(&pixmap);
-        painter.drawPixmap(150, 150, QIcon::fromTheme("emblem-symbolic-link").pixmap(50, 50, QIcon::Normal, QIcon::On));
+        painter.drawPixmap(100, 100, QIcon::fromTheme("emblem-symbolic-link").pixmap(100, 100, QIcon::Normal, QIcon::On));
     }
     return QIcon(pixmap);
 }

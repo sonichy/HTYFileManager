@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     AG->addAction(ui->action_list);
 
     dirTrash = QDir::homePath() + "/.local/share/Trash/files";
-    dirTrashInfo = QDir::homePath() + "/.local/share/Trash/info/";
+    dirTrashInfo = QDir::homePath() + "/.local/share/Trash/info";
     lineEditLocation = new QLineEdit(path, this);
     ui->mainToolBar->addWidget(lineEditLocation);
     connect(lineEditLocation, SIGNAL(returnPressed()), this, SLOT(lineEditLocationReturnPressed()));
@@ -98,11 +98,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QStringList header;
     header << "名称" << "修改时间" << "大小" << "类型" << "歌名" << "歌手" << "专辑" << "年代" << "注释";
     ui->tableWidget->setHorizontalHeaderLabels(header);
-    connect(ui->tableWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(tableWidgetDoubleClicked(QModelIndex)));
-    connect(ui->tableWidget, SIGNAL(customContextMenuRequested(QPoint)),this, SLOT(viewContextMenuTV(QPoint)));
+    connect(ui->tableWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(tableWidgetDoubleClicked(QModelIndex)));
+    connect(ui->tableWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(viewContextMenuTV(QPoint)));
 
     dialogPD = new PropertyDesktop(this);
-    connect(dialogPD,SIGNAL(accepted()),dialogPD,SLOT(saveDesktop()));
+    connect(dialogPD, SIGNAL(accepted()), dialogPD, SLOT(saveDesktop()));
 
     sortMenu = new QMenu(this);
     action_sortName = new QAction(sortMenu);
@@ -225,7 +225,9 @@ void MainWindow::open(QString newpath)
             proc->setWorkingDirectory(readSettings(newpath, "Desktop Entry", "Path"));
             qDebug() << sexec;
             proc->start(sexec);
-        }else{
+        } else if (MIME == "application/vnd.appimage") {
+            proc->start(newpath);
+        } else {
             QDesktopServices::openUrl(QUrl(newpath));
         }
     }
@@ -422,7 +424,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
     action_property = new QAction(this);
     action_property->setText("属性(&R)");
     action_property->setIcon(QIcon::fromTheme("document-properties"));
-    action_property->setShortcut(QKeySequence(Qt::Key_R));
+    //action_property->setShortcut(QKeySequence(Qt::Key_R));
     actions.append(action_property);
 
     action_terminal = new QAction(this);
@@ -469,7 +471,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
         action_setWallpaper->setVisible(false);
     }
 
-    //qDebug() << path << dirTrash;
+    qDebug() << path << dirTrash;
     if (path == dirTrash) {
         action_openwith->setVisible(false);
         action_paste->setVisible(false);
@@ -481,6 +483,8 @@ void MainWindow::customContextMenu(const QPoint &pos)
         action_rename->setVisible(false);
         action_newfolder->setVisible(false);
         action_terminal->setVisible(false);
+        action_setWallpaper->setVisible(false);
+        action_createLink->setVisible(false);
         if (index.isValid()) action_emptyTrash->setVisible(false);
     } else {
         action_delete->setVisible(false);
@@ -502,11 +506,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
         action_createLink->setVisible(false);
     }
     if (QFileInfo(filepath).isFile()) action_terminal->setVisible(false);
-
-    //在菜单中显示快捷键
-//    foreach(QAction *action, actions){
-//        action->setShortcutVisibleInContextMenu(true);
-//    }
+    if (QFileInfo(filepath).isSymLink()) action_createLink->setVisible(false);
 
     QAction *result_action = QMenu::exec(actions, ui->listWidget->mapToGlobal(pos));
 
@@ -572,9 +572,8 @@ void MainWindow::customContextMenu(const QPoint &pos)
     }
 
     if (result_action == action_cut) {
-        qDebug() << "cut" << source;
-        source = filepath;
         cut = 1;
+        copy();
         return;
     }
 
@@ -735,17 +734,21 @@ void MainWindow::customContextMenu(const QPoint &pos)
                 dialogPD->show();
             } else {
                 qDebug() << "property" << filepath;
-                QMessageBox MBox(QMessageBox::NoIcon, "属性", "文件名：\t" + QFileInfo(filepath).fileName() + "\n大小：\t" + BS(QFileInfo(filepath).size()) + "\n类型：\t" + QMimeDatabase().mimeTypeForFile(filepath).name() + "\n访问时间：\t" + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
-                if (filetype == "image") {
-                    //MBox.setIconPixmap(QPixmap(filepath).scaled(200,200, Qt::KeepAspectRatio));
-                    QImageReader reader(filepath);
-                    reader.setAutoTransform(true);
-                    QImage image = reader.read();
-                    MBox.setIconPixmap(QPixmap::fromImage(image.scaled(200,200, Qt::KeepAspectRatio)));
-                } else {
-                    QIcon icon = ui->listWidget->currentItem()->icon();
-                    MBox.setIconPixmap(icon.pixmap(QSize(150,150)));
+                QString symLinkTarget = "";
+                if(QFileInfo(filepath).isSymLink()){
+                    symLinkTarget = "链接路径：\t" + QFileInfo(filepath).symLinkTarget() + "\n";
                 }
+                QMessageBox MBox(QMessageBox::NoIcon, "属性", symLinkTarget + "文件名：\t" + QFileInfo(filepath).fileName() + "\n大小：\t" + BS(QFileInfo(filepath).size()) + "\n类型：\t" + QMimeDatabase().mimeTypeForFile(filepath).name() + "\n访问时间：\t" + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
+                //                if (filetype == "image") {//缩略图已生成，无需再读取
+                //                    //MBox.setIconPixmap(QPixmap(filepath).scaled(200,200, Qt::KeepAspectRatio));
+                //                    QImageReader reader(filepath);
+                //                    reader.setAutoTransform(true);
+                //                    QImage image = reader.read();
+                //                    MBox.setIconPixmap(QPixmap::fromImage(image.scaled(200,200, Qt::KeepAspectRatio)));
+                //                } else {
+                QIcon icon = ui->listWidget->currentItem()->icon();
+                MBox.setIconPixmap(icon.pixmap(QSize(150,150)));
+                //                }
                 MBox.exec();
             }
         }else{
@@ -837,11 +840,9 @@ void MainWindow::customContextMenu(const QPoint &pos)
     }
 
     if (result_action == action_copyto) {
-        if (dir == "") {
-            dir = QFileDialog::getExistingDirectory(this, "选择路径", "/home", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-        } else {
-            dir = QFileDialog::getExistingDirectory(this, "选择路径", dir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-        }
+        if (dir == "") dir = "/home";
+        dir = QFileDialog::getExistingDirectory(this, "选择路径", dir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
         if (dir != "") {
             QString newName = dir + "/" + QFileInfo(filepath).fileName();
             qDebug() << "copyto:" << filepath << newName;
@@ -1380,32 +1381,57 @@ void MainWindow::trashFiles()
         QString filepath = modelIndex.data(LOCATION_OF_REAL_PATH).toString();
         qDebug() << "trash" << filepath;
         QString MIME = QMimeDatabase().mimeTypeForFile(filepath).name();
-        if (MIME == "inode/directory") {
-            QDir *dir = new QDir;
-            if (!dir->rmdir(filepath)) {
-                QMessageBox::critical(this,"错误","无法删除文件夹 " + filepath);
-            }
-        } else {
-            QString newName = QDir::homePath() + "/.local/share/Trash/files/" + QFileInfo(filepath).fileName();
-            if (QFile::copy(filepath, newName)) {
-                QString pathinfo = QDir::homePath() + "/.local/share/Trash/info/" + QFileInfo(filepath).fileName() + ".trashinfo";
-                QFile file(pathinfo);
-                if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-                    QTextStream stream(&file);
+        QString newName = dirTrash + "/" + QFileInfo(filepath).fileName();
+        if(QFileInfo(filepath).isSymLink()){
+            QFile file(newName);
+            bool b = file.link(QFileInfo(filepath).symLinkTarget());
+            qDebug() << newName << QFileInfo(filepath).symLinkTarget() << b;
+            if (b) {
+                QString pathinfo = dirTrashInfo + "/" + QFileInfo(filepath).fileName() + ".trashinfo";
+                QFile filei(pathinfo);
+                if (filei.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                    QTextStream stream(&filei);
                     QDateTime time;
                     time = QDateTime::currentDateTime();
                     stream << "[Trash Info]\nPath=" + filepath + "\nDeletionDate=" + time.toString("yyyy-MM-ddThh:mm:ss");
-                    file.close();
+                    filei.close();
                 }
-                if (!QFile::remove(filepath)) {
-                    QMessageBox::critical(NULL, "错误", "无法删除文件 " + filepath);
+                //if (!QFile::remove(filepath)) {
+                //   QMessageBox::critical(NULL, "错误", "无法删除链接 " + filepath);
+                //}
+                genList(path);
+            } else {
+                QMessageBox::critical(this, "错误", "无法在回收站创建链接\n" + file.errorString());
+            }
+        }else{
+            if (MIME == "inode/directory") {
+                QDir *dir = new QDir;
+                if (dir->rmdir(filepath)) {
+                    genList(path);
+                } else {
+                    QMessageBox::critical(this, "错误", "无法删除文件夹\n" + filepath);
                 }
             } else {
-                QMessageBox::critical(NULL, "错误", "无法移动 "+filepath+" 到回收站");
+                if (QFile::copy(filepath, newName)) {
+                    genList(path);
+                    QString pathinfo = QDir::homePath() + "/.local/share/Trash/info/" + QFileInfo(filepath).fileName() + ".trashinfo";
+                    QFile file(pathinfo);
+                    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                        QTextStream stream(&file);
+                        QDateTime time;
+                        time = QDateTime::currentDateTime();
+                        stream << "[Trash Info]\nPath=" + filepath + "\nDeletionDate=" + time.toString("yyyy-MM-ddThh:mm:ss");
+                        file.close();
+                    }
+                    if (!QFile::remove(filepath)) {
+                        QMessageBox::critical(NULL, "错误", "无法删除文件 " + filepath);
+                    }
+                } else {
+                    QMessageBox::critical(NULL, "错误", "无法移动 " + filepath + " 到回收站");
+                }
             }
         }
     }
-    genList(path);
 }
 
 void MainWindow::deleteFiles()
@@ -1418,11 +1444,11 @@ void MainWindow::deleteFiles()
         if (MIME == "inode/directory") {
             QDir *dir = new QDir;
             if (!dir->rmdir(filepath)) {
-                QMessageBox::critical(this,"错误","无法删除文件夹 " + filepath);
+                QMessageBox::critical(this, "错误", "无法删除文件夹 " + filepath);
             }
         } else {
             if (QFile::remove(filepath)) {
-                if (QFileInfo(filepath).absolutePath() == dirTrash) QFile::remove(QDir::homePath() + "/.local/share/Trash/info/" + QFileInfo(filepath).fileName() + ".trashinfo");
+                if (QFileInfo(filepath).absolutePath() == dirTrash) QFile::remove(dirTrashInfo + "/" + QFileInfo(filepath).fileName() + ".trashinfo");
             } else {
                 QMessageBox::critical(NULL, "错误", "无法删除文件 " + filepath);
             }
@@ -1464,12 +1490,11 @@ void MainWindow::trashDelete()
 void MainWindow::copy()
 {
     qDebug() << "copy";
-    //pathSource = path;
-    //modelIndexList = ui->listWidget->selectionModel()->selectedIndexes();//只保存了数字，切换目录粘贴不行。
     QList<QListWidgetItem*> selected_items = ui->listWidget->selectedItems();
     SL_selected_files.clear();
     for(int i=0; i<selected_items.length(); i++){
         QString fp = selected_items.at(i)->data(LOCATION_OF_REAL_PATH).toString();
+        //QFileInfo fileInfo = selected_items.at(i)->data(FILE_INFO);
         qDebug() << "copy:add(" << fp << ")";
         SL_selected_files.append(fp);
     }
@@ -1478,40 +1503,55 @@ void MainWindow::copy()
 void MainWindow::paste()
 {
     qDebug() << "paste";
-    //foreach(QModelIndex modelIndex, modelIndexList){
     for(int i=0; i<SL_selected_files.length(); i++){
-        //source = modelIndex.data(LOCATION_OF_REAL_PATH).toString();
         source = SL_selected_files.at(i);
         QString newName = path + "/" + QFileInfo(source).fileName();
-        qDebug() << "paste" << source << newName;
-        if(!QFile::copy(source, newName)){
-            QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 " + newName + " ?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Yes);
-            if(SB == QMessageBox::Yes){
-                if(!QFile::remove(newName)){
-                    QMessageBox::critical(NULL, "错误", "无法覆盖新文件 " + newName);
-                }
-                if(!QFile::copy(source, newName)){
-                    QMessageBox::critical(NULL, "错误", "粘贴失败！");
-                }
-            }else if(SB == QMessageBox::No){
-                newName =  path + "/副本-" + QFileInfo(newName).fileName();
-                qDebug() << "副本" << source << newName;
-                if(!QFile::copy(source, newName)){
-                    QMessageBox::critical(NULL, "错误", "粘贴失败！");
-                }
+        qDebug() << "paste" << source << newName << "symLink(" << QFileInfo(source).isSymLink() << ")";
+        if(QFileInfo(source).isSymLink()){
+            QString symLinkTarget = QFileInfo(source).symLinkTarget();
+            QFile file(symLinkTarget);
+            if(!file.link(newName)){
+                QMessageBox::critical(NULL, "错误", symLinkTarget + "\n创建链接\n" + newName + "\n失败！");
+                return;
             }
-        }else{
-            // 修改文件时间
-            QFile file(newName);
-            qDebug() << "修改粘贴文件时间为原文件时间" << file.setFileTime(QFileInfo(source).lastModified(), QFileDevice::FileModificationTime);
-
-            if(cut){
+            if(cut){//如果是剪切
                 if(!QFile::remove(source)){
                     QMessageBox::critical(NULL, "错误", "无法删除剪切的源文件 " + source, QMessageBox::Ok);
+                    return;
                 }
             }
-            cut=0;
+            cut = 0;
             genList(path);
+        }else{
+            if(!QFile::copy(source, newName)){
+                QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 " + newName + " ?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Yes);
+                if(SB == QMessageBox::Yes){
+                    if(!QFile::remove(newName)){
+                        QMessageBox::critical(NULL, "错误", "无法覆盖新文件 " + newName);
+                    }
+                    if(!QFile::copy(source, newName)){
+                        QMessageBox::critical(NULL, "错误", "粘贴失败！");
+                    }
+                }else if(SB == QMessageBox::No){
+                    newName =  path + "/副本-" + QFileInfo(newName).fileName();
+                    qDebug() << "副本" << source << newName;
+                    if(!QFile::copy(source, newName)){
+                        QMessageBox::critical(NULL, "错误", "粘贴失败！");
+                    }
+                }
+            }else{
+                // 修改文件时间
+                QFile file(newName);
+                qDebug() << "修改粘贴文件时间为原文件时间" << file.setFileTime(QFileInfo(source).lastModified(), QFileDevice::FileModificationTime);
+
+                if(cut){//如果是剪切
+                    if(!QFile::remove(source)){
+                        QMessageBox::critical(NULL, "错误", "无法删除剪切的源文件 " + source, QMessageBox::Ok);
+                    }
+                }
+                cut=0;
+                genList(path);
+            }
         }
     }
 }
@@ -1537,7 +1577,7 @@ void MainWindow::genList(QString spath)
     // 读取文件夹下所有文件 https://www.cnblogs.com/findumars/p/6006129.html
     QDir dir(spath);
     if(isShowHidden){
-        dir.setFilter(QDir::Dirs | QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot);
+        dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
     }else{
         dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     }
@@ -1561,14 +1601,10 @@ void MainWindow::genList(QString spath)
                 sicon = "applications-system-symbolic";
             if (QFileInfo(sicon).isFile()) {
                 icon = QIcon(sicon);
-                //IconPreview *iconPreview = new IconPreview();
-                //icon = iconPreview->getIcon(sicon);
             } else {
                 icon = QIcon::fromTheme(sicon);
             }
         } else if (MIME == "inode/directory") {
-            //QFileIconProvider iconProvider;
-            //icon = iconProvider.icon(fileInfo);
             icon = QIcon::fromTheme("folder");
         } else if (fileInfo.suffix() == "mp3") {
             QFile file(fileInfo.absoluteFilePath());
@@ -1658,6 +1694,7 @@ void MainWindow::genList(QString spath)
         QListWidgetItem *LWI;
         LWI = new QListWidgetItem(icon, sname);
         LWI->setData(LOCATION_OF_REAL_PATH, fileInfo.absoluteFilePath());
+        //LWI->setData(FILE_INFO, fileInfo);
         LWI->setSizeHint(QSize(100,100));
         ui->listWidget->insertItem(i, LWI);
         ui->statusBar->showMessage("正在预览：" + QString::number(i) + "/" + QString::number(list.size()));

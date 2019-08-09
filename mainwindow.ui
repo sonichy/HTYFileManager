@@ -160,7 +160,7 @@ padding-left:5px;</string>
             <enum>QListView::Adjust</enum>
            </property>
            <property name="spacing">
-            <number>10</number>
+            <number>50</number>
            </property>
            <property name="gridSize">
             <size>
@@ -202,7 +202,7 @@ padding-left:5px;</string>
            <enum>QListView::Adjust</enum>
           </property>
           <property name="spacing">
-           <number>10</number>
+           <number>50</number>
           </property>
           <property name="gridSize">
            <size>

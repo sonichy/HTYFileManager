@@ -37,6 +37,7 @@ private:
     QModelIndexList modelIndexList;
     //QList<QListWidgetItem*> selected_files;
     QStringList SL_selected_files;
+    //QFileInfoList SL_selected_files;
     void trashFiles();
     void deleteFiles();
     QString readSettings(QString path, QString group, QString key);
