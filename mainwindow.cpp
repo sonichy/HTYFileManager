@@ -1,3 +1,5 @@
+#include "form_disk.h"
+#include "ui_form_disk.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "iconpreview.h"
@@ -147,7 +149,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.7\n2019-07\n简化打开文件。\nresize自动滚动到选中文件的第一个。\n修复回收站文件还原没有刷新。\n使用Qt内部方法创建链接，识别链接并绘制链接角标。\n增加缩放快捷键。\n\n2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.7\n2019-09\n自定义分区控件，增加分区进度条。\n2019-07\n简化打开文件。\nresize自动滚动到选中文件的第一个。\n修复回收站文件还原没有刷新。\n使用Qt内部方法创建链接，识别链接并绘制链接角标。\n增加缩放快捷键。\n\n2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -240,7 +242,8 @@ void MainWindow::listWidgetItemClicked(QListWidgetItem *item)
     //qDebug() << index.data().toString();
     qDebug() << "listWidgetItemClicked";
     QString filepath = list.at(ui->listWidget->currentRow()).absoluteFilePath();
-    QString MIME = QMimeDatabase().mimeTypeForFile(filepath).name();
+    //QString MIME = QMimeDatabase().mimeTypeForFile(filepath).name();
+    QString MIME = QMimeDatabase().mimeTypeForFile(filepath).comment();//MIME翻译
     ui->statusBar->showMessage("类型: " + MIME + ", 大小: " + BS(QFileInfo(filepath).size()) + ", 访问时间: " + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + ", 修改时间: " + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
 }
 
@@ -739,16 +742,8 @@ void MainWindow::customContextMenu(const QPoint &pos)
                     symLinkTarget = "链接路径：\t" + QFileInfo(filepath).symLinkTarget() + "\n";
                 }
                 QMessageBox MBox(QMessageBox::NoIcon, "属性", symLinkTarget + "文件名：\t" + QFileInfo(filepath).fileName() + "\n大小：\t" + BS(QFileInfo(filepath).size()) + "\n类型：\t" + QMimeDatabase().mimeTypeForFile(filepath).name() + "\n访问时间：\t" + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
-                //                if (filetype == "image") {//缩略图已生成，无需再读取
-                //                    //MBox.setIconPixmap(QPixmap(filepath).scaled(200,200, Qt::KeepAspectRatio));
-                //                    QImageReader reader(filepath);
-                //                    reader.setAutoTransform(true);
-                //                    QImage image = reader.read();
-                //                    MBox.setIconPixmap(QPixmap::fromImage(image.scaled(200,200, Qt::KeepAspectRatio)));
-                //                } else {
                 QIcon icon = ui->listWidget->currentItem()->icon();
                 MBox.setIconPixmap(icon.pixmap(QSize(150,150)));
-                //                }
                 MBox.exec();
             }
         }else{
@@ -1192,12 +1187,12 @@ void MainWindow::customContextMenuPartition(const QPoint &pos)
     actions.append(action_hide);
 
     action_property = new QAction(this);
-    action_property->setText("&R属性");
-    action_property->setShortcut(QKeySequence(Qt::Key_R));
+    action_property->setText("属性&R");
+    //action_property->setShortcut(QKeySequence(Qt::Key_R));
     actions.append(action_property);
 
     if (index.isValid()) {
-        action_property->setVisible(false);
+
     }else{
         action_hide->setVisible(false);
     }
@@ -1224,69 +1219,90 @@ void MainWindow::customContextMenuPartition(const QPoint &pos)
     }
 
     if (result_action == action_property) {
-        QDialog *dialog = new QDialog;
-        dialog->setWindowTitle("属性");
-        QVBoxLayout *vbox = new QVBoxLayout;
-        QLabel *label = new QLabel("隐藏的分区");
-        vbox->addWidget(label);
-        QString partition_hide = settings.value("partition_hide", "").toString();
-        if (partition_hide != "") {
-            QStringList SL_partition_hide = partition_hide.split(";");
-            for (int i=0; i<SL_partition_hide.length(); i++) {
-                QCheckBox *checkBox = new QCheckBox(SL_partition_hide.at(i), this);
-                checkBox->setChecked(true);
-                connect(checkBox, static_cast<void (QCheckBox::*)(int)>(&QCheckBox::stateChanged), [=](int state){
-                    if (state == Qt::Checked) {
-                        settings.sync();
-                        QString partition_hide1 = settings.value("partition_hide", "").toString();
-                        if(partition_hide1 == ""){
-                            partition_hide1 = checkBox->text();
-                        }else{
-                            partition_hide1 = partition_hide1 + ";" + checkBox->text();
-                        }
-                        settings.setValue("partition_hide", partition_hide1);
-                    } else if (state == Qt::PartiallyChecked) {
+        if (index.isValid()) {
+            Form_disk *form_disk = (Form_disk*)(ui->listWidget_partition->itemWidget(ui->listWidget_partition->currentItem()));
+            QDialog *dialog = new QDialog;
+            dialog->setWindowTitle("属性");
+            QVBoxLayout *vbox = new QVBoxLayout;
+            //QHBoxLayout *hbox = new QHBoxLayout;
+            //QIcon icon = ui->listWidget_partition->currentItem()->icon();
+            //QLabel *label = new QLabel;
+            //label->setPixmap(icon.pixmap(150,150));
+            //hbox->addWidget(label);
+            //vbox->addLayout(hbox);
+            //QLabel *label = form_disk->ui->label_icon;
+            QLabel *label = new QLabel;
+            label->setPixmap(*form_disk->ui->label_icon->pixmap());
+            vbox->addWidget(label);
+            label = new QLabel(form_disk->ui->label->text());
+            vbox->addWidget(label);
+            dialog->setLayout(vbox);
+            dialog->exec();
+        }else{
+            QDialog *dialog = new QDialog;
+            dialog->setWindowTitle("属性");
+            QVBoxLayout *vbox = new QVBoxLayout;
+            QLabel *label = new QLabel("隐藏的分区");
+            vbox->addWidget(label);
+            QString partition_hide = settings.value("partition_hide", "").toString();
+            if (partition_hide != "") {
+                QStringList SL_partition_hide = partition_hide.split(";");
+                for (int i=0; i<SL_partition_hide.length(); i++) {
+                    QCheckBox *checkBox = new QCheckBox(SL_partition_hide.at(i), this);
+                    checkBox->setChecked(true);
+                    connect(checkBox, static_cast<void (QCheckBox::*)(int)>(&QCheckBox::stateChanged), [=](int state){
+                        if (state == Qt::Checked) {
+                            settings.sync();
+                            QString partition_hide1 = settings.value("partition_hide", "").toString();
+                            if(partition_hide1 == ""){
+                                partition_hide1 = checkBox->text();
+                            }else{
+                                partition_hide1 = partition_hide1 + ";" + checkBox->text();
+                            }
+                            settings.setValue("partition_hide", partition_hide1);
+                        } else if (state == Qt::PartiallyChecked) {
 
-                    } else if (state == Qt::Unchecked) {
-                        settings.sync();
-                        QString partition_hide1 = settings.value("partition_hide", "").toString();
-                        QStringList SL_partition_hide1 = partition_hide1.split(";");
-                        if(SL_partition_hide1.contains(checkBox->text())){
-                            for(int j=0; j<SL_partition_hide1.length(); j++){
-                                if(SL_partition_hide1.at(j) == checkBox->text()){
-                                    SL_partition_hide1.removeAt(j);
+                        } else if (state == Qt::Unchecked) {
+                            settings.sync();
+                            QString partition_hide1 = settings.value("partition_hide", "").toString();
+                            QStringList SL_partition_hide1 = partition_hide1.split(";");
+                            if(SL_partition_hide1.contains(checkBox->text())){
+                                for(int j=0; j<SL_partition_hide1.length(); j++){
+                                    if(SL_partition_hide1.at(j) == checkBox->text()){
+                                        SL_partition_hide1.removeAt(j);
+                                    }
                                 }
                             }
-                        }
-                        QString s = "";
-                        for(int j=0; j<SL_partition_hide1.length(); j++){
-                            if(j < SL_partition_hide1.length() - 1){
-                                s += SL_partition_hide1.at(j) + ";";
-                            }else{
-                                s += SL_partition_hide1.at(j);
+                            QString s = "";
+                            for(int j=0; j<SL_partition_hide1.length(); j++){
+                                if(j < SL_partition_hide1.length() - 1){
+                                    s += SL_partition_hide1.at(j) + ";";
+                                }else{
+                                    s += SL_partition_hide1.at(j);
+                                }
                             }
-                        }
-                        settings.setValue("partition_hide", s);
+                            settings.setValue("partition_hide", s);
 
-                    }
-                });
-                vbox->addWidget(checkBox);
+                        }
+                    });
+                    vbox->addWidget(checkBox);
+                }
             }
+            QPushButton *pushButton_confirm = new QPushButton("确定");
+            QPushButton *pushButton_cancel = new QPushButton("取消");
+            QHBoxLayout *hbox = new QHBoxLayout;
+            hbox->addWidget(pushButton_confirm);
+            hbox->addWidget(pushButton_cancel);
+            vbox->addLayout(hbox);
+            dialog->setLayout(vbox);
+            connect(pushButton_confirm, SIGNAL(clicked()), dialog, SLOT(accept()));
+            connect(pushButton_cancel, SIGNAL(clicked()), dialog, SLOT(reject()));
+            if(dialog->exec() == QDialog::Accepted){
+                genHomePage();
+            }
+            dialog->close();
+            return;
         }
-        QPushButton *pushButton_confirm = new QPushButton("确定");
-        QPushButton *pushButton_cancel = new QPushButton("取消");
-        QHBoxLayout *hbox = new QHBoxLayout;
-        hbox->addWidget(pushButton_confirm);
-        hbox->addWidget(pushButton_cancel);
-        vbox->addLayout(hbox);
-        dialog->setLayout(vbox);
-        connect(pushButton_confirm, SIGNAL(clicked()), dialog, SLOT(accept()));
-        connect(pushButton_cancel, SIGNAL(clicked()), dialog, SLOT(reject()));
-        if(dialog->exec() == QDialog::Accepted){
-            genHomePage();
-        }
-        dialog->close();
-        return;
     }
 
 }
@@ -1893,9 +1909,19 @@ void MainWindow::genHomePage()
     QString mountPath = storage.rootPath();
     LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘");
     LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
-    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘\n" + BS(storage.bytesFree()) + " / " + BS(storage.bytesTotal()));
+    //    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘\n" + BS(storage.bytesFree()) + " / " + BS(storage.bytesTotal()));
+    //    LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
+    //    ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
+    Form_disk *form_disk = new Form_disk;
+    form_disk->ui->label->setText("系统盘");
+    form_disk->bytesFree = storage.bytesFree();
+    form_disk->bytesTotal = storage.bytesTotal();
+    form_disk->init();
+    LWI = new QListWidgetItem(ui->listWidget_partition);
+    LWI->setSizeHint(QSize(120,130));
     LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
-    ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
+    ui->listWidget_partition->setItemWidget(LWI, form_disk);
+    ui->listWidget_partition->addItem(LWI);
     //获取挂载路径
     settings.sync();
     QString partition_hide = settings.value("partition_hide", "").toString();
@@ -1919,9 +1945,19 @@ void MainWindow::genHomePage()
                     LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name);
                     LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
                     ui->listWidget_nav->insertItem(ui->listWidget_nav->count(), LWI);
-                    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name + "\n" + BS(storage.bytesFree()) + " / " + BS(storage.bytesTotal()));
+                    //LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name + "\n" + BS(storage.bytesFree()) + " / " + BS(storage.bytesTotal()));
+                    //LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
+                    //ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
+                    Form_disk *form_disk = new Form_disk;
+                    form_disk->ui->label->setText(name);
+                    form_disk->bytesFree = storage.bytesFree();
+                    form_disk->bytesTotal = storage.bytesTotal();
+                    form_disk->init();
+                    LWI = new QListWidgetItem(ui->listWidget_partition);
+                    LWI->setSizeHint(QSize(120,130));
                     LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
-                    ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
+                    ui->listWidget_partition->setItemWidget(LWI, form_disk);
+                    ui->listWidget_partition->addItem(LWI);
                 }
             }
         }

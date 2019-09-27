@@ -8,14 +8,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     propertydesktop.cpp \
-    iconpreview.cpp
+    iconpreview.cpp \
+    form_disk.cpp
 
 HEADERS  += mainwindow.h \
     propertydesktop.h \
-    iconpreview.h
+    iconpreview.h \
+    form_disk.h
 
 FORMS    += mainwindow.ui \
-    propertydesktop.ui
+    propertydesktop.ui \
+    form_disk.ui
 
 RESOURCES += \
     files.qrc
