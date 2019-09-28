@@ -27,7 +27,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QString BS(qint64 b);
+    QString BS(qint64 b, int digits);
     QLineEdit *lineEditLocation, *lineEditSearch;
     QString path, source, pathIcon, pathDesktop, dir, pathSource, dirTrash, dirTrashInfo;
     int cut;

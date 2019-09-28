@@ -244,7 +244,7 @@ void MainWindow::listWidgetItemClicked(QListWidgetItem *item)
     QString filepath = list.at(ui->listWidget->currentRow()).absoluteFilePath();
     //QString MIME = QMimeDatabase().mimeTypeForFile(filepath).name();
     QString MIME = QMimeDatabase().mimeTypeForFile(filepath).comment();//MIME翻译
-    ui->statusBar->showMessage("类型: " + MIME + ", 大小: " + BS(QFileInfo(filepath).size()) + ", 访问时间: " + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + ", 修改时间: " + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
+    ui->statusBar->showMessage("类型: " + MIME + ", 大小: " + BS(QFileInfo(filepath).size(),2) + ", 访问时间: " + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + ", 修改时间: " + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
 }
 
 void MainWindow::lineEditLocationReturnPressed()
@@ -741,13 +741,13 @@ void MainWindow::customContextMenu(const QPoint &pos)
                 if(QFileInfo(filepath).isSymLink()){
                     symLinkTarget = "链接路径：\t" + QFileInfo(filepath).symLinkTarget() + "\n";
                 }
-                QMessageBox MBox(QMessageBox::NoIcon, "属性", symLinkTarget + "文件名：\t" + QFileInfo(filepath).fileName() + "\n大小：\t" + BS(QFileInfo(filepath).size()) + "\n类型：\t" + QMimeDatabase().mimeTypeForFile(filepath).name() + "\n访问时间：\t" + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
+                QMessageBox MBox(QMessageBox::NoIcon, "属性", symLinkTarget + "文件名：\t" + QFileInfo(filepath).fileName() + "\n大小：\t" + BS(QFileInfo(filepath).size(),2) + "\n类型：\t" + QMimeDatabase().mimeTypeForFile(filepath).name() + "\n访问时间：\t" + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
                 QIcon icon = ui->listWidget->currentItem()->icon();
                 MBox.setIconPixmap(icon.pixmap(QSize(150,150)));
                 MBox.exec();
             }
         }else{
-            QMessageBox MBox(QMessageBox::NoIcon, "文件夹属性", "路径：\t" + path + "\n大小：\t" + BS(QFileInfo(path).size()) + "\n访问时间：\t" + QFileInfo(path).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(path).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
+            QMessageBox MBox(QMessageBox::NoIcon, "文件夹属性", "路径：\t" + path + "\n大小：\t" + BS(QFileInfo(path).size(),2) + "\n访问时间：\t" + QFileInfo(path).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(path).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
             MBox.setIconPixmap(QIcon::fromTheme("folder").pixmap(QSize(150,150)));
             MBox.exec();
         }
@@ -1137,7 +1137,7 @@ void MainWindow::viewContextMenuTV(const QPoint &position)
             dialogPD->show();
         }else{
             qDebug() << "property" << filepath;
-            QMessageBox MBox(QMessageBox::NoIcon, "属性", "文件名：\t" + QFileInfo(filepath).fileName() + "\n大小：\t" + BS(QFileInfo(filepath).size()) + "\n类型：\t" + QMimeDatabase().mimeTypeForFile(filepath).name() + "\n访问时间：\t" + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
+            QMessageBox MBox(QMessageBox::NoIcon, "属性", "文件名：\t" + QFileInfo(filepath).fileName() + "\n大小：\t" + BS(QFileInfo(filepath).size(),2) + "\n类型：\t" + QMimeDatabase().mimeTypeForFile(filepath).name() + "\n访问时间：\t" + QFileInfo(filepath).lastRead().toString("yyyy-MM-dd hh:mm:ss") + "\n修改时间：\t" + QFileInfo(filepath).lastModified().toString("yyyy-MM-dd hh:mm:ss"));
             if(filetype == "image"){
                 QSize iconSize(200,200);
                 MBox.setIconPixmap(QPixmap(filepath).scaled(iconSize, Qt::KeepAspectRatio));
@@ -1223,19 +1223,61 @@ void MainWindow::customContextMenuPartition(const QPoint &pos)
             Form_disk *form_disk = (Form_disk*)(ui->listWidget_partition->itemWidget(ui->listWidget_partition->currentItem()));
             QDialog *dialog = new QDialog;
             dialog->setWindowTitle("属性");
+            dialog->setFixedWidth(300);
             QVBoxLayout *vbox = new QVBoxLayout;
-            //QHBoxLayout *hbox = new QHBoxLayout;
-            //QIcon icon = ui->listWidget_partition->currentItem()->icon();
-            //QLabel *label = new QLabel;
-            //label->setPixmap(icon.pixmap(150,150));
-            //hbox->addWidget(label);
-            //vbox->addLayout(hbox);
-            //QLabel *label = form_disk->ui->label_icon;
             QLabel *label = new QLabel;
+            label->setAlignment(Qt::AlignCenter);
             label->setPixmap(*form_disk->ui->label_icon->pixmap());
             vbox->addWidget(label);
             label = new QLabel(form_disk->ui->label->text());
+            label->setAlignment(Qt::AlignCenter);
             vbox->addWidget(label);
+            QHBoxLayout *hbox = new QHBoxLayout;
+            //label = new QLabel(form_disk->mountPath);
+            label = new QLabel(form_disk->device);
+            hbox->addWidget(label);
+            //label = new QLabel(BS(form_disk->bytesFree,2) + " / " + BS(form_disk->bytesTotal,2));
+            int value = 100 * (form_disk->bytesTotal - form_disk->bytesFree) / form_disk->bytesTotal;
+            label = new QLabel(QString::number(value) +" %");
+            label->setAlignment(Qt::AlignRight);
+            hbox->addWidget(label);
+            vbox->addLayout(hbox);
+            QProgressBar *progressBar = new QProgressBar;
+            progressBar->setRange(0,100);
+            progressBar->setValue(value);
+            progressBar->setFixedHeight(10);
+            progressBar->setFormat("");
+            QString style;
+            if(value < 60){
+                style = "QProgressBar { border: 1px solid gray; border-radius: 5px; background: white; }"
+                        "QProgressBar::chunk { background-color: dodgerblue; }";
+            }else if(value < 80){
+                style = "QProgressBar { border: 1px solid gray; border-radius: 5px; background: white; }"
+                        "QProgressBar::chunk { background-color: orange; }";
+            }else{
+                style = "QProgressBar { border: 1px solid gray; border-radius: 5px; background: white; }"
+                        "QProgressBar::chunk { background-color: red; }";
+            }
+            progressBar->setStyleSheet(style);
+            vbox->addWidget(progressBar);
+            QGridLayout *gridLayout = new QGridLayout;
+            label = new QLabel("文件系统");
+            gridLayout->addWidget(label,0,0,Qt::AlignRight);
+            label = new QLabel(form_disk->fileSystemType);
+            gridLayout->addWidget(label,0,1);
+            label = new QLabel("总容量");
+            gridLayout->addWidget(label,1,0,Qt::AlignRight);
+            label = new QLabel(BS(form_disk->bytesTotal,2));
+            gridLayout->addWidget(label,1,1);
+            label = new QLabel("已用容量");
+            gridLayout->addWidget(label,2,0,Qt::AlignRight);
+            label = new QLabel(BS(form_disk->bytesTotal - form_disk->bytesFree,2));
+            gridLayout->addWidget(label,2,1);
+            label = new QLabel("可用容量");
+            gridLayout->addWidget(label,3,0,Qt::AlignRight);
+            label = new QLabel(BS(form_disk->bytesFree,2));
+            gridLayout->addWidget(label,3,1);
+            vbox->addLayout(gridLayout);
             dialog->setLayout(vbox);
             dialog->exec();
         }else{
@@ -1347,17 +1389,17 @@ void MainWindow::zoom1()
     }
 }
 
-QString MainWindow::BS(qint64 b)
+QString MainWindow::BS(qint64 b, int digits)
 {
     QString s = "";
     if (b > 999999999) {
-        s = QString::number(b/(1024*1024*1024.0),'f',2) + " GB";
+        s = QString::number(b/(1024*1024*1024.0), 'f', digits) + " GB";
     } else {
         if (b > 999999){
-            s = QString::number(b/(1024*1024.0),'f',2) + " MB";
+            s = QString::number(b/(1024*1024.0), 'f', digits) + " MB";
         } else {
             if (b > 999) {
-                s = QString::number(b/1024.0,'f',2) + " KB";
+                s = QString::number(b/1024.0, 'f', digits) + " KB";
             } else {
                 s = QString::number(b)+" B";
             }
@@ -1717,7 +1759,7 @@ void MainWindow::genList(QString spath)
         ui->tableWidget ->insertRow(i);
         ui->tableWidget->setItem(i, 0, new QTableWidgetItem(QIcon(icon),sname));
         ui->tableWidget->setItem(i, 1, new QTableWidgetItem(fileInfo.lastModified().toString("yyyy/MM/dd HH:mm:ss")));
-        ui->tableWidget->setItem(i, 2, new QTableWidgetItem(BS(fileInfo.size())));
+        ui->tableWidget->setItem(i, 2, new QTableWidgetItem(BS(fileInfo.size(),2)));
         ui->tableWidget->setItem(i, 3, new QTableWidgetItem(QMimeDatabase().mimeTypeForFile(fileInfo.filePath()).name()));
         ui->tableWidget->setItem(i, 4, new QTableWidgetItem(Title));
         ui->tableWidget->setItem(i, 5, new QTableWidgetItem(Artist));
@@ -1909,11 +1951,14 @@ void MainWindow::genHomePage()
     QString mountPath = storage.rootPath();
     LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘");
     LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
-    //    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘\n" + BS(storage.bytesFree()) + " / " + BS(storage.bytesTotal()));
+    //    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘\n" + BS(storage.bytesFree(),0) + " / " + BS(storage.bytesTotal(),0));
     //    LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
     //    ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
     Form_disk *form_disk = new Form_disk;
     form_disk->ui->label->setText("系统盘");
+    form_disk->mountPath = mountPath;
+    form_disk->device = storage.device();
+    form_disk->fileSystemType = storage.fileSystemType();
     form_disk->bytesFree = storage.bytesFree();
     form_disk->bytesTotal = storage.bytesTotal();
     form_disk->init();
@@ -1945,11 +1990,14 @@ void MainWindow::genHomePage()
                     LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name);
                     LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
                     ui->listWidget_nav->insertItem(ui->listWidget_nav->count(), LWI);
-                    //LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name + "\n" + BS(storage.bytesFree()) + " / " + BS(storage.bytesTotal()));
+                    //LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name + "\n" + BS(storage.bytesFree(),0) + " / " + BS(storage.bytesTotal(),0));
                     //LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
                     //ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
                     Form_disk *form_disk = new Form_disk;
                     form_disk->ui->label->setText(name);
+                    form_disk->mountPath = mountPath;
+                    form_disk->device = storage.device();
+                    form_disk->fileSystemType = storage.fileSystemType();
                     form_disk->bytesFree = storage.bytesFree();
                     form_disk->bytesTotal = storage.bytesTotal();
                     form_disk->init();
