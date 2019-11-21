@@ -149,7 +149,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.7\n2019-09\n自定义分区控件，增加分区进度条。\n2019-07\n简化打开文件。\nresize自动滚动到选中文件的第一个。\n修复回收站文件还原没有刷新。\n使用Qt内部方法创建链接，识别链接并绘制链接角标。\n增加缩放快捷键。\n\n2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.7\n2019-09\n增加分区属性窗口。\n自定义分区控件，增加分区进度条。\n2019-07\n简化打开文件。\nresize自动滚动到选中文件的第一个。\n修复回收站文件还原没有刷新。\n使用Qt内部方法创建链接，识别链接并绘制链接角标。\n增加缩放快捷键。\n\n2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -350,26 +350,22 @@ void MainWindow::customContextMenu(const QPoint &pos)
     openwithImage->addAction(HTYIV);
 
     action_copy = new QAction(this);
-    action_copy->setText("复制(&C)");
+    action_copy->setText("复制&C");   //不加&弹出菜单无法响应按键，加了后不需要setShortcut
     action_copy->setIcon(QIcon::fromTheme("edit-copy"));
-    action_copy->setShortcut(QKeySequence(Qt::Key_C));
     actions.append(action_copy);
 
     action_cut = new QAction(this);
-    action_cut->setText("剪切(&X)");
+    action_cut->setText("剪切&X");
     action_cut->setIcon(QIcon::fromTheme("edit-cut"));
-    action_cut->setShortcut(QKeySequence(Qt::Key_X));
     actions.append(action_cut);
 
     action_paste = new QAction(this);
-    action_paste->setText("粘贴(&V)");
+    action_paste->setText("粘贴&V");
     action_paste->setIcon(QIcon::fromTheme("edit-paste"));
-    action_paste->setShortcut(QKeySequence(Qt::Key_V));
     actions.append(action_paste);
 
     action_rename = new QAction(this);
-    action_rename->setText("重命名(&M)");
-    action_rename->setShortcut(QKeySequence(Qt::Key_M));
+    action_rename->setText("重命名&M");
     actions.append(action_rename);
 
     action_moveto = new QAction(this);
@@ -425,9 +421,8 @@ void MainWindow::customContextMenu(const QPoint &pos)
     actions.append(action_setWallpaper);
 
     action_property = new QAction(this);
-    action_property->setText("属性(&R)");
+    action_property->setText("属性&R");
     action_property->setIcon(QIcon::fromTheme("document-properties"));
-    //action_property->setShortcut(QKeySequence(Qt::Key_R));
     actions.append(action_property);
 
     action_terminal = new QAction(this);
@@ -857,10 +852,12 @@ void MainWindow::customContextMenu(const QPoint &pos)
                     }
                 }
             }else{
+#if(QT_VERSION >= QT_VERSION_CHECK(5,10,0))
                 QFile file(newName);
                 file.open(QIODevice::ReadOnly);
                 qDebug() << "修改粘贴文件时间为原文件时间" << file.setFileTime(QFileInfo(filepath).lastModified(), QFileDevice::FileModificationTime);
                 file.close();
+#endif
             }
         }
         return;
@@ -1188,7 +1185,6 @@ void MainWindow::customContextMenuPartition(const QPoint &pos)
 
     action_property = new QAction(this);
     action_property->setText("属性&R");
-    //action_property->setShortcut(QKeySequence(Qt::Key_R));
     actions.append(action_property);
 
     if (index.isValid()) {
@@ -1197,9 +1193,12 @@ void MainWindow::customContextMenuPartition(const QPoint &pos)
         action_hide->setVisible(false);
     }
 
+    //在菜单中显示快捷键(QT5.7已经显示，不需要)
+#if (QT_VERSION >= QT_VERSION_CHECK(5,10,0))
     foreach(QAction *action, actions){
         action->setShortcutVisibleInContextMenu(true);
     }
+#endif
 
     QAction *result_action = QMenu::exec(actions, ui->listWidget_partition->mapToGlobal(pos));
 
@@ -1599,9 +1598,10 @@ void MainWindow::paste()
                 }
             }else{
                 // 修改文件时间
+#if(QT_VERSION >= QT_VERSION_CHECK(5,10,0))
                 QFile file(newName);
                 qDebug() << "修改粘贴文件时间为原文件时间" << file.setFileTime(QFileInfo(source).lastModified(), QFileDevice::FileModificationTime);
-
+#endif
                 if(cut){//如果是剪切
                     if(!QFile::remove(source)){
                         QMessageBox::critical(NULL, "错误", "无法删除剪切的源文件 " + source, QMessageBox::Ok);
