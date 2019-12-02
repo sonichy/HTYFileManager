@@ -38,7 +38,7 @@ PropertyDesktop::~PropertyDesktop()
 
 void PropertyDesktop::changeIcon()
 {
-    QString newpath = QFileDialog::getOpenFileName(this,"选择图片", QFileInfo(ui->lineEdit_exec->text()).absolutePath(), "图片文件(*.jpg *.jpeg *.png *.bmp *.svg *.ico)");
+    QString newpath = QFileDialog::getOpenFileName(this,"选择图片", iconPath, "图片文件(*.jpg *.jpeg *.png *.bmp *.svg *.ico)");
     if (newpath != "") {
         ui->pushButton_icon->setIcon(QIcon(newpath));
         iconPath = newpath;
@@ -56,7 +56,7 @@ void PropertyDesktop::changeExec()
 void PropertyDesktop::openPath()
 {
     QProcess *proc = new QProcess;
-    QString cmd = QDir::currentPath() + "/HTYFileManager " + ui->lineEdit_path->text();
+    QString cmd = QApplication::applicationDirPath() + "/HTYFileManager " + ui->lineEdit_path->text();
     qDebug() << cmd;
     proc->start(cmd);
 }
