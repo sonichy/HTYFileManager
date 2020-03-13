@@ -89,6 +89,8 @@ private slots:
     void zoomIn();
     void zoomOut();
     void zoom1();
+    void processOutput();
+    void processError();
 
 };
 
