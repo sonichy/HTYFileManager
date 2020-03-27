@@ -333,6 +333,9 @@ void MainWindow::customContextMenu(const QPoint &pos)
     openwithVideo->addAction(HTYMP);
 
     QMenu *openwithText = new QMenu;
+    QAction *deepin_editor = new QAction("深度编辑器", openwithText);
+    deepin_editor->setIcon(QIcon::fromTheme("deepin-editor"));
+    openwithText->addAction(deepin_editor);
     QAction *gedit = new QAction("gedit", openwithText);
     gedit->setIcon(QIcon::fromTheme("gedit"));
     openwithText->addAction(gedit);
@@ -536,6 +539,14 @@ void MainWindow::customContextMenu(const QPoint &pos)
     if (result_action == Thunar) {
         QProcess *proc = new QProcess;
         QString cmd = "thunar \"" + filepath + "\"";
+        qDebug() << cmd;
+        proc->start(cmd);
+        return;
+    }
+
+    if (result_action == deepin_editor) {
+        QProcess *proc = new QProcess;
+        QString cmd = "deepin-editor \"" + filepath + "\"";
         qDebug() << cmd;
         proc->start(cmd);
         return;
