@@ -17,6 +17,10 @@ Form_disk::~Form_disk()
 
 void Form_disk::init()
 {
+    QFontMetrics fontMetrics(ui->label->font());
+    QString name_elide = fontMetrics.elidedText(name, Qt::ElideRight, ui->label->width());
+    ui->label->setText(name_elide);
+    ui->label->setToolTip(name);
     qint64 bytesUsed = bytesTotal - bytesFree;
     ui->label_bytes->setText(BS(bytesUsed) + " / " + BS(bytesTotal));
     ui->progressBar->setRange(0, 100);

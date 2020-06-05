@@ -50,10 +50,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(lineEditLocation, SIGNAL(returnPressed()), this, SLOT(lineEditLocationReturnPressed()));
     lineEditSearch = new QLineEdit("", this);
     lineEditSearch->setPlaceholderText("搜索");
+    QAction *action_clear_lineEditSearch = new QAction;
+    action_clear_lineEditSearch->setIcon(QIcon::fromTheme("edit-clear"));
+    connect(action_clear_lineEditSearch, &QAction::triggered, [=]{
+        lineEditSearch->clear();
+        genList(path);
+    });
+    lineEditSearch->addAction(action_clear_lineEditSearch, QLineEdit::TrailingPosition);
     lineEditSearch->setFixedWidth(100);
     ui->mainToolBar->addWidget(lineEditSearch);
-    //connect(lineEditSearch,SIGNAL(textChanged(QString)),this,SLOT(search()));
-    connect(lineEditSearch,SIGNAL(returnPressed()),this,SLOT(search()));
+    //connect(lineEditSearch, SIGNAL(textChanged(QString)), this, SLOT(search()));
+    connect(lineEditSearch, SIGNAL(returnPressed()), this, SLOT(search()));
 
     genHomePage();
 
@@ -149,7 +156,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.9\n2020-04\n适配虚拟路径：trash:\\\\\\。\n\n2.8\n2020-03\n增加Git项目打包zip，tar.gz。\n\n2.7\n2019-09\n增加分区属性窗口。\n自定义分区控件，增加分区进度条。\n2019-07\n简化打开文件。\nresize自动滚动到选中文件的第一个。\n修复回收站文件还原没有刷新。\n使用Qt内部方法创建链接，识别链接并绘制链接角标。\n增加缩放快捷键。\n\n2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.10\n2020-06\n文件夹排在前面。\n实现图标模式排序。\n实现搜索（过滤）功能。\n修复盘符文字太宽挤开图标。\n\n2.9\n2020-04\n适配虚拟路径：trash:\\\\\\。\n\n2.8\n2020-03\n增加Git项目打包zip，tar.gz。\n\n2.7\n2019-09\n增加分区属性窗口。\n自定义分区控件，增加分区进度条。\n2019-07\n简化打开文件。\nresize自动滚动到选中文件的第一个。\n修复回收站文件还原没有刷新。\n使用Qt内部方法创建链接，识别链接并绘制链接角标。\n增加缩放快捷键。\n\n2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -839,22 +846,26 @@ void MainWindow::customContextMenu(const QPoint &pos)
 
     if (result_action == action_sortName) {
         qDebug() << "sort by name";
-        //model->sort(0,Qt::AscendingOrder);
+        sortFlags = QDir::Name | QDir::DirsFirst;
+        genList(path);
     }
 
     if (result_action == action_sortSize) {
         qDebug() << "sort by size";
-        //model->sort(1,Qt::DescendingOrder);
+        sortFlags = QDir::Size | QDir::DirsFirst;
+        genList(path);
     }
 
     if (result_action == action_sortType) {
         qDebug() << "sort by type";
-        //model->sort(0,Qt::AscendingOrder);
+        sortFlags = QDir::Type | QDir::DirsFirst;
+        genList(path);
     }
 
     if(result_action == action_sortTime){
         qDebug() << "sort by time";
-        //model->sort(3,Qt::DescendingOrder);
+        sortFlags = QDir::Time | QDir::DirsFirst;
+        genList(path);
     }
 
     if (result_action == action_copyto) {
@@ -1284,20 +1295,18 @@ void MainWindow::customContextMenuPartition(const QPoint &pos)
             Form_disk *form_disk = (Form_disk*)(ui->listWidget_partition->itemWidget(ui->listWidget_partition->currentItem()));
             QDialog *dialog = new QDialog;
             dialog->setWindowTitle("属性");
-            dialog->setFixedWidth(300);
+            dialog->setFixedSize(300,250);
             QVBoxLayout *vbox = new QVBoxLayout;
             QLabel *label = new QLabel;
             label->setAlignment(Qt::AlignCenter);
             label->setPixmap(*form_disk->ui->label_icon->pixmap());
             vbox->addWidget(label);
-            label = new QLabel(form_disk->ui->label->text());
+            label = new QLabel(form_disk->name);
             label->setAlignment(Qt::AlignCenter);
             vbox->addWidget(label);
             QHBoxLayout *hbox = new QHBoxLayout;
-            //label = new QLabel(form_disk->mountPath);
             label = new QLabel(form_disk->device);
             hbox->addWidget(label);
-            //label = new QLabel(BS(form_disk->bytesFree,2) + " / " + BS(form_disk->bytesTotal,2));
             int value = 100 * (form_disk->bytesTotal - form_disk->bytesFree) / form_disk->bytesTotal;
             label = new QLabel(QString::number(value) +" %");
             label->setAlignment(Qt::AlignRight);
@@ -1344,6 +1353,7 @@ void MainWindow::customContextMenuPartition(const QPoint &pos)
         }else{
             QDialog *dialog = new QDialog;
             dialog->setWindowTitle("属性");
+            dialog->setFixedSize(200,100);
             QVBoxLayout *vbox = new QVBoxLayout;
             QLabel *label = new QLabel("隐藏的分区");
             vbox->addWidget(label);
@@ -1394,8 +1404,10 @@ void MainWindow::customContextMenuPartition(const QPoint &pos)
             QPushButton *pushButton_confirm = new QPushButton("确定");
             QPushButton *pushButton_cancel = new QPushButton("取消");
             QHBoxLayout *hbox = new QHBoxLayout;
+            hbox->addStretch();
             hbox->addWidget(pushButton_confirm);
             hbox->addWidget(pushButton_cancel);
+            hbox->addStretch();
             vbox->addLayout(hbox);
             dialog->setLayout(vbox);
             connect(pushButton_confirm, SIGNAL(clicked()), dialog, SLOT(accept()));
@@ -1486,9 +1498,7 @@ void MainWindow::enterOpen()
 void MainWindow::search()
 {
     qDebug() << "search";
-    //QStringList filter;
-    //filter << "*" + lineEditSearch->text() + "*";
-    //model->setNameFilters(filter);
+    genList(path);
 }
 
 void MainWindow::trashFiles()
@@ -1704,133 +1714,134 @@ void MainWindow::genList(QString spath)
     }else{
         dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     }
-    //dir.setSorting(QDir::Size | QDir::Reversed);
+    dir.setSorting(sortFlags);
     list.clear();
     list = dir.entryInfoList();
-    QTextCodec *TC = QTextCodec::codecForName("GBK");
-    //QTextCodec *TC = QTextCodec::codecForLocale();
     for (int i = 0; i < list.size(); i++) {
         QString sname="", TAG="", Title="", Artist="", Album="", Year="", Comment="";
         QFileInfo fileInfo = list.at(i);
         sname = fileInfo.fileName();
-        QIcon icon;
-        QString MIME = QMimeDatabase().mimeTypeForFile(fileInfo.absoluteFilePath()).name();
-        //QString filetype = MIME.left(MIME.indexOf("/"));
-        if (MIME == "application/x-desktop") {
-            sname = readSettings(fileInfo.absoluteFilePath(), "Desktop Entry", "Name");
-            QString sicon = readSettings(fileInfo.absoluteFilePath(), "Desktop Entry", "Icon");
-            //qDebug() << sicon;
-            if(sicon == "")
-                sicon = "applications-system-symbolic";
-            if (QFileInfo(sicon).isFile()) {
-                icon = QIcon(sicon);
-            } else {
-                icon = QIcon::fromTheme(sicon);
-            }
-        } else if (MIME == "inode/directory") {
-            icon = QIcon::fromTheme("folder");
-        } else if (fileInfo.suffix() == "mp3") {
-            QFile file(fileInfo.absoluteFilePath());
-            file.open(QIODevice::ReadOnly);
-            QString ID3,Ver,Revision,Flag;
-            bool ok;
-            qint64 size;
-            ID3 = QString(file.read(3));
-            icon = QIcon::fromTheme(MIME.replace("/","-"));
-            if (ID3 == "ID3") {
-                Ver = QString::number(file.read(1).toHex().toInt(&ok,16));
-                Revision = QString::number(file.read(1).toHex().toInt(&ok,16));
-                Flag = QString::number(file.read(1).toHex().toInt(&ok,16));
-                //size = file.read(4).toHex().toLongLong(&ok,16);
-                size = (file.read(1).toHex().toInt(&ok,16) & 0xEF) << 21 | (file.read(1).toHex().toInt(&ok,16) & 0xEF) << 14 | (file.read(1).toHex().toInt(&ok,16) & 0xEF) << 7 | file.read(1).toHex().toInt(&ok,16) & 0xEF;
-                while (file.pos() < size) {
-                    QString FTag(file.read(4));
-                    qint64 FSize = file.read(4).toHex().toLongLong(&ok,16);
-                    //qint64 FSize = file.read(1).toHex().toInt(&ok,16) << 24 | file.read(1).toHex().toInt(&ok,16) << 16 | file.read(1).toHex().toInt(&ok,16) << 8 | file.read(1).toHex().toInt(&ok,16);
-                    Flag = QString::number(file.read(2).toHex().toInt(&ok,16));
-                    QByteArray BA = file.read(FSize);
-                    if (FTag == "APIC") {
-                        BA = BA.right(FSize-14);
-                        QPixmap pixmap;
-                        ok = pixmap.loadFromData(BA);
-                        if(ok){
-                            icon = QIcon(pixmap);
-                        }
-                        break;
-                    } else if (FTag == "TYER") {
-                        if(BA.contains("\xFF\xFE")){
-                            Year = QString::fromUtf16(reinterpret_cast<const ushort*>(BA.mid(3,FSize-3).data()));
-                        }else{
-                            Year = BA.mid(1,FSize-2);
-                        }
-                    } else if (FTag == "COMM") {
-                        QString language = BA.mid(1,3);
-                        Comment = language + " "+ QString::fromUtf16(reinterpret_cast<const ushort*>(BA.mid(10,FSize-12).data()));
-                    } else if (FTag == "TIT2") {
-                        QByteArray UFlag = BA.left(1);
-                        if(UFlag.toHex().toInt() == 0){
-                            Title = TC->toUnicode(BA);
-                        }else{
-                            Title = QString::fromUtf16(reinterpret_cast<const ushort*>(BA.right(FSize-3).data()));
-                        }
-                    }else if (FTag == "TPE1") {
-                        QByteArray UFlag = BA.left(1);
-                        if (UFlag.toHex().toInt() == 0) {
-                            Artist = TC->toUnicode(BA);
-                        } else {
-                            Artist = QString::fromUtf16(reinterpret_cast<const ushort*>(BA.right(FSize-3).data()));
-                        }
-                    }else if (FTag == "TALB") {
-                        QByteArray UFlag = BA.left(1);
-                        if (UFlag.toHex().toInt() == 0) {
-                            Album = TC->toUnicode(BA);
-                        } else {
-                            Album = QString::fromUtf16(reinterpret_cast<const ushort*>(BA.right(FSize-3).data()));
+        if(sname.contains(lineEditSearch->text()) || lineEditSearch->text() == ""){
+            QIcon icon;
+            QString MIME = QMimeDatabase().mimeTypeForFile(fileInfo.absoluteFilePath()).name();
+            //QString filetype = MIME.left(MIME.indexOf("/"));
+            if (MIME == "application/x-desktop") {
+                sname = readSettings(fileInfo.absoluteFilePath(), "Desktop Entry", "Name");
+                QString sicon = readSettings(fileInfo.absoluteFilePath(), "Desktop Entry", "Icon");
+                //qDebug() << sicon;
+                if(sicon == "")
+                    sicon = "applications-system-symbolic";
+                if (QFileInfo(sicon).isFile()) {
+                    icon = QIcon(sicon);
+                } else {
+                    icon = QIcon::fromTheme(sicon);
+                }
+            } else if (MIME == "inode/directory") {
+                icon = QIcon::fromTheme("folder");
+            } else if (fileInfo.suffix() == "mp3") {
+                QFile file(fileInfo.absoluteFilePath());
+                file.open(QIODevice::ReadOnly);
+                QString ID3,Ver,Revision,Flag;
+                bool ok;
+                qint64 size;
+                ID3 = QString(file.read(3));
+                icon = QIcon::fromTheme(MIME.replace("/","-"));
+                QTextCodec *TC = QTextCodec::codecForName("GBK");
+                if (ID3 == "ID3") {
+                    Ver = QString::number(file.read(1).toHex().toInt(&ok,16));
+                    Revision = QString::number(file.read(1).toHex().toInt(&ok,16));
+                    Flag = QString::number(file.read(1).toHex().toInt(&ok,16));
+                    //size = file.read(4).toHex().toLongLong(&ok,16);
+                    size = (file.read(1).toHex().toInt(&ok,16) & 0xEF) << 21 | (file.read(1).toHex().toInt(&ok,16) & 0xEF) << 14 | (file.read(1).toHex().toInt(&ok,16) & 0xEF) << 7 | file.read(1).toHex().toInt(&ok,16) & 0xEF;
+                    while (file.pos() < size) {
+                        QString FTag(file.read(4));
+                        qint64 FSize = file.read(4).toHex().toLongLong(&ok,16);
+                        //qint64 FSize = file.read(1).toHex().toInt(&ok,16) << 24 | file.read(1).toHex().toInt(&ok,16) << 16 | file.read(1).toHex().toInt(&ok,16) << 8 | file.read(1).toHex().toInt(&ok,16);
+                        Flag = QString::number(file.read(2).toHex().toInt(&ok,16));
+                        QByteArray BA = file.read(FSize);
+                        if (FTag == "APIC") {
+                            BA = BA.right(FSize-14);
+                            QPixmap pixmap;
+                            ok = pixmap.loadFromData(BA);
+                            if(ok){
+                                icon = QIcon(pixmap);
+                            }
+                            break;
+                        } else if (FTag == "TYER") {
+                            if(BA.contains("\xFF\xFE")){
+                                Year = QString::fromUtf16(reinterpret_cast<const ushort*>(BA.mid(3,FSize-3).data()));
+                            }else{
+                                Year = BA.mid(1,FSize-2);
+                            }
+                        } else if (FTag == "COMM") {
+                            QString language = BA.mid(1,3);
+                            Comment = language + " "+ QString::fromUtf16(reinterpret_cast<const ushort*>(BA.mid(10,FSize-12).data()));
+                        } else if (FTag == "TIT2") {
+                            QByteArray UFlag = BA.left(1);
+                            if(UFlag.toHex().toInt() == 0){
+                                Title = TC->toUnicode(BA);
+                            }else{
+                                Title = QString::fromUtf16(reinterpret_cast<const ushort*>(BA.right(FSize-3).data()));
+                            }
+                        }else if (FTag == "TPE1") {
+                            QByteArray UFlag = BA.left(1);
+                            if (UFlag.toHex().toInt() == 0) {
+                                Artist = TC->toUnicode(BA);
+                            } else {
+                                Artist = QString::fromUtf16(reinterpret_cast<const ushort*>(BA.right(FSize-3).data()));
+                            }
+                        }else if (FTag == "TALB") {
+                            QByteArray UFlag = BA.left(1);
+                            if (UFlag.toHex().toInt() == 0) {
+                                Album = TC->toUnicode(BA);
+                            } else {
+                                Album = QString::fromUtf16(reinterpret_cast<const ushort*>(BA.right(FSize-3).data()));
+                            }
                         }
                     }
                 }
+                qint64 pos = file.size()-128;
+                file.seek(pos);
+                TAG = QString(file.read(3));
+                if (TAG == "TAG") {
+                    Title = TC->toUnicode(file.read(30));
+                    Artist = TC->toUnicode(file.read(30));
+                    Album = TC->toUnicode(file.read(30));
+                    Year = QString(file.read(4));
+                    Comment = TC->toUnicode(file.read(28));
+                }
+            } else {
+                icon = QIcon::fromTheme(MIME.replace("/", "-"));
+                if(icon.isNull()){
+                    icon = QIcon::fromTheme("unknown");
+                }
             }
-            qint64 pos = file.size()-128;
-            file.seek(pos);
-            TAG = QString(file.read(3));
-            if (TAG == "TAG") {
-                Title = TC->toUnicode(file.read(30));
-                Artist = TC->toUnicode(file.read(30));
-                Album = TC->toUnicode(file.read(30));
-                Year = QString(file.read(4));
-                Comment = TC->toUnicode(file.read(28));
-            }
-        } else {
-            icon = QIcon::fromTheme(MIME.replace("/", "-"));
-            if(icon.isNull()){
-                icon = QIcon::fromTheme("unknown");
-            }
-        }
 
-        if(fileInfo.isSymLink()){
-            QPixmap pixmap = icon.pixmap(200, 200, QIcon::Normal, QIcon::On);
-            QPainter painter(&pixmap);
-            painter.drawPixmap(100, 100, QIcon::fromTheme("emblem-symbolic-link").pixmap(100, 100, QIcon::Normal, QIcon::On));
-            icon = QIcon(pixmap);
-        }
+            if(fileInfo.isSymLink()){
+                QPixmap pixmap = icon.pixmap(200, 200, QIcon::Normal, QIcon::On);
+                QPainter painter(&pixmap);
+                painter.drawPixmap(100, 100, QIcon::fromTheme("emblem-symbolic-link").pixmap(100, 100, QIcon::Normal, QIcon::On));
+                icon = QIcon(pixmap);
+            }
 
-        QListWidgetItem *LWI;
-        LWI = new QListWidgetItem(icon, sname);
-        LWI->setData(LOCATION_OF_REAL_PATH, fileInfo.absoluteFilePath());
-        //LWI->setData(FILE_INFO, fileInfo);
-        LWI->setSizeHint(QSize(100,100));
-        ui->listWidget->insertItem(i, LWI);
-        ui->statusBar->showMessage("正在预览：" + QString::number(i) + "/" + QString::number(list.size()));
-        ui->tableWidget ->insertRow(i);
-        ui->tableWidget->setItem(i, 0, new QTableWidgetItem(QIcon(icon),sname));
-        ui->tableWidget->setItem(i, 1, new QTableWidgetItem(fileInfo.lastModified().toString("yyyy/MM/dd HH:mm:ss")));
-        ui->tableWidget->setItem(i, 2, new QTableWidgetItem(BS(fileInfo.size(),2)));
-        ui->tableWidget->setItem(i, 3, new QTableWidgetItem(QMimeDatabase().mimeTypeForFile(fileInfo.filePath()).name()));
-        ui->tableWidget->setItem(i, 4, new QTableWidgetItem(Title));
-        ui->tableWidget->setItem(i, 5, new QTableWidgetItem(Artist));
-        ui->tableWidget->setItem(i, 6, new QTableWidgetItem(Album));
-        ui->tableWidget->setItem(i, 7, new QTableWidgetItem(Year));
-        ui->tableWidget->setItem(i, 8, new QTableWidgetItem(Comment));
+            QListWidgetItem *LWI;
+            LWI = new QListWidgetItem(icon, sname);
+            LWI->setData(LOCATION_OF_REAL_PATH, fileInfo.absoluteFilePath());
+            //LWI->setData(FILE_INFO, fileInfo);
+            LWI->setSizeHint(QSize(100,100));
+            ui->listWidget->insertItem(i, LWI);
+            ui->statusBar->showMessage("正在预览：" + QString::number(i) + "/" + QString::number(list.size()));
+            ui->tableWidget ->insertRow(i);
+            ui->tableWidget->setItem(i, 0, new QTableWidgetItem(QIcon(icon),sname));
+            ui->tableWidget->setItem(i, 1, new QTableWidgetItem(fileInfo.lastModified().toString("yyyy/MM/dd HH:mm:ss")));
+            ui->tableWidget->setItem(i, 2, new QTableWidgetItem(BS(fileInfo.size(),2)));
+            ui->tableWidget->setItem(i, 3, new QTableWidgetItem(QMimeDatabase().mimeTypeForFile(fileInfo.filePath()).name()));
+            ui->tableWidget->setItem(i, 4, new QTableWidgetItem(Title));
+            ui->tableWidget->setItem(i, 5, new QTableWidgetItem(Artist));
+            ui->tableWidget->setItem(i, 6, new QTableWidgetItem(Album));
+            ui->tableWidget->setItem(i, 7, new QTableWidgetItem(Year));
+            ui->tableWidget->setItem(i, 8, new QTableWidgetItem(Comment));
+        }
     }
     ui->tableWidget->resizeColumnsToContents();
     iconPreview(0);
@@ -2016,9 +2027,6 @@ void MainWindow::genHomePage()
     QString mountPath = storage.rootPath();
     LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘");
     LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
-    //    LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), "系统盘\n" + BS(storage.bytesFree(),0) + " / " + BS(storage.bytesTotal(),0));
-    //    LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
-    //    ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
     Form_disk *form_disk = new Form_disk;
     form_disk->ui->label->setText("系统盘");
     form_disk->mountPath = mountPath;
@@ -2055,11 +2063,8 @@ void MainWindow::genHomePage()
                     LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name);
                     LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
                     ui->listWidget_nav->insertItem(ui->listWidget_nav->count(), LWI);
-                    //LWI = new QListWidgetItem(QIcon::fromTheme("drive-harddisk"), name + "\n" + BS(storage.bytesFree(),0) + " / " + BS(storage.bytesTotal(),0));
-                    //LWI->setData(LOCATION_OF_REAL_PATH, mountPath);
-                    //ui->listWidget_partition->insertItem(ui->listWidget_partition->count(), LWI);
                     Form_disk *form_disk = new Form_disk;
-                    form_disk->ui->label->setText(name);
+                    form_disk->name = name;
                     form_disk->mountPath = mountPath;
                     form_disk->device = storage.device();
                     form_disk->fileSystemType = storage.fileSystemType();

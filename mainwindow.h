@@ -11,7 +11,7 @@
 #include <QFileInfoList>
 #include <QListWidgetItem>
 #include <QSettings>
-//#include <QFileSystemWatcher>
+#include <QDir>
 
 namespace Ui {
 class MainWindow;
@@ -51,6 +51,7 @@ private:
     void readSettings();
     void genHomePage();
     QSettings settings;
+    QDir::SortFlags sortFlags = QDir::Name | QDir::DirsFirst;
 
 protected:
     void wheelEvent(QWheelEvent*);

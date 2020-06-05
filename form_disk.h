@@ -16,7 +16,7 @@ public:
     ~Form_disk();
     Ui::Form_disk *ui;
     qint64 bytesFree, bytesTotal;
-    QString mountPath;
+    QString mountPath, name;
     QByteArray device, fileSystemType;
     void init();
 
