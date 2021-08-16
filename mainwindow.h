@@ -28,7 +28,7 @@ public:
 private:
     Ui::MainWindow *ui;
     QString BS(qint64 b, int digits);
-    QLineEdit *lineEditLocation, *lineEditSearch;
+    QLineEdit *lineEditLocation, *lineEdit_search;
     QString path, source, pathIcon, pathDesktop, dir, pathSource, dirTrash, dirTrashInfo;
     int cut;
     PropertyDesktop *dialogPD;
@@ -52,6 +52,7 @@ private:
     void genHomePage();
     QSettings settings;
     QDir::SortFlags sortFlags = QDir::Name | QDir::DirsFirst;
+    void appendLog(QString s);
 
 protected:
     void wheelEvent(QWheelEvent*);

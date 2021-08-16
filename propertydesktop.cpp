@@ -4,13 +4,15 @@
 #include <QProcess>
 #include <QDebug>
 #include <QSettings>
+#include <QAction>
 
 PropertyDesktop::PropertyDesktop(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PropertyDesktop)
 {
     ui->setupUi(this);
-    //setFixedSize(400,350);
+    setWindowFlags(Qt::Tool);
+    setFixedSize(400,400);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText("保存");
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setText("取消");
     //ui->gridLayout->itemAtPosition(0,0)->setAlignment(Qt::AlignCenter);

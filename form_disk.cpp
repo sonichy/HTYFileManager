@@ -1,6 +1,7 @@
 #include "form_disk.h"
 #include "ui_form_disk.h"
 #include <QDebug>
+#include <QIcon>
 
 Form_disk::Form_disk(QWidget *parent) :
     QWidget(parent),
