@@ -171,7 +171,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.11\n2021-08\n恢复直接删除（不进回收站），修复没有写路径参数取不到路径无法删除的问题。\n\n2.10\n2020-06\n文件夹排在前面。\n实现图标模式排序。\n实现搜索（过滤）功能。\n修复盘符文字太宽挤开图标。\n\n2.9\n2020-04\n适配虚拟路径：trash:\\\\\\。\n\n2.8\n2020-03\n增加Git项目打包zip，tar.gz。\n\n2.7\n2019-09\n增加分区属性窗口。\n自定义分区控件，增加分区进度条。\n2019-07\n简化打开文件。\nresize自动滚动到选中文件的第一个。\n修复回收站文件还原没有刷新。\n使用Qt内部方法创建链接，识别链接并绘制链接角标。\n增加缩放快捷键。\n\n2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.12\n2021-10\n修改默认终端x-terminal-emulator通用。\n\n2.11\n2021-08\n恢复直接删除（不进回收站），修复没有写路径参数取不到路径无法删除的问题。\n\n2.10\n2020-06\n文件夹排在前面。\n实现图标模式排序。\n实现搜索（过滤）功能。\n修复盘符文字太宽挤开图标。\n\n2.9\n2020-04\n适配虚拟路径：trash:\\\\\\。\n\n2.8\n2020-03\n增加Git项目打包zip，tar.gz。\n\n2.7\n2019-09\n增加分区属性窗口。\n自定义分区控件，增加分区进度条。\n2019-07\n简化打开文件。\nresize自动滚动到选中文件的第一个。\n修复回收站文件还原没有刷新。\n使用Qt内部方法创建链接，识别链接并绘制链接角标。\n增加缩放快捷键。\n\n2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -196,7 +196,7 @@ void MainWindow::on_action_changelog_triggered()
 
 void MainWindow::on_action_about_triggered()
 {
-    QMessageBox aboutMB(QMessageBox::NoIcon, "关于", "海天鹰文件管理器 2.9\n一款基于 Qt5 的文件管理器。\n作者：海天鹰\nE-mail: sonichy@163.com\n主页：https://github.com/sonichy/HTYFileManager\n参考：\n右键菜单：http://windrocblog.sinaapp.com/?p=1016\n二级菜单：http://blog.csdn.net/u011417605/article/details/51219019\nQAction组群单选：http://qiusuoge.com/12287.html\nQListView添加项目：http://blog.csdn.net/u010142953/article/details/46694419\n修改文本：http://blog.csdn.net/caoshangpa/article/details/51775147\n获取系统文件图标：http://www.cnblogs.com/RainyBear/p/5223103.html");
+    QMessageBox aboutMB(QMessageBox::NoIcon, "关于", "海天鹰文件管理器 2.12\n一款基于 Qt5 的文件管理器。\n作者：海天鹰\nE-mail: sonichy@163.com\n主页：https://github.com/sonichy/HTYFileManager\n参考：\n右键菜单：http://windrocblog.sinaapp.com/?p=1016\n二级菜单：http://blog.csdn.net/u011417605/article/details/51219019\nQAction组群单选：http://qiusuoge.com/12287.html\nQListView添加项目：http://blog.csdn.net/u010142953/article/details/46694419\n修改文本：http://blog.csdn.net/caoshangpa/article/details/51775147\n获取系统文件图标：http://www.cnblogs.com/RainyBear/p/5223103.html");
     aboutMB.setIconPixmap(QPixmap(":/icon.png"));
     aboutMB.exec();
 }
@@ -545,8 +545,10 @@ void MainWindow::customContextMenu(const QPoint &pos)
             action_git_zip->setVisible(false);
         }
     }
-    if (QFileInfo(filepath).isFile()) action_terminal->setVisible(false);
-    if (QFileInfo(filepath).isSymLink()) action_createLink->setVisible(false);
+    if (QFileInfo(filepath).isFile())
+        action_terminal->setVisible(false);
+    if (QFileInfo(filepath).isSymLink())
+        action_createLink->setVisible(false);
 
     QAction *result_action = QMenu::exec(actions, ui->listWidget->mapToGlobal(pos));
 
@@ -807,9 +809,10 @@ void MainWindow::customContextMenu(const QPoint &pos)
     if (result_action == action_desktop) {
         qDebug() << "Create desktop file";
         QString iconName = "icon.png";
-        if(MIME == "application/vnd.appimage") iconName = QFileInfo(filepath).baseName() + ".png";
+        if (MIME == "application/vnd.appimage")
+            iconName = QFileInfo(filepath).baseName() + ".png";
         QString sExec;
-        if(MIME=="application/x-ms-dos-executable"){
+        if (MIME=="application/x-ms-dos-executable") {
             sExec = "deepin-wine " + filepath;
         }else{
             sExec = filepath;
@@ -822,9 +825,9 @@ void MainWindow::customContextMenu(const QPoint &pos)
             in << str;
             file.close();
             genList(path);
-        }else{
+        } else {
             //QMessageBox::warning(this,"错误","不能创建 " + filepath + ".desktop", QMessageBox::Yes);
-            QMessageBox MB(QMessageBox::Question, "错误", "不能创建 " + filepath + ".desktop，是否在桌面创建？", QMessageBox::Yes | QMessageBox::No, NULL);
+            QMessageBox MB(QMessageBox::Question, "错误", "不能创建 " + filepath + ".desktop，是否在桌面创建？", QMessageBox::Yes | QMessageBox::No, nullptr);
             if (MB.exec() ==  QMessageBox::Yes) {
                 file.setFileName(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/" + QFileInfo(filepath).baseName() + ".desktop");
                 if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -843,25 +846,22 @@ void MainWindow::customContextMenu(const QPoint &pos)
 
     if (result_action == action_gksu) {
         qDebug() << "gksu";
-        QProcess *proc = new QProcess;
-        if(filetype == "text" || MIME == "application/x-desktop"){
-            proc->start("gksu gedit " + filepath);
+        QProcess *process = new QProcess;
+        if (filetype == "text" || MIME == "application/x-desktop") {
+            process->start("gksu gedit " + filepath);
         }
         if(MIME == "inode/directory"){
-            proc->start("gksu " + QDir::currentPath() + "/HTYFileManager " + filepath);
+            process->start("gksu " + QDir::currentPath() + "/HTYFileManager " + filepath);
         }
     }
 
-    if(result_action == action_terminal){
-        QProcess *proc = new QProcess;
-        QString cmd = "";
-        if (index.isValid()) {
-            cmd = "deepin-terminal -w " + filepath;
-        } else {
-            cmd = "deepin-terminal -w " + path;
-        }
+    if (result_action == action_terminal) {
+        QProcess *process = new QProcess;
+        process->setWorkingDirectory(path);
+        QString cmd = "x-terminal-emulator";
         qDebug() << cmd;
-        proc->start(cmd);
+        process->setProgram(cmd);
+        process->startDetached();
     }
 
     if (result_action == action_sortName) {
@@ -896,16 +896,16 @@ void MainWindow::customContextMenu(const QPoint &pos)
             QString newName = dir + "/" + QFileInfo(filepath).fileName();
             qDebug() << "copyto:" << filepath << newName;
             if (!QFile::copy(filepath, newName)) {
-                QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 "+newName+" ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+                QMessageBox::StandardButton SB = QMessageBox::warning(nullptr, "覆盖", "是否覆盖 "+newName+" ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                 if (SB == QMessageBox::Yes) {
                     if (!QFile::remove(newName)) {
-                        QMessageBox::critical(NULL, "错误", "无法覆盖新文件 "+newName);
+                        QMessageBox::critical(nullptr, "错误", "无法覆盖新文件 "+newName);
                     } else {
                         qDebug() << "copyto" << newName;
                         refresh();
                     }
                     if (!QFile::copy(filepath, newName)) {
-                        QMessageBox::critical(NULL, "错误", "粘贴失败！");
+                        QMessageBox::critical(nullptr, "错误", "粘贴失败！");
                     } else {
                         qDebug() << "copy" << filepath << newName;
                     }
@@ -936,24 +936,24 @@ void MainWindow::customContextMenu(const QPoint &pos)
                     if (QFile::remove(fp)) {
                         qDebug() << "remove" << fp;
                     }else{
-                        QMessageBox::critical(NULL, "错误", "无法删除源文件 " + fp);
+                        QMessageBox::critical(nullptr, "错误", "无法删除源文件 " + fp);
                     }
                 }else{
-                    QMessageBox::StandardButton SB = QMessageBox::warning(NULL, "覆盖", "是否覆盖 " + newName + " ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+                    QMessageBox::StandardButton SB = QMessageBox::warning(nullptr, "覆盖", "是否覆盖 " + newName + " ?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
                     if (SB == QMessageBox::Yes) {
                         if (QFile::remove(newName)) {
                             qDebug() << "remove" << newName;
                             refresh();
                         } else {
-                            QMessageBox::critical(NULL, "错误", "无法覆盖新文件 " + newName);
+                            QMessageBox::critical(nullptr, "错误", "无法覆盖新文件 " + newName);
                         }
                         if (!QFile::copy(fp, newName)) {
-                            QMessageBox::critical(NULL, "错误", "粘贴失败！");
+                            QMessageBox::critical(nullptr, "错误", "粘贴失败！");
                         } else {
                             qDebug() << "copy" << fp << newName;
                             if (!QFile::remove(fp)) {
-                                QMessageBox::critical(NULL, "错误", "无法删除源文件 " + fp);
-                            }else{
+                                QMessageBox::critical(nullptr, "错误", "无法删除源文件 " + fp);
+                            } else {
                                 qDebug() << "remove" << fp;
                             }
                         }
@@ -968,24 +968,24 @@ void MainWindow::customContextMenu(const QPoint &pos)
     if (result_action == action_setWallpaper) {
         QString cmd = "gsettings set org.gnome.desktop.background picture-uri \"file://" + filepath + "\"";
         qDebug() << "setWallpaper:" << cmd;
-        QProcess *proc = new QProcess;
-        proc->start(cmd);
+        QProcess *process = new QProcess;
+        process->start(cmd);
         return;
     }
 
     if (result_action == action_zip) {
         QString cmd = "zip -rj " + filepath + ".zip " + filepath;
         qDebug() << cmd;
-        QProcess *proc = new QProcess;
-        proc->start(cmd);
+        QProcess *process = new QProcess;
+        process->start(cmd);
         return;
     }
 
     if (result_action == action_unzip) {
         QString cmd = "unzip -d " + QFileInfo(filepath).absolutePath() + "/" + QFileInfo(filepath).baseName() + " " + filepath;
         qDebug() << cmd;
-        QProcess *proc = new QProcess;
-        proc->start(cmd);
+        QProcess *process = new QProcess;
+        process->start(cmd);
         return;
     }
 
@@ -1034,7 +1034,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
     if (result_action == action_createLink) {
         QString dest = QFileInfo(filepath).absolutePath() + "/快捷方式-" + QFileInfo(filepath).fileName();
         QFile file(filepath);
-        if(file.link(dest))
+        if (file.link(dest))
             genList(QFileInfo(filepath).absolutePath());
         return;
     }
