@@ -25,6 +25,7 @@
 #include <QCheckBox>
 #include <QDesktopServices>
 #include <QPainter>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -241,16 +242,16 @@ void MainWindow::open(QString newpath)
         path = newpath;
         genList(path);
     } else {
-        QProcess *proc = new QProcess;
+        QProcess *process = new QProcess;
         QString MIME = QMimeDatabase().mimeTypeForFile(newpath).name();
         qDebug() << MIME;
         if (MIME == "application/x-desktop") {
             QString sexec = readSettings(newpath, "Desktop Entry", "Exec");
-            proc->setWorkingDirectory(readSettings(newpath, "Desktop Entry", "Path"));
+            process->setWorkingDirectory(readSettings(newpath, "Desktop Entry", "Path"));
             qDebug() << sexec;
-            proc->start(sexec);
+            process->start(sexec);
         } else if (MIME == "application/vnd.appimage") {
-            proc->start(newpath);
+            process->start(newpath);
         } else {
             QDesktopServices::openUrl(QUrl(newpath));
         }
@@ -326,7 +327,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
     QModelIndex index = ui->listWidget->indexAt(pos);
     //QString filepath = path + "/" + index.data(Qt::DisplayRole).toString();
     QString filepath = "";
-    if(index.isValid())
+    if (index.isValid())
         filepath = list.at(ui->listWidget->currentRow()).absoluteFilePath();
     qDebug() << filepath;
     QString filename = QFileInfo(filepath).fileName();
@@ -339,40 +340,54 @@ void MainWindow::customContextMenu(const QPoint &pos)
     action_openwith->setText("打开方式");
     actions.append(action_openwith);
 
-    QMenu *openwithFileManager = new QMenu(this);
-    QAction *DFM = new QAction(openwithFileManager);
-    DFM->setText("深度文管");
-    DFM->setIcon(QIcon::fromTheme("dde-file-manager"));
-    openwithFileManager->addAction(DFM);
-    QAction *Thunar = new QAction(openwithFileManager);
-    Thunar->setText("Thunar");
-    Thunar->setIcon(QIcon::fromTheme("Thunar"));
-    openwithFileManager->addAction(Thunar);
-
-    QMenu *openwithVideo = new QMenu(this);
-    QAction *HTYMP = new QAction(openwithVideo);
-    HTYMP->setText("海天鹰播放器");
-    openwithVideo->addAction(HTYMP);
-
-    QMenu *openwithText = new QMenu;
-    QAction *deepin_editor = new QAction("深度编辑器", openwithText);
-    deepin_editor->setIcon(QIcon::fromTheme("deepin-editor"));
-    openwithText->addAction(deepin_editor);
-    QAction *gedit = new QAction("gedit", openwithText);
-    gedit->setIcon(QIcon::fromTheme("gedit"));
-    openwithText->addAction(gedit);
-    QAction *notepadqq = new QAction("notepadqq", openwithText);
-    notepadqq->setIcon(QIcon::fromTheme("notepadqq"));
-    openwithText->addAction(notepadqq);
-    QAction *HTYEdit = new QAction("海天鹰编辑器", openwithText);
-    openwithText->addAction(HTYEdit);
-
-    QMenu *openwithImage = new QMenu;
-    QAction *DIV = new QAction("深度看图", openwithImage);
-    DIV->setIcon(QIcon::fromTheme("deepin-image-viewer"));
-    openwithImage->addAction(DIV);
-    QAction *HTYIV = new QAction("海天鹰看图", openwithImage);
-    openwithImage->addAction(HTYIV);
+    QFile *file = new QFile;
+    file->setFileName("/usr/share/applications/mimeinfo.cache");
+    bool ok = file->open(QIODevice::ReadOnly);
+    if (ok) {
+        QTextStream TS(file);
+        QString s = TS.readAll();
+        file->close();
+        QStringList SL = s.split("\n");
+        SL = SL.filter(MIME + "=");
+        QMenu *menu_openwith = new QMenu(this);
+        action_openwith->setMenu(menu_openwith);
+        for (int i=0; i<SL.length(); i++) {
+            s = SL.at(i);
+            //qDebug() << s;
+            s = s.mid(s.indexOf("=")+1);
+            //qDebug() << s;
+            QStringList SL1 = s.split(";");
+            SL1.removeAll("");
+            for (int j=0; j<SL1.length(); j++) {
+                QString desktop = "/usr/share/applications/" + SL1.at(j);
+                QString sExec = readSettings(desktop, "Desktop Entry", "Exec");
+                sExec = sExec.left(sExec.indexOf(" "));
+                QString sName = readSettings(desktop, "Desktop Entry", "Name");
+                QString sIcon = readSettings(desktop, "Desktop Entry", "Icon");
+                QAction *action = new QAction(menu_openwith);
+                action->setText(sName);
+                QIcon icon;
+                if (sIcon == "")
+                    sIcon = "applications-system-symbolic";
+                if (QFileInfo(sIcon).isFile()) {
+                    icon = QIcon(sIcon);
+                } else {
+                    icon = QIcon::fromTheme(sIcon);
+                }
+                action->setIcon(icon);
+                connect(action, &QAction::triggered, [=](){
+                    QProcess *process = new QProcess;
+                    process->setWorkingDirectory(path);
+                    qDebug() << sExec;
+                    process->setProgram(sExec);
+                    process->setArguments(QStringList() << filepath);
+                    bool b = process->startDetached();
+                    qDebug() << b;
+                });
+                menu_openwith->addAction(action);
+            }
+        }
+    }
 
     action_copy = new QAction(this);
     action_copy->setText("复制&C");   //不加&弹出菜单无法响应按键，加了后不需要setShortcut
@@ -478,17 +493,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
     action_createLink->setIcon(QIcon::fromTheme("emblem-symbolic-link"));
     actions.append(action_createLink);
 
-    if (filetype == "video" || filetype == "audio" || MIME == "application/vnd.rn-realmedia") {
-        action_openwith->setMenu(openwithVideo);
-    }
-
-    if (filetype == "text" || MIME == "application/javascript" || MIME == "application/x-desktop") {
-        action_openwith->setMenu(openwithText);
-    }
-
-    if (MIME == "inode/directory") {
-        action_openwith->setMenu(openwithFileManager);
-    } else{
+    if (MIME != "inode/directory") {
         action_zip->setVisible(false);
     }
 
@@ -496,15 +501,14 @@ void MainWindow::customContextMenu(const QPoint &pos)
         action_unzip->setVisible(true);
     }
 
-    if (MIME != "application/x-executable" && MIME != "application/x-shellscript" && MIME != "application/x-ms-dos-executable" && MIME !="application/x-sharedlib" && MIME != "application/vnd.appimage") action_desktop->setVisible(false);
+    if (MIME != "application/x-executable" && MIME != "application/x-shellscript" && MIME != "application/x-ms-dos-executable" && MIME !="application/x-sharedlib" && MIME != "application/vnd.appimage")
+        action_desktop->setVisible(false);
 
-    if (filetype == "image"){
-        action_openwith->setMenu(openwithImage);
-    }else{
+    if (filetype != "image") {
         action_setWallpaper->setVisible(false);
     }
 
-    qDebug() << path << dirTrash;
+    //qDebug() << path << dirTrash;
     if (path == dirTrash) {
         action_openwith->setVisible(false);
         action_paste->setVisible(false);
@@ -540,7 +544,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
         action_restore->setVisible(false);
         action_createLink->setVisible(false);
         QDir dir_git(path + "/.git");
-        if(!dir_git.exists()){
+        if (!dir_git.exists()) {
             action_git_tar_gz->setVisible(false);
             action_git_zip->setVisible(false);
         }
@@ -550,71 +554,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
     if (QFileInfo(filepath).isSymLink())
         action_createLink->setVisible(false);
 
-    QAction *result_action = QMenu::exec(actions, ui->listWidget->mapToGlobal(pos));
-
-    if (result_action == DFM) {
-        QProcess *proc = new QProcess;
-        QString cmd = "dde-file-manager \"" + filepath + "\"";
-        qDebug() << cmd;
-        proc->start(cmd);
-        return;
-    }
-
-    if (result_action == Thunar) {
-        QProcess *proc = new QProcess;
-        QString cmd = "thunar \"" + filepath + "\"";
-        qDebug() << cmd;
-        proc->start(cmd);
-        return;
-    }
-
-    if (result_action == deepin_editor) {
-        QProcess *proc = new QProcess;
-        QString cmd = "deepin-editor \"" + filepath + "\"";
-        qDebug() << cmd;
-        proc->start(cmd);
-        return;
-    }
-
-    if (result_action == gedit) {
-        QProcess *proc = new QProcess;
-        QString cmd = "gedit \"" + filepath + "\"";
-        qDebug() << cmd;
-        proc->start(cmd);
-        return;
-    }
-
-    if (result_action == notepadqq) {
-        QProcess *proc = new QProcess;
-        QString cmd = "notepadqq \"" + filepath + "\"";
-        qDebug() << cmd;
-        proc->start(cmd);
-        return;
-    }
-
-    if (result_action == HTYEdit) {
-        QProcess *proc = new QProcess;
-        QString cmd = "/media/sonichy/job/HY/Linux/Qt/HTYEdit/HTYEdit \"" + filepath + "\"";
-        qDebug() << cmd;
-        proc->start(cmd);
-        return;
-    }
-
-    if (result_action == DIV) {
-        QProcess *proc = new QProcess;
-        QString cmd = "deepin-image-viewer \"" + filepath + "\"";
-        qDebug() << cmd;
-        proc->start(cmd);
-        return;
-    }
-
-    if (result_action == HTYIV) {
-        QProcess *proc = new QProcess;
-        QString cmd = "/media/sonichy/job/HY/Linux/Qt/HTYIV/HTYIV \"" + filepath + "\"";
-        qDebug() << cmd;
-        proc->start(cmd);
-        return;
-    }
+    QAction *result_action = QMenu::exec(actions, ui->listWidget->mapToGlobal(pos));    
 
     if (result_action == action_copy) {
         copy();
@@ -627,7 +567,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
         return;
     }
 
-    if(result_action == action_paste){
+    if (result_action == action_paste) {
         paste();
         /*
         qDebug() << "paste";
@@ -746,8 +686,8 @@ void MainWindow::customContextMenu(const QPoint &pos)
             qDebug() << "rename" << filepath << newName;
             if (QFile::rename(filepath, newName)) {
                 genList(QFileInfo(filepath).absolutePath());
-            }else{
-                QMessageBox::critical(NULL, "错误", "无法重命名文件，该文件已存在！", QMessageBox::Ok);
+            } else {
+                QMessageBox::critical(nullptr, "错误", "无法重命名文件，该文件已存在！", QMessageBox::Ok);
             }
         }
         dialog->close();
@@ -765,9 +705,9 @@ void MainWindow::customContextMenu(const QPoint &pos)
                 QString sCategories = readSettings(filepath, "Desktop Entry", "Categories");
                 //dialogPD->ui->lineEditPathDesktop->setText(filepath);
                 dialogPD->filePath = filepath;
-                if(sIcon.contains("/")){
+                if (sIcon.contains("/")) {
                     dialogPD->ui->pushButton_icon->setIcon(QIcon(sIcon));
-                }else{
+                } else {
                     dialogPD->ui->pushButton_icon->setIcon(QIcon::fromTheme(sIcon));
                 }
                 //dialogPD->ui->lineEditIcon->setText(sicon);
@@ -844,15 +784,19 @@ void MainWindow::customContextMenu(const QPoint &pos)
         return;
     }
 
-    if (result_action == action_gksu) {
-        qDebug() << "gksu";
+    if (result_action == action_gksu) {        
+        QString cmd;
         QProcess *process = new QProcess;
         if (filetype == "text" || MIME == "application/x-desktop") {
-            process->start("gksu gedit " + filepath);
+            cmd = "gksu gedit " + filepath;
         }
-        if(MIME == "inode/directory"){
-            process->start("gksu " + QDir::currentPath() + "/HTYFileManager " + filepath);
+        if (MIME == "inode/directory") {
+            cmd = "gksu " + QDir::currentPath() + "/HTYFileManager " + filepath;
         }
+        qDebug() << cmd;
+        //process->start(cmd);
+        process->setProgram(cmd);
+        process->startDetached();
     }
 
     if (result_action == action_terminal) {
@@ -1018,16 +962,8 @@ void MainWindow::customContextMenu(const QPoint &pos)
         qDebug() << s;
         connect(process1, SIGNAL(readyReadStandardOutput()), this, SLOT(processOutput()));
         process1->start(s);
-        if(process1->waitForFinished())
+        if (process1->waitForFinished())
             genList(path);
-        return;
-    }
-
-    if (result_action == HTYMP) {
-        QString desktopPath = QDir::homePath() + "/.local/share/applications/HTYMP.desktop";
-        QString sexec = readSettings(desktopPath, "Desktop Entry", "Exec");
-        QProcess *proc = new QProcess;
-        proc->start(sexec);
         return;
     }
 
@@ -1816,14 +1752,14 @@ void MainWindow::genList(QString spath)
                             }else{
                                 Title = QString::fromUtf16(reinterpret_cast<const ushort*>(BA.right(FSize-3).data()));
                             }
-                        }else if (FTag == "TPE1") {
+                        } else if (FTag == "TPE1") {
                             QByteArray UFlag = BA.left(1);
                             if (UFlag.toHex().toInt() == 0) {
                                 Artist = TC->toUnicode(BA);
                             } else {
                                 Artist = QString::fromUtf16(reinterpret_cast<const ushort*>(BA.right(FSize-3).data()));
                             }
-                        }else if (FTag == "TALB") {
+                        } else if (FTag == "TALB") {
                             QByteArray UFlag = BA.left(1);
                             if (UFlag.toHex().toInt() == 0) {
                                 Album = TC->toUnicode(BA);
@@ -1850,7 +1786,7 @@ void MainWindow::genList(QString spath)
                 }
             }
 
-            if(fileInfo.isSymLink()){
+            if (fileInfo.isSymLink()) {
                 QPixmap pixmap = icon.pixmap(200, 200, QIcon::Normal, QIcon::On);
                 QPainter painter(&pixmap);
                 painter.drawPixmap(100, 100, QIcon::fromTheme("emblem-symbolic-link").pixmap(100, 100, QIcon::Normal, QIcon::On));
