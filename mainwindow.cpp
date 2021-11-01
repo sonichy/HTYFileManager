@@ -46,9 +46,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     dirTrash = QDir::homePath() + "/.local/share/Trash/files";
     dirTrashInfo = QDir::homePath() + "/.local/share/Trash/info";
-    lineEditLocation = new QLineEdit(path, this);
-    ui->mainToolBar->addWidget(lineEditLocation);
-    connect(lineEditLocation, SIGNAL(returnPressed()), this, SLOT(lineEditLocationReturnPressed()));
+    lineEdit_location = new QLineEdit(path, this);
+    ui->mainToolBar->addWidget(lineEdit_location);
+    connect(lineEdit_location, SIGNAL(returnPressed()), this, SLOT(lineEditLocationReturnPressed()));
     lineEdit_search = new QLineEdit("", this);
     lineEdit_search->setPlaceholderText("搜索");
     QAction *action_clear_lineEditSearch = new QAction;
@@ -155,7 +155,7 @@ MainWindow::MainWindow(QWidget *parent) :
             });
             loop.exec();
         }
-        lineEditLocation->setText(path);
+        lineEdit_location->setText(path);
         lineEditLocationReturnPressed();
         ui->computerWidget->hide();
         if (ui->action_icon->isChecked())
@@ -172,7 +172,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_changelog_triggered()
 {
-    QString s = "2.12\n2021-10\n修改默认终端x-terminal-emulator通用。\n\n2.11\n2021-08\n恢复直接删除（不进回收站），修复没有写路径参数取不到路径无法删除的问题。\n\n2.10\n2020-06\n文件夹排在前面。\n实现图标模式排序。\n实现搜索（过滤）功能。\n修复盘符文字太宽挤开图标。\n\n2.9\n2020-04\n适配虚拟路径：trash:\\\\\\。\n\n2.8\n2020-03\n增加Git项目打包zip，tar.gz。\n\n2.7\n2019-09\n增加分区属性窗口。\n自定义分区控件，增加分区进度条。\n2019-07\n简化打开文件。\nresize自动滚动到选中文件的第一个。\n修复回收站文件还原没有刷新。\n使用Qt内部方法创建链接，识别链接并绘制链接角标。\n增加缩放快捷键。\n\n2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
+    QString s = "2.12\n2021-10\n增加打开方式，支持设置默认APP。\n修改默认终端x-terminal-emulator通用。\n\n2.11\n2021-08\n恢复直接删除（不进回收站），修复没有写路径参数取不到路径无法删除的问题。\n\n2.10\n2020-06\n文件夹排在前面。\n实现图标模式排序。\n实现搜索（过滤）功能。\n修复盘符文字太宽挤开图标。\n\n2.9\n2020-04\n适配虚拟路径：trash:\\\\\\。\n\n2.8\n2020-03\n增加Git项目打包zip，tar.gz。\n\n2.7\n2019-09\n增加分区属性窗口。\n自定义分区控件，增加分区进度条。\n2019-07\n简化打开文件。\nresize自动滚动到选中文件的第一个。\n修复回收站文件还原没有刷新。\n使用Qt内部方法创建链接，识别链接并绘制链接角标。\n增加缩放快捷键。\n\n2.6\n2019-06\n增加：隐藏分区，取消隐藏分区功能。\n\n2.5\n2019-05\n修复：复制文件显示名而不是真实文件名导致粘贴失败的问题。\n修复：desktop属性窗口主题图标无法显示的问题。\n区分文件属性和文件夹属性。\n\n2.4\n2019-04\n导航增加系统盘。\n关闭时保存窗口位置和大小。\ndesktop属性窗口增加文件路径（只读）。\n粘贴文件后修改文件时间(>=5.10)。\n增加创建链接。\n\n2.3\n2018-12\n切换目录时设置导航栏。\n本地创建desktop失败，询问是否在桌面创建。\n修复显示文管主页时，地址栏打开路径不显示文件列表的问题。\ndesktop文件增加以管理员身份打开。\ndesktop无图标则显示默认图标。\n2018-11\n修复未知文件不显示图标问题。\n右键菜单移动文件后自动刷新当前目录。\n添加到深度文管目录打开方式列表。\n导航列表增加挂载分区，增加主页。\n\n2.2\n2018-07\n增加显示隐藏快捷键，刷新快捷键，增加图片打开方式。\n\n2.1\n2018-05\n列表模式可以显示MP3的ID3信息。\n\n2.0\n2018-04\n使用 QListWidget + Dir 遍历代替 QListView + QFileSystemModel，可以自定义文件图标。\n\n1.0\n2017-10\n增加文本文件打开方式菜单。\n文件列表回车快捷键与地址栏回车键冲突，引起有文件选中时地址栏回车无效，无文件选中时程序崩溃，暂时保留地址栏回车信号，取消程序的回车快捷键。\n粘贴有重名选择不覆盖将命名为副件XXX。\n2017-08\n多选复制粘贴删除成功，增加复制粘贴删除快捷键。\n增加搜索(过滤)。\n更新日志太长，由消息框改为文本框。\n2017-07\n增加视频文件打开方式，增加rmvb文件打开方式。\n增加背景图。\n增加压缩和解压缩菜单。\n2017-06\n属性窗体读取系统图标，增加回车键进入文件夹，增加退格键回到上层目录。\n属性窗体增加显示系统文件默认图标。\n从主窗体中分离属性窗体的代码。\n2017-05\n右键菜单增加【在终端中打开】。\n文件夹增加深度文管和Thunar打开方式。\n修复desktop已经存在，创建desktop会追加内容的BUG。\n单击文件在状态栏显示文件的MIME。\n2017-04\n图片右键菜单增加【设为壁纸】。\n文件右键菜单增加【移动到】、【复制到】。\n增加是否覆盖对话框。\ndesktop文件属性支持打开执行路径。\nQListView、QTableView实现排序。\n图标、列表按钮实现按下效果。\n实现删除文件到回收站，从回收站还原，优化回收站菜单。\n引号括起来，解决文件名含空格双击打不开的问题。\n增加列表模式右键菜单。\n增加管理员身份打开文件或文件夹。\n双击desktop文件，读取执行参数启动程序。\n增加修改desktop文件属性。\n解决QGridLayout单元格图标居中问题。\n增加读取desktop文件属性。\n增加新建文件夹，删除新建文件夹。\n程序右键增加创建快捷方式。\n图片的右键属性增加缩略图。\n2017-03\n增加左侧导航栏。\n增加右键菜单，增加复制、剪切、删除、属性功能。\n增加QTableView以列表形式显示，按钮切换图标、列表模式。\n增加后退功能。\n使用QListView以图标形式显示。";
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle("更新历史");
     dialog->setFixedSize(400,300);
@@ -206,7 +206,7 @@ void MainWindow::nav(QListWidgetItem *item)
 {
     path = item->data(LOCATION_OF_REAL_PATH).toString();
     //qDebug() << path;
-    lineEditLocation->setText(path);
+    lineEdit_location->setText(path);
     if(path == "computer://"){
         ui->computerWidget->show();
         ui->listWidget->hide();
@@ -273,7 +273,7 @@ void MainWindow::listWidgetItemClicked(QListWidgetItem *item)
 void MainWindow::lineEditLocationReturnPressed()
 {
     qDebug() << "lineEditLocationReturnPressed";
-    QString newpath = lineEditLocation->text();
+    QString newpath = lineEdit_location->text();
     QFileInfo FI(newpath);
     if (FI.isDir() || newpath == "trash:///") {
         path = newpath;
@@ -286,15 +286,15 @@ void MainWindow::lineEditLocationReturnPressed()
 void MainWindow::on_action_back_triggered()
 {
     if(path != "/"){
-        int n = lineEditLocation->text().lastIndexOf("/");
+        int n = lineEdit_location->text().lastIndexOf("/");
         qDebug() << n;
         QString newpath = "";
         if (n>0) {
-            newpath = lineEditLocation->text().left(n);
+            newpath = lineEdit_location->text().left(n);
         } else {
             newpath = "/";
         }
-        lineEditLocation->setText(newpath);
+        lineEdit_location->setText(newpath);
         path = newpath;
         genList(path);
     }
@@ -335,11 +335,12 @@ void MainWindow::customContextMenu(const QPoint &pos)
     qDebug() << MIME;
     QString filetype = MIME.left(MIME.indexOf("/"));
 
-    QList<QAction*> actions;
+    QList<QAction*> actions, actions_recommend_app;
     QAction *action_openwith = new QAction(this);
     action_openwith->setText("打开方式");
     actions.append(action_openwith);
-
+    QMenu *menu_openwith = new QMenu(this);
+    action_openwith->setMenu(menu_openwith);
     QFile *file = new QFile;
     file->setFileName("/usr/share/applications/mimeinfo.cache");
     bool ok = file->open(QIODevice::ReadOnly);
@@ -349,8 +350,6 @@ void MainWindow::customContextMenu(const QPoint &pos)
         file->close();
         QStringList SL = s.split("\n");
         SL = SL.filter(MIME + "=");
-        QMenu *menu_openwith = new QMenu(this);
-        action_openwith->setMenu(menu_openwith);
         for (int i=0; i<SL.length(); i++) {
             s = SL.at(i);
             //qDebug() << s;
@@ -365,6 +364,7 @@ void MainWindow::customContextMenu(const QPoint &pos)
                 QString sName = readSettings(desktop, "Desktop Entry", "Name");
                 QString sIcon = readSettings(desktop, "Desktop Entry", "Icon");
                 QAction *action = new QAction(menu_openwith);
+                action->setProperty("path", desktop);
                 action->setText(sName);
                 QIcon icon;
                 if (sIcon == "")
@@ -385,9 +385,134 @@ void MainWindow::customContextMenu(const QPoint &pos)
                     qDebug() << b;
                 });
                 menu_openwith->addAction(action);
+                actions_recommend_app.append(action);
             }
         }
     }
+
+    QAction *action_choose_default_app = new QAction(menu_openwith);
+    action_choose_default_app->setText("选择默认程序&C");
+    menu_openwith->addAction(action_choose_default_app);
+    connect(action_choose_default_app, &QAction::triggered, [=](){
+        QDialog *dialog = new QDialog(this);
+        dialog->setWindowTitle("打开方式");
+        dialog->setFixedSize(600,500);
+        QVBoxLayout *vbox = new QVBoxLayout;
+        dialog->setLayout(vbox);
+        QLabel *label = new QLabel("推荐应用 " + QString::number(actions_recommend_app.size()));
+        vbox->addWidget(label);
+        QListWidget *listWidget_recommend_app = new QListWidget(dialog);
+        listWidget_recommend_app->setViewMode(QListView::IconMode);
+        listWidget_recommend_app->setDragDropMode(QAbstractItemView::NoDragDrop);
+        vbox->addWidget(listWidget_recommend_app);
+        foreach (QAction *action, actions_recommend_app) {
+            QListWidgetItem *LWI;
+            LWI = new QListWidgetItem(action->icon(), action->text());
+            LWI->setData(LOCATION_OF_REAL_PATH, action->property("path"));
+            LWI->setSizeHint(QSize(120,120));
+            listWidget_recommend_app->insertItem(listWidget_recommend_app->count() + 1, LWI);
+        }
+
+        QHBoxLayout *hbox = new QHBoxLayout;
+        vbox->addLayout(hbox);
+        label = new QLabel("其他应用");
+        hbox->addWidget(label);
+        QLineEdit *lineEdit = new QLineEdit(dialog);
+        QAction *action_lineEdit_filter = new QAction(lineEdit);
+        action_lineEdit_filter->setIcon(QIcon::fromTheme("search"));
+        lineEdit->addAction(action_lineEdit_filter, QLineEdit::LeadingPosition);
+        QAction *action_lineEdit_clear = new QAction(lineEdit);
+        action_lineEdit_clear->setIcon(QIcon::fromTheme("edit-clear"));
+        lineEdit->addAction(action_lineEdit_clear, QLineEdit::TrailingPosition);
+        hbox->addWidget(lineEdit);
+        hbox->addStretch();
+
+        QListWidget *listWidget_app = new QListWidget(dialog);
+        listWidget_app->setViewMode(QListView::IconMode);
+        listWidget_app->setDragDropMode(QAbstractItemView::NoDragDrop);
+        vbox->addWidget(listWidget_app);
+        connect(action_lineEdit_filter, &QAction::triggered, [=](){
+            openwith_filter(listWidget_app, lineEdit->text(), label);
+        });
+        //快捷键冲突
+//        connect(lineEdit, &QLineEdit::returnPressed, [=](){
+//            openwith_filter(listWidget_app, lineEdit->text(), label);
+//        });
+        connect(action_lineEdit_clear, &QAction::triggered, [=](){
+            lineEdit->clear();
+            openwith_filter(listWidget_app, "", label);
+        });
+        openwith_filter(listWidget_app, "", label);
+
+        //2个QListWidget单选
+        connect(listWidget_recommend_app, &QListWidget::itemSelectionChanged, [=](){
+            QList<QListWidgetItem*> list_recommend_app_selected = listWidget_recommend_app->selectedItems();
+            if (list_recommend_app_selected.size() != 0) {
+                listWidget_app->setCurrentRow(-1);
+            }
+        });
+        connect(listWidget_app, &QListWidget::itemSelectionChanged, [=](){
+            QList<QListWidgetItem*> list_app_selected = listWidget_app->selectedItems();
+            if (list_app_selected.size() != 0) {
+                listWidget_recommend_app->setCurrentRow(-1);
+            }
+        });
+
+        hbox = new QHBoxLayout;
+        hbox->addStretch();
+        vbox->addLayout(hbox);
+        QCheckBox *checkBox_default_app = new QCheckBox("设为默认");
+        hbox->addWidget(checkBox_default_app);
+        QPushButton *pushButton_cancel = new QPushButton("取消");
+        connect(pushButton_cancel, &QPushButton::pressed, [=](){
+            dialog->close();
+        });
+        hbox->addWidget(pushButton_cancel);
+        QPushButton *pushButton_confirm = new QPushButton("确定");
+        connect(pushButton_confirm, &QPushButton::pressed, [=](){
+            QListWidgetItem *LWI;
+            QList<QListWidgetItem*> list_recommend_app_selected = listWidget_recommend_app->selectedItems();
+            if (list_recommend_app_selected.size() != 0) {
+                LWI = listWidget_recommend_app->selectedItems().first();
+            } else {
+                LWI = listWidget_app->selectedItems().first();
+            }
+            QString desktop = LWI->data(LOCATION_OF_REAL_PATH).toString();
+            QString sExec = readSettings(desktop, "Desktop Entry", "Exec");
+            sExec = sExec.left(sExec.indexOf(" "));
+            QProcess *process = new QProcess;
+            process->setWorkingDirectory(path);
+            qDebug() << sExec;
+            process->setProgram(sExec);
+            process->setArguments(QStringList() << filepath);
+            bool b = process->startDetached();
+            qDebug() << b;
+            dialog->close();
+            if (checkBox_default_app->isChecked()) {
+                QString default_apps = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/mimeapps.list";
+                QFile *file = new QFile;
+                file->setFileName(default_apps);
+                QString s="";
+                bool ok = file->open(QIODevice::ReadOnly);
+                if (ok) {
+                    QTextStream TS(file);
+                    s = TS.readAll();
+                    file->close();
+                }
+                file->setFileName(default_apps);
+                ok = file->open(QFile::WriteOnly);
+                if (ok) {
+                    QFileInfo FI(desktop);
+                    QTextStream TS(file);
+                    s.replace(QRegularExpression(MIME + "=.*\n"), MIME + "=" + FI.fileName() + "\n");
+                    TS << s;
+                    file->close();
+                }
+            }
+        });
+        hbox->addWidget(pushButton_confirm);
+        dialog->show();
+    });
 
     action_copy = new QAction(this);
     action_copy->setText("复制&C");   //不加&弹出菜单无法响应按键，加了后不需要setShortcut
@@ -1661,7 +1786,7 @@ void MainWindow::genList(QString spath)
     if (spath == "trash:///")
         spath = dirTrash;
     else
-        lineEditLocation->setText(spath);
+        lineEdit_location->setText(spath);
 
     for (int i=0; i<ui->listWidget_nav->count(); i++) {
         QString LWI_path = ui->listWidget_nav->item(i)->data(LOCATION_OF_REAL_PATH).toString();
@@ -2052,7 +2177,7 @@ void MainWindow::genHomePage()
 
     ui->listWidget_nav->setCurrentRow(8);
     path = "computer://";
-    lineEditLocation->setText(path);
+    lineEdit_location->setText(path);
     ui->listWidget->hide();
 }
 
@@ -2060,7 +2185,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
     QList<QListWidgetItem*> LWIs = ui->listWidget->selectedItems();
-    if(LWIs.size() > 0)
+    if (LWIs.size() > 0)
         ui->listWidget->scrollToItem(LWIs.at(0), QAbstractItemView::PositionAtCenter);
 }
 
@@ -2094,3 +2219,33 @@ void MainWindow::appendLog(QString s)
         file.close();
     }
 }
+
+void MainWindow::openwith_filter(QListWidget *listWidget, QString text, QLabel *label)
+{
+    listWidget->clear();
+    QDir dir("/usr/share/applications/");
+    dir.setNameFilters(QStringList() << "*.desktop");
+    if (text != "")
+        dir.setNameFilters(QStringList() << "*" + text + "*");
+    QFileInfoList FIL = dir.entryInfoList();
+    label->setText("其他应用 " + QString::number(FIL.size()));
+    for (int i = 0; i < FIL.size(); i++) {
+        QFileInfo fileInfo = FIL.at(i);
+        QString filepath = fileInfo.absoluteFilePath();
+        QString sname = readSettings(filepath, "Desktop Entry", "Name");
+        QString sicon = readSettings(filepath, "Desktop Entry", "Icon");
+        if (sicon == "")
+            sicon = "applications-system-symbolic";
+        QIcon icon;
+        if (QFileInfo(sicon).isFile()) {
+            icon = QIcon(sicon);
+        } else {
+            icon = QIcon::fromTheme(sicon);
+        }
+        QListWidgetItem *LWI;
+        LWI = new QListWidgetItem(icon, sname);
+        LWI->setData(LOCATION_OF_REAL_PATH, filepath);
+        LWI->setSizeHint(QSize(120,120));
+        listWidget->insertItem(listWidget->count() + 1, LWI);
+    }
+};
